@@ -1,0 +1,4 @@
+node_modules/
+kip.db
+uploads/
+.env

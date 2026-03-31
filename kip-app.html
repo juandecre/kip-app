@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIP – Knowledge Is Power</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/socket.io/socket.io.js"></script>
+<style>
+:root {
+  --navy:#0B1829;--navy-mid:#152236;--blue:#1A6BF0;--blue-hover:#1558D0;
+  --cyan:#00C2FF;--white:#FFFFFF;--gray-100:#F4F6FA;--gray-200:#E8ECF4;
+  --gray-400:#9BA8BB;--gray-600:#5C6B82;--gray-800:#2C3A4D;
+  --green:#00D4A0;--green-soft:rgba(0,212,160,0.12);
+  --orange:#FF7B35;--orange-soft:rgba(255,123,53,0.12);
+  --red:#FF4444;--gold:#FFD60A;
+  --shadow-sm:0 2px 8px rgba(11,24,41,0.08);--shadow-md:0 8px 24px rgba(11,24,41,0.12);--shadow-lg:0 20px 60px rgba(11,24,41,0.18);
+  --radius:16px;--radius-sm:10px;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy);overflow-x:hidden}
+button{cursor:pointer;border:none;font-family:var(--font-body)}
+input,textarea,select{font-family:var(--font-body)}
+.screen{display:none;min-height:100vh}
+.screen.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,24,41,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;display:flex;align-items:center;padding:0 24px;gap:16px}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;font-family:var(--font-display)}
+.navbar-logo{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--white)}
+.navbar-logo span{color:var(--cyan)}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--gray-400);transition:all .2s;background:none;border:none;cursor:pointer}
+.nav-link:hover,.nav-link.active{color:var(--white);background:rgba(255,255,255,0.08)}
+.btn-nav-primary{padding:8px 18px;border-radius:8px;font-size:14px;font-weight:600;background:var(--blue);color:white;border:none;cursor:pointer}
+.navbar-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;border:2px solid rgba(255,255,255,0.15);overflow:hidden;background:linear-gradient(135deg,#667eea,#764ba2)}
+.navbar-avatar img{width:100%;height:100%;object-fit:cover}
+.app-layout{display:flex;padding-top:64px;min-height:100vh}
+.sidebar{width:240px;min-height:calc(100vh - 64px);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:64px;left:0;bottom:0;overflow-y:auto;padding:16px 0}
+.sidebar-section{padding:8px 16px;margin-bottom:4px}
+.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);padding:0 8px;margin-bottom:6px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500;color:var(--gray-600);cursor:pointer;transition:all .15s;width:100%;background:none;border:none;text-align:left}
+.sidebar-item:hover{background:var(--gray-100);color:var(--navy)}
+.sidebar-item.active{background:rgba(26,107,240,0.08);color:var(--blue);font-weight:600}
+.sidebar-badge{margin-left:auto;background:var(--blue);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px}
+.main-content{margin-left:240px;flex:1;padding:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;transition:all .2s;border:none;cursor:pointer}
+.btn-primary{background:var(--blue);color:white}
+.btn-primary:hover{background:var(--blue-hover);transform:translateY(-1px);box-shadow:0 8px 20px rgba(26,107,240,0.3)}
+.btn-secondary{background:var(--gray-100);color:var(--navy)}
+.btn-secondary:hover{background:var(--gray-200)}
+.btn-success{background:var(--green);color:white}
+.btn-sm{padding:8px 16px;font-size:13px}
+.btn-lg{padding:16px 32px;font-size:16px;border-radius:var(--radius)}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);overflow:hidden}
+.card-header{padding:20px 24px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center}
+.card-body{padding:24px}
+.card-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy)}
+.card-subtitle{font-size:13px;color:var(--gray-400);margin-top:2px}
+.input-group{margin-bottom:16px}
+.input-label{display:block;font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:6px}
+.input-field{width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--gray-200);font-size:14px;color:var(--navy);background:var(--white);transition:border-color .2s;outline:none}
+.input-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,107,240,0.1)}
+.input-field::placeholder{color:var(--gray-400)}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-blue{background:rgba(26,107,240,0.1);color:var(--blue)}
+.badge-green{background:var(--green-soft);color:#00a07a}
+.badge-orange{background:var(--orange-soft);color:var(--orange)}
+.badge-red{background:rgba(255,68,68,0.1);color:var(--red)}
+.stars{color:var(--gold);font-size:14px}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-family:var(--font-display);flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.av-grad-1{background:linear-gradient(135deg,#667eea,#764ba2)}
+.av-grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.av-grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.av-grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.av-grad-5{background:linear-gradient(135deg,#fa709a,#fee140)}
+.av-grad-6{background:linear-gradient(135deg,#a18cd1,#fbc2eb)}
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:600;color:white;z-index:9999;box-shadow:var(--shadow-lg);display:none}
+.toast.show{display:flex;align-items:center;gap:10px;animation:slideIn .3s ease}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);z-index:9998;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.loading-overlay.show{display:flex}
+.spinner{width:40px;height:40px;border:3px solid var(--gray-200);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-wrap{min-height:100vh;background:var(--gray-100);display:flex;align-items:center;justify-content:center;padding:80px 24px}
+.auth-card{background:white;border-radius:24px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);padding:40px;width:100%;max-width:480px}
+.auth-wide{max-width:660px}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center}
+.auth-logo .logo-icon{width:40px;height:40px;font-size:18px;border-radius:10px}
+.auth-logo-text{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--navy)}
+.auth-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:4px}
+.auth-sub{font-size:14px;color:var(--gray-400);text-align:center;margin-bottom:28px}
+.auth-footer-text{text-align:center;font-size:14px;color:var(--gray-400);margin-top:16px}
+.auth-link{color:var(--blue);font-weight:600;cursor:pointer}
+.type-toggle{display:flex;gap:8px;background:var(--gray-100);padding:4px;border-radius:10px;margin-bottom:24px}
+.type-btn{flex:1;padding:10px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--gray-600)}
+.type-btn.active{background:white;color:var(--navy);box-shadow:var(--shadow-sm)}
+.page-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+.page-sub{font-size:14px;color:var(--gray-400);margin-top:4px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border-radius:var(--radius);padding:20px;border:1px solid var(--gray-200);position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.blue::after{background:var(--blue)}.stat-card.green::after{background:var(--green)}.stat-card.orange::after{background:var(--orange)}.stat-card.cyan::after{background:var(--cyan)}
+.stat-card-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:8px}
+.stat-card-val{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--navy)}
+.stat-card-change{font-size:12px;margin-top:4px;color:var(--green)}
+.stat-card-icon{position:absolute;top:20px;right:20px;font-size:20px;opacity:.4}
+.content-grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.pro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.pro-card{background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:20px;cursor:pointer;transition:all .2s}
+.pro-card:hover{border-color:var(--blue);box-shadow:0 8px 32px rgba(26,107,240,0.12);transform:translateY(-2px)}
+.pro-card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.pro-avatar-wrap{width:52px;height:52px;border-radius:14px;overflow:hidden;flex-shrink:0}
+.pro-avatar-wrap img{width:100%;height:100%;object-fit:cover}
+.pro-info .pro-name{font-weight:700;font-size:15px;color:var(--navy)}
+.pro-info .pro-specialty{font-size:13px;color:var(--blue);font-weight:500;margin-top:2px}
+.pro-info .pro-location{font-size:12px;color:var(--gray-400);margin-top:2px}
+.pro-stats{display:flex;gap:16px;margin-bottom:16px}
+.pro-stat-item{font-size:12px;color:var(--gray-400);display:flex;align-items:center;gap:4px}
+.pro-stat-item strong{color:var(--navy);font-weight:700;font-size:13px}
+.pro-card-actions{display:flex;gap:8px}
+.pro-card-actions .btn{flex:1;justify-content:center}
+.chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 104px);background:white;border-radius:var(--radius);border:1px solid var(--gray-200);overflow:hidden}
+.chat-sidebar{border-right:1px solid var(--gray-200);display:flex;flex-direction:column}
+.chat-sidebar-header{padding:16px;border-bottom:1px solid var(--gray-200)}
+.chat-sidebar-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.chat-search{width:100%;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;outline:none}
+.chat-list{overflow-y:auto;flex:1}
+.chat-item{padding:14px 16px;display:flex;gap:12px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--gray-100)}
+.chat-item:hover{background:var(--gray-100)}
+.chat-item.active{background:rgba(26,107,240,0.06)}
+.ci-avatar{width:44px;height:44px;border-radius:50%;font-size:16px;flex-shrink:0;overflow:hidden}
+.ci-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-item-body{flex:1;min-width:0}
+.chat-item-name{font-size:14px;font-weight:600;color:var(--navy)}
+.chat-item-preview{font-size:13px;color:var(--gray-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.chat-item-time{font-size:11px;color:var(--gray-400)}
+.chat-main{display:flex;flex-direction:column}
+.chat-header{padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:12px}
+.ch-avatar{width:40px;height:40px;border-radius:50%;font-size:16px;overflow:hidden}
+.ch-avatar img{width:100%;height:100%;object-fit:cover}
+.ch-name{font-size:15px;font-weight:700;color:var(--navy)}
+.ch-status{font-size:12px;color:var(--green)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg-group{display:flex;gap:10px}
+.msg-group.sent{flex-direction:row-reverse}
+.msg-av{width:32px;height:32px;border-radius:50%;font-size:13px;flex-shrink:0;align-self:flex-end;overflow:hidden}
+.msg-av img{width:100%;height:100%;object-fit:cover}
+.msg-bubble{max-width:65%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.5}
+.msg-group.received .msg-bubble{background:var(--gray-100);color:var(--navy);border-bottom-left-radius:4px}
+.msg-group.sent .msg-bubble{background:var(--blue);color:white;border-bottom-right-radius:4px}
+.msg-time{font-size:11px;color:var(--gray-400);margin-top:4px}
+.msg-group.sent .msg-time{text-align:right}
+.chat-input-area{padding:16px 20px;border-top:1px solid var(--gray-200);display:flex;gap:10px;align-items:flex-end}
+.chat-input-field{flex:1;padding:12px 16px;border:1.5px solid var(--gray-200);border-radius:12px;font-size:14px;resize:none;outline:none;font-family:var(--font-body);max-height:120px}
+.chat-input-field:focus{border-color:var(--blue)}
+.chat-send-btn{width:42px;height:42px;border-radius:10px;background:var(--blue);border:none;cursor:pointer;font-size:16px;color:white;flex-shrink:0}
+.typing-indicator{font-size:12px;color:var(--gray-400);padding:0 20px 8px;font-style:italic;min-height:20px}
+.online-dot{width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid white;position:absolute;bottom:2px;right:2px}
+.search-filters{background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:20px;margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.filter-select{padding:8px 14px;border-radius:8px;border:1.5px solid var(--gray-200);font-size:13px;font-family:var(--font-body);color:var(--navy);background:white;outline:none;cursor:pointer}
+.search-main-input{flex:1;min-width:200px;padding:10px 16px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:var(--font-body);outline:none}
+.search-main-input:focus{border-color:var(--blue)}
+.profile-hero{background:linear-gradient(135deg,var(--navy) 0%,#1a3a5c 100%);border-radius:var(--radius);padding:36px;margin-bottom:20px;display:flex;align-items:flex-start;gap:24px}
+.profile-name{font-family:var(--font-display);font-size:28px;font-weight:800;color:white;letter-spacing:-.5px;margin-bottom:4px}
+.notif-item{background:white;border-radius:var(--radius-sm);border:1px solid var(--gray-200);padding:16px;display:flex;gap:14px;margin-bottom:8px}
+.notif-item.unread{border-left:3px solid var(--blue)}
+.notif-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.notif-icon-wrap.blue{background:rgba(26,107,240,0.1)}.notif-icon-wrap.green{background:var(--green-soft)}.notif-icon-wrap.orange{background:var(--orange-soft)}
+.notif-dot{width:8px;height:8px;background:var(--blue);border-radius:50%;align-self:center;flex-shrink:0}
+.progress-bar-wrap{background:var(--gray-100);border-radius:4px;height:6px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.breakdown-item{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--gray-100)}
+.breakdown-step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.breakdown-step.done{background:var(--green-soft);color:#00a07a}.breakdown-step.active{background:rgba(26,107,240,0.1);color:var(--blue)}.breakdown-step.pending{background:var(--gray-100);color:var(--gray-400)}
+.seniority-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700}
+.seniority-pro{background:linear-gradient(135deg,rgba(255,214,10,0.2),rgba(255,123,53,0.15));color:#b8960a;border:1px solid rgba(255,214,10,0.3)}
+.jobs-tabs{display:flex;gap:4px;background:var(--gray-100);padding:4px;border-radius:10px;margin-bottom:20px;width:fit-content}
+.job-tab{padding:8px 18px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--gray-600);transition:all .2s}
+.job-tab.active{background:white;color:var(--navy);box-shadow:var(--shadow-sm)}
+.rating-stars-input{display:flex;gap:8px;font-size:36px;cursor:pointer;margin:16px 0}
+.rating-stars-input span{color:var(--gray-200);transition:color .2s}
+.rating-stars-input span.active{color:var(--gold)}
+.review-card{background:white;border-radius:var(--radius-sm);border:1px solid var(--gray-200);padding:16px;margin-bottom:12px}
+.payment-summary{background:linear-gradient(135deg,var(--navy),var(--navy-mid,#152236));border-radius:var(--radius);padding:28px;color:white;margin-bottom:20px}
+.ps-row{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,0.08)}
+.foto-upload-area{border:2px dashed var(--gray-200);border-radius:var(--radius-sm);padding:32px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.foto-upload-area:hover{border-color:var(--blue);background:rgba(26,107,240,0.02)}
+.foto-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.foto-preview{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;border:3px solid var(--blue)}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px 60px;position:relative;overflow:hidden;background:var(--navy)}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.04) 1px,transparent 1px);background-size:32px 32px}
+.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(26,107,240,0.25) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-60%)}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:760px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(0,194,255,0.1);border:1px solid rgba(0,194,255,0.2);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:24px}
+.hero-title{font-family:var(--font-display);font-size:clamp(42px,7vw,76px);font-weight:800;color:var(--white);line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero-title .accent{color:var(--cyan)}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:40px}
+.hero-search-wrap{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:60px;padding:8px 8px 8px 24px;display:flex;align-items:center;gap:12px;max-width:580px;margin:0 auto 48px;width:100%}
+.hero-search-input{flex:1;background:none;border:none;outline:none;font-size:15px;color:white;font-family:var(--font-body)}
+.hero-search-input::placeholder{color:rgba(255,255,255,0.35)}
+.hero-search-btn{padding:12px 28px;border-radius:50px;background:var(--blue);color:white;font-weight:700;font-size:14px;border:none;cursor:pointer}
+.hero-cta-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero-outline{padding:14px 28px;border-radius:50px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.15);color:white;font-weight:600;font-size:15px;cursor:pointer}
+.stats-bar{display:flex;justify-content:center;gap:48px;padding:32px 24px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+.stat-num{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--white)}
+.stat-num span{color:var(--cyan)}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px}
+.home-section{padding:80px 24px;background:var(--navy)}
+.section-header{text-align:center;margin-bottom:48px}
+.section-eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:12px}
+.section-title{font-family:var(--font-display);font-size:clamp(28px,4vw,42px);font-weight:800;color:var(--white);letter-spacing:-1px}
+.categories-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:960px;margin:0 auto}
+.cat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s}
+.cat-card:hover{background:rgba(26,107,240,0.12);border-color:rgba(26,107,240,0.3);transform:translateY(-4px)}
+.cat-icon{font-size:32px;margin-bottom:12px;display:block}
+.cat-name{font-size:14px;font-weight:600;color:rgba(255,255,255,0.85)}
+.cat-count{font-size:12px;color:rgba(255,255,255,0.35);margin-top:4px}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;max-width:960px;margin:0 auto}
+.how-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:32px 24px;position:relative}
+.how-num{font-family:var(--font-display);font-size:64px;font-weight:800;color:rgba(255,255,255,0.04);position:absolute;top:16px;right:20px}
+.how-icon{font-size:28px;margin-bottom:16px}
+.how-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:white;margin-bottom:8px}
+.how-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.6}
+.footer-bottom{text-align:center;padding:24px;font-size:13px;color:rgba(255,255,255,0.2);border-top:1px solid rgba(255,255,255,0.04);background:var(--navy)}
+/* Chat vacío */
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gray-400);gap:12px}
+.chat-empty-icon{font-size:48px;opacity:.4}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+<div class="loading-overlay" id="loading"><div class="spinner"></div></div>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="screen active" id="screen-home" style="background:var(--navy)">
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,24,41,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;display:flex;align-items:center;padding:0 24px;gap:16px">
+    <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div>
+    <div style="flex:1"></div>
+    <button class="nav-link" onclick="showScreen('login')">Iniciar sesión</button>
+    <button class="btn-nav-primary" onclick="showScreen('register-client')">Registrarme</button>
+  </nav>
+  <section class="hero">
+    <div style="position:absolute;inset:0;pointer-events:none"><div class="hero-dots"></div><div class="hero-glow"></div></div>
+    <div class="hero-content">
+      <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:32px">
+        <div class="logo-icon" style="width:52px;height:52px;font-size:22px;border-radius:14px">K</div>
+        <span style="font-family:var(--font-display);font-size:36px;font-weight:800;color:white;letter-spacing:-1px">KIP</span>
+      </div>
+      <div class="hero-eyebrow">Plataforma de servicios profesionales</div>
+      <h1 class="hero-title">Encontrá profesionales<br><span class="accent">de confianza</span></h1>
+      <p class="hero-sub">Conectamos personas con técnicos y profesionales verificados para cualquier trabajo en Argentina.</p>
+      <div class="hero-search-wrap">
+        <span style="font-size:18px">🔍</span>
+        <input class="hero-search-input" placeholder="¿Qué servicio necesitás?" type="text">
+        <button class="hero-search-btn" onclick="showScreen('register-client')">Buscar</button>
+      </div>
+      <div class="hero-cta-group">
+        <button class="btn btn-primary btn-lg" onclick="showScreen('register-client')">Encontrar un profesional</button>
+        <button class="btn-hero-outline" onclick="showScreen('register-pro')">Ofrecer mis servicios</button>
+      </div>
+    </div>
+  </section>
+  <div class="stats-bar">
+    <div style="text-align:center"><div class="stat-num">12<span>K</span></div><div class="stat-label">Profesionales activos</div></div>
+    <div style="text-align:center"><div class="stat-num">48<span>K</span></div><div class="stat-label">Trabajos completados</div></div>
+    <div style="text-align:center"><div class="stat-num">4.8<span>★</span></div><div class="stat-label">Calificación promedio</div></div>
+    <div style="text-align:center"><div class="stat-num">98<span>%</span></div><div class="stat-label">Satisfacción</div></div>
+  </div>
+  <section class="home-section">
+    <div class="section-header"><div class="section-eyebrow">Categorías</div><h2 class="section-title">¿Qué necesitás hoy?</h2></div>
+    <div class="categories-grid">
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">⚡</span><div class="cat-name">Electricista</div><div class="cat-count">340 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🔧</span><div class="cat-name">Plomero</div><div class="cat-count">218 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🪵</span><div class="cat-name">Carpintero</div><div class="cat-count">165 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🧱</span><div class="cat-name">Albañil</div><div class="cat-count">290 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🏗️</span><div class="cat-name">Arquitecto</div><div class="cat-count">87 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">💰</span><div class="cat-name">Contador</div><div class="cat-count">124 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">💻</span><div class="cat-name">Programador</div><div class="cat-count">203 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🎨</span><div class="cat-name">Diseñador</div><div class="cat-count">156 pros</div></div>
+    </div>
+  </section>
+  <section class="home-section" style="background:rgba(255,255,255,0.02)">
+    <div class="section-header"><div class="section-eyebrow">Proceso</div><h2 class="section-title">¿Cómo funciona KIP?</h2></div>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">1</div><div class="how-icon">🔍</div><h3 class="how-title">Buscá</h3><p class="how-desc">Encontrá el profesional ideal por rubro, zona y calificación.</p></div>
+      <div class="how-card"><div class="how-num">2</div><div class="how-icon">💬</div><h3 class="how-title">Chatéa</h3><p class="how-desc">Hablá con el profesional y pedí tu presupuesto.</p></div>
+      <div class="how-card"><div class="how-num">3</div><div class="how-icon">🤝</div><h3 class="how-title">Contratá</h3><p class="how-desc">Aceptá el presupuesto y pagá de forma segura.</p></div>
+      <div class="how-card"><div class="how-num">4</div><div class="how-icon">⭐</div><h3 class="how-title">Calificá</h3><p class="how-desc">Al finalizar, puntuá el trabajo.</p></div>
+    </div>
+  </section>
+  <div class="footer-bottom">© 2025 KIP – Knowledge Is Power</div>
+</div>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div class="screen" id="screen-login" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
+      <h2 class="auth-title">Bienvenido de vuelta</h2>
+      <p class="auth-sub">Ingresá a tu cuenta para continuar</p>
+      <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="login-email" placeholder="tu@email.com"></div>
+      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="doLogin()">Iniciar sesión</button>
+      <p class="auth-footer-text">¿No tenés cuenta? <span class="auth-link" onclick="showScreen('register-client')">Registrate gratis</span></p>
+      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ REGISTER CLIENT ══════════ -->
+<div class="screen" id="screen-register-client" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
+      <h2 class="auth-title">Crear cuenta</h2>
+      <p class="auth-sub">Unirte es gratis</p>
+      <div class="type-toggle">
+        <button class="type-btn active" onclick="showScreen('register-client')">👤 Soy cliente</button>
+        <button class="type-btn" onclick="showScreen('register-pro')">🔧 Soy profesional</button>
+      </div>
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="rc-nombre" placeholder="Juan"></div>
+        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="rc-apellido" placeholder="Rodríguez"></div>
+      </div>
+      <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="rc-email" placeholder="tu@email.com"></div>
+      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="rc-telefono" placeholder="+54 11 1234-5678"></div>
+      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="rc-password" placeholder="Mínimo 8 caracteres"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegistroCliente()">Crear mi cuenta</button>
+      <p class="auth-footer-text">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ REGISTER PRO ══════════ -->
+<div class="screen" id="screen-register-pro" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card auth-wide">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
+      <h2 class="auth-title">Registrarme como profesional</h2>
+      <p class="auth-sub">Empezá a conseguir clientes hoy</p>
+      <div class="type-toggle">
+        <button class="type-btn" onclick="showScreen('register-client')">👤 Soy cliente</button>
+        <button class="type-btn active" onclick="showScreen('register-pro')">🔧 Soy profesional</button>
+      </div>
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="rp-nombre" placeholder="Carlos"></div>
+        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="rp-apellido" placeholder="Martínez"></div>
+      </div>
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="rp-email" placeholder="tu@email.com"></div>
+        <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="rp-telefono" placeholder="+54 11"></div>
+      </div>
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Especialidad</label>
+          <select class="input-field" id="rp-especialidad"><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
+        </div>
+        <div class="input-group"><label class="input-label">Años de experiencia</label><input class="input-field" type="number" id="rp-experiencia" placeholder="5"></div>
+      </div>
+      <div class="input-group"><label class="input-label">Zona donde trabajás</label><input class="input-field" id="rp-zona" placeholder="CABA, GBA Norte..."></div>
+      <div class="input-group"><label class="input-label">Descripción de servicios</label><textarea class="input-field" rows="3" id="rp-descripcion" placeholder="Contá qué servicios ofrecés..."></textarea></div>
+      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="rp-password" placeholder="••••••••"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegistroPro()">Registrarme como profesional</button>
+      <p class="auth-footer-text">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DASHBOARD CLIENTE ══════════ -->
+<div class="screen" id="screen-dashboard-client" style="display:none">
+  <nav class="navbar">
+    <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div>
+    <button class="nav-link active">Dashboard</button>
+    <button class="nav-link" onclick="showScreen('search')">Buscar</button>
+    <button class="nav-link" onclick="showScreen('jobs')">Trabajos</button>
+    <button class="nav-link" onclick="openChat(null)">Chat</button>
+    <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
+  </nav>
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Principal</div>
+        <button class="sidebar-item active">🏠 Dashboard</button>
+        <button class="sidebar-item" onclick="showScreen('search')">🔍 Buscar profesionales</button>
+        <button class="sidebar-item" onclick="openChat(null)">💬 Chat <span class="sidebar-badge" id="badge-chat-client">0</span></button>
+        <button class="sidebar-item" onclick="showScreen('jobs')">📋 Mis trabajos</button>
+        <button class="sidebar-item" onclick="showScreen('payments')">💳 Pagos</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Cuenta</div>
+        <button class="sidebar-item" onclick="showScreen('notifications')">🔔 Notificaciones</button>
+        <button class="sidebar-item" onclick="showScreen('profile-user')">👤 Mi perfil</button>
+        <button class="sidebar-item" onclick="doLogout()">🚪 Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="page-header">
+        <div><h1 class="page-title" id="dash-greeting">Hola 👋</h1><p class="page-sub">Esto es lo que pasa en tu cuenta</p></div>
+        <button class="btn btn-primary" onclick="showScreen('search')">+ Nuevo servicio</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card blue"><div class="stat-card-icon">🔧</div><div class="stat-card-label">Trabajos activos</div><div class="stat-card-val">3</div><div class="stat-card-change">↑ 1 esta semana</div></div>
+        <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-card-label">Finalizados</div><div class="stat-card-val">12</div><div class="stat-card-change">↑ 2 este mes</div></div>
+        <div class="stat-card orange"><div class="stat-card-icon">📩</div><div class="stat-card-label">Presupuestos</div><div class="stat-card-val">5</div><div class="stat-card-change">3 pendientes</div></div>
+        <div class="stat-card cyan"><div class="stat-card-icon">⭐</div><div class="stat-card-label">Calificación</div><div class="stat-card-val">4.7</div></div>
+      </div>
+      <div class="content-grid">
+        <div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><div><div class="card-title">Profesionales en KIP</div><div class="card-subtitle">Registrados en la plataforma</div></div><button class="btn btn-secondary btn-sm" onclick="loadProfesionales('pros-list')">🔄 Actualizar</button></div>
+            <div class="card-body"><div class="pro-grid" id="pros-list" style="grid-template-columns:1fr 1fr"><div style="font-size:14px;color:var(--gray-400);text-align:center;padding:20px;grid-column:span 2">Cargando...</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><div class="card-title">Presupuestos recibidos</div></div>
+            <div class="card-body" style="padding:16px">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--gray-100);border-radius:10px">
+                <div class="avatar av-grad-2" style="width:40px;height:40px;font-size:16px">PC</div>
+                <div style="flex:1"><div style="font-size:13px;font-weight:600">Pedro Castro</div><div style="font-size:12px;color:var(--gray-400)">Pintura interior</div></div>
+                <div style="text-align:right"><div style="font-size:15px;font-weight:800">$38.000</div><button class="btn btn-success btn-sm" style="margin-top:4px" onclick="showScreen('payments')">Aceptar</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Actividad reciente</div></div>
+            <div class="card-body" style="padding:16px">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:6px;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600">Diego finalizó el trabajo</div><div style="font-size:12px;color:var(--gray-400)">Hace 2 horas</div></div></div>
+                <div style="display:flex;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:6px;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600">Presupuesto de Laura Vidal</div><div style="font-size:12px;color:var(--gray-400)">Hace 5 horas</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DASHBOARD PRO ══════════ -->
+<div class="screen" id="screen-dashboard-pro" style="display:none">
+  <nav class="navbar">
+    <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div>
+    <button class="nav-link active">Dashboard</button>
+    <button class="nav-link" onclick="openChat(null)">Chat</button>
+    <button class="nav-link" onclick="showScreen('jobs')">Trabajos</button>
+    <div class="navbar-avatar" id="nav-avatar-pro" onclick="showScreen('profile-user')"></div>
+  </nav>
+  <div class="app-layout">
+    <div class="sidebar">
+      <div style="padding:16px">
+        <div style="background:linear-gradient(135deg,var(--navy),#1a3a5c);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">
+          <div id="pro-sidebar-avatar-wrap" style="width:56px;height:56px;border-radius:14px;margin:0 auto 10px;overflow:hidden;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;font-family:var(--font-display)"></div>
+          <div style="font-size:14px;font-weight:700;color:white" id="pro-sidebar-name">Profesional</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px" id="pro-sidebar-esp">Especialidad</div>
+          <div class="seniority-badge seniority-pro">🏆 Profesional KIP</div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Principal</div>
+        <button class="sidebar-item active">🏠 Dashboard</button>
+        <button class="sidebar-item" onclick="openChat(null)">💬 Mensajes <span class="sidebar-badge" id="badge-chat-pro">0</span></button>
+        <button class="sidebar-item" onclick="showScreen('jobs')">📋 Solicitudes</button>
+        <button class="sidebar-item" onclick="showScreen('payments')">💳 Pagos</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Cuenta</div>
+        <button class="sidebar-item" onclick="showScreen('profile-user')">👤 Mi perfil</button>
+        <button class="sidebar-item" onclick="doLogout()">🚪 Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="page-header">
+        <div><h1 class="page-title" id="dash-pro-greeting">Dashboard Profesional</h1><p class="page-sub">Tus métricas y solicitudes</p></div>
+        <button class="btn btn-primary" onclick="showScreen('budget-send')">+ Enviar presupuesto</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card blue"><div class="stat-card-icon">📩</div><div class="stat-card-label">Solicitudes nuevas</div><div class="stat-card-val">4</div></div>
+        <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-card-label">Finalizados</div><div class="stat-card-val">142</div></div>
+        <div class="stat-card orange"><div class="stat-card-icon">💰</div><div class="stat-card-label">Este mes</div><div class="stat-card-val">$184K</div></div>
+        <div class="stat-card cyan"><div class="stat-card-icon">⭐</div><div class="stat-card-label">Calificación</div><div class="stat-card-val">4.9</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Solicitudes nuevas</div><span class="badge badge-orange">4 pendientes</span></div>
+        <div class="card-body">
+          <div style="background:var(--gray-100);border-radius:10px;padding:16px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:10px"><div class="avatar av-grad-5" style="width:36px;height:36px;font-size:14px">JR</div><div><div style="font-size:13px;font-weight:600">Juan Rodríguez</div><div style="font-size:11px;color:var(--gray-400)">Palermo, CABA</div></div></div>
+              <span class="badge badge-blue">Nueva</span>
+            </div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);margin-top:10px">Instalación de tomacorrientes</div>
+            <div style="font-size:13px;color:var(--gray-600);margin-top:4px">Necesito instalar 6 tomacorrientes en mi oficina.</div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn btn-primary btn-sm" onclick="showScreen('budget-send')">Enviar presupuesto</button>
+              <button class="btn btn-secondary btn-sm" onclick="openChat(null)">Chatear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SEARCH ══════════ -->
+<div class="screen" id="screen-search" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:1100px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Buscar profesionales</h1><p class="page-sub">Encontrá el experto ideal</p></div></div>
+    <div class="search-filters">
+      <input class="search-main-input" placeholder="🔍 ¿Qué servicio buscás?" id="search-query" type="text" onkeydown="if(event.key==='Enter')buscarProfesionales()">
+      <select class="filter-select" id="search-esp"><option value="">Todos los rubros</option><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
+      <select class="filter-select" id="search-zona"><option value="">Toda la zona</option><option>CABA</option><option>GBA Norte</option><option>GBA Sur</option><option>Córdoba</option></select>
+      <button class="btn btn-primary btn-sm" onclick="buscarProfesionales()">Buscar</button>
+      <button class="btn btn-secondary btn-sm" onclick="buscarProfesionales(true)">Ver todos</button>
+    </div>
+    <div class="pro-grid" id="search-results"><div style="font-size:14px;color:var(--gray-400);text-align:center;padding:40px;grid-column:span 3">Buscá un profesional arriba 👆</div></div>
+  </div>
+</div>
+
+<!-- ══════════ PRO PROFILE ══════════ -->
+<div class="screen" id="screen-pro-profile" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:900px;margin:0 auto">
+    <div class="profile-hero">
+      <div id="pp-avatar-wrap" style="width:96px;height:96px;border-radius:20px;overflow:hidden;border:3px solid rgba(255,255,255,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:white;background:linear-gradient(135deg,#667eea,#764ba2)"></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+          <h1 class="profile-name" id="pp-name">Profesional</h1>
+          <div class="badge badge-green">✓ Verificado</div>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,194,255,0.15);border:1px solid rgba(0,194,255,0.2);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:12px" id="pp-esp">Especialidad</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div style="font-size:14px;color:rgba(255,255,255,0.6)" id="pp-zona">📍 Zona</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6)" id="pp-exp">📅 Experiencia</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.6);margin-top:12px;line-height:1.6" id="pp-desc">Descripción</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" id="pp-chat-btn" onclick="openChatWithPro()">💬 Chatear</button>
+        <button style="padding:12px 20px;border-radius:10px;background:rgba(255,255,255,0.08);color:white;border:1.5px solid rgba(255,255,255,0.15);font-weight:600;cursor:pointer" onclick="showScreen('budget-request')">📋 Presupuesto</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Reseñas</div></div>
+      <div class="card-body">
+        <div class="review-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div class="avatar av-grad-5" style="width:36px;height:36px;font-size:14px">JR</div><div><div style="font-size:14px;font-weight:600">Juan Rodríguez</div><div class="stars" style="font-size:12px">★★★★★</div></div></div><div style="font-size:14px;color:var(--gray-600)">"Excelente profesional. Trabajo prolijo y rápido."</div></div>
+        <div class="review-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div class="avatar av-grad-2" style="width:36px;height:36px;font-size:14px">MG</div><div><div style="font-size:14px;font-weight:600">María González</div><div class="stars" style="font-size:12px">★★★★★</div></div></div><div style="font-size:14px;color:var(--gray-600)">"Muy buen precio y calidad garantizada."</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHAT ══════════ -->
+<div class="screen" id="screen-chat" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:64px 16px 0;height:100vh">
+    <div class="chat-layout" style="margin-top:16px">
+      <div class="chat-sidebar">
+        <div class="chat-sidebar-header">
+          <div class="chat-sidebar-title">Mensajes</div>
+          <input class="chat-search" placeholder="🔍 Buscar..." oninput="filtrarChats(this.value)">
+        </div>
+        <div class="chat-list" id="chat-list">
+          <div style="padding:20px;text-align:center;font-size:13px;color:var(--gray-400)">Cargando conversaciones...</div>
+        </div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-header" id="chat-header">
+          <div style="flex:1;display:flex;align-items:center;gap:12px">
+            <div class="ch-avatar avatar av-grad-1" id="chat-av" style="width:40px;height:40px;font-size:16px"></div>
+            <div><div class="ch-name" id="chat-name">Seleccioná una conversación</div><div class="ch-status" id="chat-status">● En línea</div></div>
+          </div>
+        </div>
+        <div class="typing-indicator" id="typing-indicator"></div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty"><div class="chat-empty-icon">💬</div><div style="font-size:15px;font-weight:600">Seleccioná una conversación</div><div style="font-size:13px">O buscá un profesional para iniciar un chat</div></div>
+        </div>
+        <div class="chat-input-area" id="chat-input-area" style="display:none">
+          <textarea class="chat-input-field" rows="1" id="chat-input" placeholder="Escribí tu mensaje..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+          <button class="chat-send-btn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ BUDGET REQUEST ══════════ -->
+<div class="screen" id="screen-budget-request" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:680px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Solicitar presupuesto</h1></div></div>
+    <div class="card"><div class="card-body">
+      <div class="input-group"><label class="input-label">Tipo de trabajo</label><select class="input-field"><option>Instalación eléctrica</option><option>Reparación urgente</option><option>Otro</option></select></div>
+      <div class="input-group"><label class="input-label">Descripción</label><textarea class="input-field" rows="4" placeholder="Describí el trabajo..."></textarea></div>
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Dirección</label><input class="input-field" placeholder="Av. Corrientes 1234"></div>
+        <div class="input-group"><label class="input-label">Fecha deseada</label><input class="input-field" type="date"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="showToast('¡Solicitud enviada!','success');openChat(null)">Enviar solicitud</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════ BUDGET SEND ══════════ -->
+<div class="screen" id="screen-budget-send" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:680px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Enviar presupuesto</h1></div></div>
+    <div class="card"><div class="card-body">
+      <div class="input-row">
+        <div class="input-group"><label class="input-label">Precio total ($)</label><input class="input-field" type="number" id="budget-precio" placeholder="45000" oninput="calcBudget()"></div>
+        <div class="input-group"><label class="input-label">Tiempo estimado</label><select class="input-field"><option>1 día</option><option>2 días</option><option>3-5 días</option><option>1 semana</option></select></div>
+      </div>
+      <div class="input-group"><label class="input-label">Detalle</label><textarea class="input-field" rows="4" placeholder="¿Qué incluye tu presupuesto?"></textarea></div>
+      <div style="background:rgba(26,107,240,0.04);border:1px solid rgba(26,107,240,0.15);border-radius:10px;padding:16px;margin:16px 0">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:8px">Resumen KIP</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--gray-600)">Total</span><span id="bc-total">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--gray-600)">Comisión KIP (5%)</span><span id="bc-comision" style="color:var(--red)">-$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--gray-600)">50% al iniciar</span><span id="bc-inicio" style="color:var(--green)">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--gray-600)">50% al finalizar</span><span id="bc-fin" style="color:var(--blue)">$0</span></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="showToast('¡Presupuesto enviado!','success');openChat(null)">Enviar presupuesto</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════ PAYMENTS ══════════ -->
+<div class="screen" id="screen-payments" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:780px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Pagos</h1></div></div>
+    <div class="payment-summary">
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px">Presupuesto aceptado</div>
+      <div style="font-family:var(--font-display);font-size:42px;font-weight:800;letter-spacing:-1px;margin-bottom:8px">$45.000</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:20px">Marcos Ruiz · Instalación eléctrica</div>
+      <div class="ps-row"><div style="font-size:14px;color:rgba(255,255,255,0.5)">Total</div><div style="font-size:14px;font-weight:600;color:white">$45.000</div></div>
+      <div class="ps-row"><div style="font-size:14px;color:rgba(255,255,255,0.5)">Comisión KIP (5%)</div><div style="font-size:14px;font-weight:600;color:#ff8888">–$2.250</div></div>
+      <div class="ps-row"><div style="font-size:14px;color:rgba(255,255,255,0.5)">Neto al profesional</div><div style="font-size:14px;font-weight:600;color:var(--green)">$42.750</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Método de pago</div></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <label style="display:flex;align-items:center;gap:12px;padding:14px;border:2px solid var(--blue);border-radius:10px;cursor:pointer;background:rgba(26,107,240,0.04)"><input type="radio" name="payment" checked><span style="font-size:20px">💳</span><div><div style="font-size:14px;font-weight:600">Tarjeta terminada en 4521</div><div style="font-size:12px;color:var(--gray-400)">Visa • Vence 09/26</div></div></label>
+          <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--gray-200);border-radius:10px;cursor:pointer"><input type="radio" name="payment"><span style="font-size:20px">💰</span><div><div style="font-size:14px;font-weight:600">MercadoPago</div></div></label>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:16px" onclick="showToast('¡Pago procesado!','success');showScreen('rating')">🔒 Pagar $21.375 (50% inicial)</button>
+        <p style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:12px">🛡️ Tu pago está protegido por KIP.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ RATING ══════════ -->
+<div class="screen" id="screen-rating" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:580px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Calificar trabajo</h1></div></div>
+    <div class="card"><div class="card-body">
+      <div style="text-align:center;margin-bottom:24px">
+        <div class="avatar av-grad-1" style="width:72px;height:72px;font-size:28px;border-radius:20px;margin:0 auto 12px">MR</div>
+        <div style="font-size:18px;font-weight:700">Marcos Ruiz</div>
+        <div style="font-size:13px;color:var(--gray-400)">Instalación eléctrica cocina</div>
+      </div>
+      <div style="font-size:14px;font-weight:600;text-align:center">Calificación general</div>
+      <div class="rating-stars-input" id="stars-general" style="justify-content:center">
+        <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
+      </div>
+      <div class="input-group"><label class="input-label">Comentario</label><textarea class="input-field" rows="4" placeholder="Contá tu experiencia..."></textarea></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="showToast('¡Calificación enviada!','success');showScreen('dashboard-client')">Enviar calificación</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════ JOBS ══════════ -->
+<div class="screen" id="screen-jobs" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:900px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Mis trabajos</h1></div><button class="btn btn-primary" onclick="showScreen('search')">+ Nuevo servicio</button></div>
+    <div class="jobs-tabs"><button class="job-tab active" onclick="switchTab(this)">Todos</button><button class="job-tab" onclick="switchTab(this)">En curso</button><button class="job-tab" onclick="switchTab(this)">Finalizados</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card"><div class="card-body" style="display:flex;align-items:center;gap:16px;padding:16px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(26,107,240,0.1);display:flex;align-items:center;justify-content:center;font-size:20px">⚡</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Instalación eléctrica cocina</div><div style="font-size:12px;color:var(--gray-400)">Marcos Ruiz • En progreso</div><div style="margin-top:8px"><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:65%"></div></div></div></div>
+        <div style="text-align:right"><div style="font-size:18px;font-weight:800">$45.000</div><span class="badge badge-blue" style="display:inline-flex;margin-top:6px">En curso</span></div>
+      </div></div>
+      <div class="card" style="opacity:.75"><div class="card-body" style="display:flex;align-items:center;gap:16px;padding:16px">
+        <div style="width:44px;height:44px;border-radius:10px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Mueble a medida placard</div><div style="font-size:12px;color:var(--gray-400)">Diego López • Finalizado 15 Mar</div></div>
+        <div style="text-align:right"><div style="font-size:18px;font-weight:800">$68.000</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge badge-green">Finalizado</span><button class="btn btn-secondary btn-sm" onclick="showScreen('rating')">Calificar</button></div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ NOTIFICATIONS ══════════ -->
+<div class="screen" id="screen-notifications" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:680px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Notificaciones</h1></div></div>
+    <div class="notif-item unread"><div class="notif-icon-wrap green">✅</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Diego finalizó el trabajo</div><div style="font-size:13px;color:var(--gray-600);margin-top:2px">El placard está listo.</div><div style="font-size:12px;color:var(--gray-400);margin-top:6px">Hace 2 horas</div></div><div class="notif-dot"></div></div>
+    <div class="notif-item unread"><div class="notif-icon-wrap blue">📋</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Nuevo presupuesto de Laura Vidal</div><div style="font-size:13px;color:var(--gray-600);margin-top:2px">$25.000 por contabilidad mensual</div><div style="font-size:12px;color:var(--gray-400);margin-top:6px">Hace 5 horas</div></div><div class="notif-dot"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ PROFILE USER ══════════ -->
+<div class="screen" id="screen-profile-user" style="display:none">
+  <nav class="navbar"><div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div><button class="nav-link" onclick="goBack()">← Volver</button></nav>
+  <div style="padding:80px 24px 24px;max-width:780px;margin:0 auto">
+    <div class="page-header"><div><h1 class="page-title">Mi perfil</h1></div><button class="btn btn-primary" onclick="guardarPerfil()">Guardar cambios</button></div>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px">
+      <div>
+        <div class="card" style="text-align:center;padding:24px">
+          <div id="profile-foto-preview" style="width:90px;height:90px;border-radius:50%;margin:0 auto 16px;overflow:hidden;background:linear-gradient(135deg,#fa709a,#fee140);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:white;font-family:var(--font-display)"></div>
+          <div style="font-size:16px;font-weight:700" id="profile-fullname">Usuario</div>
+          <div style="font-size:13px;color:var(--gray-400);margin:4px 0 20px" id="profile-tipo">KIP</div>
+          <div class="foto-upload-area">
+            <input type="file" accept="image/*" onchange="previewFoto(this)">
+            <div style="font-size:24px;margin-bottom:8px">📷</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy)">Cambiar foto</div>
+            <div style="font-size:12px;color:var(--gray-400);margin-top:4px">JPG, PNG • máx 5MB</div>
+          </div>
+          <button id="btn-subir-foto" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:12px;display:none" onclick="subirFoto()">⬆️ Subir foto</button>
+          <button class="btn btn-sm" style="width:100%;justify-content:center;margin-top:8px;color:var(--red);background:rgba(255,68,68,0.08)" onclick="doLogout()">🚪 Cerrar sesión</button>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Datos personales</div></div>
+          <div class="card-body">
+            <div class="input-row">
+              <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="profile-nombre"></div>
+              <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="profile-apellido"></div>
+            </div>
+            <div class="input-group"><label class="input-label">Email</label><input class="input-field" id="profile-email" type="email"></div>
+            <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="profile-tel"></div>
+            <div id="pro-extra-fields" style="display:none">
+              <div class="input-group"><label class="input-label">Zona de trabajo</label><input class="input-field" id="profile-zona"></div>
+              <div class="input-group"><label class="input-label">Descripción</label><textarea class="input-field" rows="3" id="profile-desc"></textarea></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3000/api';
+let currentScreen = 'home';
+let previousScreen = 'home';
+let currentUser = null;
+let currentToken = null;
+let socket = null;
+let activeChatUser = null; // { id, nombre, apellido, foto }
+let selectedFotoFile = null;
+const grads = ['av-grad-1','av-grad-2','av-grad-3','av-grad-4','av-grad-5','av-grad-6'];
+
+// ── NAVEGACIÓN ─────────────────────────────────
+function showScreen(name) {
+  previousScreen = currentScreen; currentScreen = name;
+  document.querySelectorAll('.screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  const t = document.getElementById('screen-'+name);
+  if (t) { t.style.display='block'; t.classList.add('active'); window.scrollTo(0,0); }
+}
+function goBack() { showScreen(previousScreen); }
+
+// ── TOAST / LOADING ────────────────────────────
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✅ ':'❌ ') + msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+function showLoading(v) { document.getElementById('loading').classList.toggle('show', v); }
+
+// ── AVATAR HTML ────────────────────────────────
+function avatarHtml(user, size=40, radius='50%', fontSize=16) {
+  const ini = ((user.nombre||'?')[0] + ((user.apellido||'')[0]||'')).toUpperCase();
+  const grad = grads[((user.id||0) % grads.length)];
+  if (user.foto) {
+    return `<div style="width:${size}px;height:${size}px;border-radius:${radius};overflow:hidden;flex-shrink:0"><img src="${user.foto}" style="width:100%;height:100%;object-fit:cover"></div>`;
+  }
+  return `<div class="avatar ${grad}" style="width:${size}px;height:${size}px;border-radius:${radius};font-size:${fontSize}px;flex-shrink:0">${ini}</div>`;
+}
+
+function setAvatarEl(el, user, size=40, radius='50%', fontSize=16) {
+  if (!el) return;
+  const ini = ((user.nombre||'?')[0] + ((user.apellido||'')[0]||'')).toUpperCase();
+  const grad = grads[((user.id||0) % grads.length)];
+  if (user.foto) {
+    el.innerHTML = `<img src="${user.foto}" style="width:100%;height:100%;object-fit:cover">`;
+    el.style.background = 'none';
+  } else {
+    el.textContent = ini;
+    el.className = (el.className||'').replace(/av-grad-\d/g,'') + ' ' + grad;
+  }
+}
+
+// ── REGISTRO ───────────────────────────────────
+async function doRegistroCliente() {
+  const nombre=document.getElementById('rc-nombre').value.trim();
+  const apellido=document.getElementById('rc-apellido').value.trim();
+  const email=document.getElementById('rc-email').value.trim();
+  const telefono=document.getElementById('rc-telefono').value.trim();
+  const password=document.getElementById('rc-password').value;
+  if (!nombre||!email||!password) return showToast('Completá nombre, email y contraseña','error');
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/registro`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellido,email,telefono,password,tipo:'cliente'})});
+    const d = await r.json(); showLoading(false);
+    if (d.ok) { showToast('¡Cuenta creada!'); await autoLogin(email,password); }
+    else showToast(d.error||'Error al registrar','error');
+  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
+async function doRegistroPro() {
+  const nombre=document.getElementById('rp-nombre').value.trim();
+  const apellido=document.getElementById('rp-apellido').value.trim();
+  const email=document.getElementById('rp-email').value.trim();
+  const telefono=document.getElementById('rp-telefono').value.trim();
+  const password=document.getElementById('rp-password').value;
+  const especialidad=document.getElementById('rp-especialidad').value;
+  const experiencia=document.getElementById('rp-experiencia').value;
+  const zona=document.getElementById('rp-zona').value.trim();
+  const descripcion=document.getElementById('rp-descripcion').value.trim();
+  if (!nombre||!email||!password) return showToast('Completá nombre, email y contraseña','error');
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/registro`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellido,email,telefono,password,tipo:'profesional',especialidad,experiencia:parseInt(experiencia)||0,zona,descripcion})});
+    const d = await r.json(); showLoading(false);
+    if (d.ok) { showToast('¡Perfil profesional creado!'); await autoLogin(email,password); }
+    else showToast(d.error||'Error al registrar','error');
+  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
+// ── LOGIN ──────────────────────────────────────
+async function doLogin() {
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-password').value;
+  if (!email||!password) return showToast('Completá email y contraseña','error');
+  await autoLogin(email,password);
+}
+
+async function autoLogin(email,password) {
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const d = await r.json(); showLoading(false);
+    if (d.ok) { currentUser=d.usuario; currentToken=d.token; updateUIAfterLogin(); }
+    else showToast(d.error||'Email o contraseña incorrectos','error');
+  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
+function updateUIAfterLogin() {
+  const ini = ((currentUser.nombre||'')[0]+((currentUser.apellido||'')[0]||'')).toUpperCase();
+  // Navbar avatars
+  ['nav-avatar-client','nav-avatar-pro'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    if (currentUser.foto) { el.innerHTML=`<img src="${currentUser.foto}" style="width:100%;height:100%;object-fit:cover">`; }
+    else { el.textContent=ini; }
+  });
+  // Greetings
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('dash-greeting',`Hola, ${currentUser.nombre} 👋`);
+  set('dash-pro-greeting',`Hola, ${currentUser.nombre} 👋`);
+  // Pro sidebar
+  const psAv = document.getElementById('pro-sidebar-avatar-wrap');
+  if (psAv) {
+    if (currentUser.foto) psAv.innerHTML=`<img src="${currentUser.foto}" style="width:100%;height:100%;object-fit:cover">`;
+    else psAv.textContent=ini;
+  }
+  set('pro-sidebar-name',`${currentUser.nombre} ${currentUser.apellido||''}`);
+  set('pro-sidebar-esp',currentUser.especialidad||'Profesional');
+  // Profile page
+  set('profile-fullname',`${currentUser.nombre} ${currentUser.apellido||''}`);
+  set('profile-tipo',currentUser.tipo==='profesional'?'Profesional KIP':'Cliente KIP');
+  const pfp = document.getElementById('profile-foto-preview');
+  if (pfp) {
+    if (currentUser.foto) pfp.innerHTML=`<img src="${currentUser.foto}" style="width:100%;height:100%;object-fit:cover">`;
+    else pfp.textContent=ini;
+  }
+  const pN=document.getElementById('profile-nombre'); if(pN) pN.value=currentUser.nombre;
+  const pA=document.getElementById('profile-apellido'); if(pA) pA.value=currentUser.apellido||'';
+  const pE=document.getElementById('profile-email'); if(pE) pE.value=currentUser.email;
+  const pZ=document.getElementById('profile-zona'); if(pZ) pZ.value=currentUser.zona||'';
+  const pD=document.getElementById('profile-desc'); if(pD) pD.value=currentUser.descripcion||'';
+  const proExtra=document.getElementById('pro-extra-fields');
+  if (proExtra) proExtra.style.display=currentUser.tipo==='profesional'?'block':'none';
+  // Socket
+  initSocket();
+  showToast(`¡Bienvenido, ${currentUser.nombre}!`);
+  if (currentUser.tipo==='profesional') { showScreen('dashboard-pro'); }
+  else { showScreen('dashboard-client'); loadProfesionales('pros-list'); }
+}
+
+function doLogout() {
+  if (socket) { socket.disconnect(); socket=null; }
+  currentUser=null; currentToken=null; activeChatUser=null;
+  showToast('Sesión cerrada'); showScreen('home');
+}
+
+// ── SOCKET.IO ──────────────────────────────────
+function initSocket() {
+  if (socket) socket.disconnect();
+  socket = io();
+  socket.emit('identificar', currentUser.id);
+
+  socket.on('mensaje', (msg) => {
+    // Si el chat activo es con quien mandó el mensaje, mostrarlo
+    if (activeChatUser && msg.de_usuario === activeChatUser.id) {
+      appendMessage(msg, false);
+    }
+    showToast(`Nuevo mensaje de ${msg.nombre||'alguien'}`);
+    loadConversaciones();
+  });
+
+  socket.on('mensaje_enviado', (msg) => {
+    appendMessage(msg, true);
+    loadConversaciones();
+  });
+}
+
+// ── CHAT ───────────────────────────────────────
+async function openChat(user) {
+  showScreen('chat');
+  await loadConversaciones();
+  if (user) selectChatUser(user);
+}
+
+async function openChatWithPro() {
+  if (!currentUser) return showScreen('login');
+  openChat(window._currentPro);
+}
+
+async function loadConversaciones() {
+  if (!currentUser) return;
+  try {
+    const r = await fetch(`${API}/conversaciones/${currentUser.id}`);
+    const convos = await r.json();
+    const list = document.getElementById('chat-list');
+    if (convos.length === 0) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;color:var(--gray-400)">No hay conversaciones aún.<br>Contactá un profesional para empezar.</div>';
+      return;
+    }
+    list.innerHTML = convos.map(c => {
+      const ini = (c.nombre[0]+(c.apellido?.[0]||'')).toUpperCase();
+      const grad = grads[(c.otro_id||0) % grads.length];
+      const fotoHtml = c.foto ? `<img src="${c.foto}" style="width:100%;height:100%;object-fit:cover">` : ini;
+      const isActive = activeChatUser && activeChatUser.id === c.otro_id;
+      return `<div class="chat-item ${isActive?'active':''}" onclick="selectChatUser({id:${c.otro_id},nombre:'${c.nombre}',apellido:'${c.apellido||''}',foto:${c.foto?`'${c.foto}'`:'null'},especialidad:'${c.especialidad||''}'})">
+        <div class="ci-avatar avatar ${grad}" style="width:44px;height:44px;font-size:16px">${fotoHtml}</div>
+        <div class="chat-item-body">
+          <div class="chat-item-name">${c.nombre} ${c.apellido||''}</div>
+          <div class="chat-item-preview">${c.ultimo_mensaje||'Sin mensajes aún'}</div>
+        </div>
+        <div class="chat-item-time" style="font-size:11px;color:var(--gray-400)">${c.ultimo_tiempo ? formatTime(c.ultimo_tiempo) : ''}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.log('Error convos:', e); }
+}
+
+async function selectChatUser(user) {
+  activeChatUser = user;
+  // Update header
+  const av = document.getElementById('chat-av');
+  const grad = grads[(user.id||0) % grads.length];
+  av.className = `ch-avatar avatar ${grad}`;
+  av.style.width='40px'; av.style.height='40px'; av.style.fontSize='16px';
+  if (user.foto) av.innerHTML=`<img src="${user.foto}" style="width:100%;height:100%;object-fit:cover">`;
+  else av.textContent=((user.nombre||'')[0]+((user.apellido||'')[0]||'')).toUpperCase();
+  document.getElementById('chat-name').textContent = `${user.nombre} ${user.apellido||''}`;
+  document.getElementById('chat-status').textContent = user.especialidad ? `● ${user.especialidad}` : '● En línea';
+  document.getElementById('chat-input-area').style.display = 'flex';
+  // Mark active
+  document.querySelectorAll('.chat-item').forEach(i=>i.classList.remove('active'));
+  event?.currentTarget?.classList?.add('active');
+  // Load messages
+  await loadMensajes();
+}
+
+async function loadMensajes() {
+  if (!currentUser || !activeChatUser) return;
+  try {
+    const r = await fetch(`${API}/mensajes/${currentUser.id}/${activeChatUser.id}`);
+    const msgs = await r.json();
+    const container = document.getElementById('chat-messages');
+    if (msgs.length === 0) {
+      container.innerHTML = `<div class="chat-empty"><div class="chat-empty-icon">👋</div><div style="font-size:15px;font-weight:600">Empezá la conversación</div><div style="font-size:13px">Mandá un mensaje para conectarte</div></div>`;
+      return;
+    }
+    container.innerHTML = msgs.map(m => buildMsgHtml(m, m.de_usuario === currentUser.id)).join('');
+    container.scrollTop = container.scrollHeight;
+  } catch(e) { console.log('Error msgs:', e); }
+}
+
+function buildMsgHtml(msg, isSent) {
+  const now = new Date(msg.creado_en);
+  const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const user = isSent ? currentUser : activeChatUser;
+  const ini = ((user.nombre||'')[0]+((user.apellido||'')[0]||'')).toUpperCase();
+  const grad = grads[(user.id||0) % grads.length];
+  const avHtml = user.foto ? `<img src="${user.foto}" style="width:100%;height:100%;object-fit:cover">` : ini;
+  return `<div class="msg-group ${isSent?'sent':'received'}">
+    <div class="msg-av avatar ${grad}" style="width:32px;height:32px;font-size:13px">${avHtml}</div>
+    <div><div class="msg-bubble">${escapeHtml(msg.texto)}</div><div class="msg-time">${time}</div></div>
+  </div>`;
+}
+
+function appendMessage(msg, isSent) {
+  const container = document.getElementById('chat-messages');
+  const empty = container.querySelector('.chat-empty');
+  if (empty) container.innerHTML = '';
+  container.innerHTML += buildMsgHtml(msg, isSent);
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !activeChatUser || !socket) return;
+  socket.emit('mensaje', { de_usuario: currentUser.id, para_usuario: activeChatUser.id, texto: text });
+  input.value = '';
+}
+
+function filtrarChats(q) {
+  document.querySelectorAll('.chat-item').forEach(item => {
+    const name = item.querySelector('.chat-item-name')?.textContent?.toLowerCase()||'';
+    item.style.display = name.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// ── PROFESIONALES ──────────────────────────────
+async function loadProfesionales(containerId) {
+  try {
+    const r = await fetch(`${API}/profesionales`);
+    const pros = await r.json();
+    renderPros(pros, containerId);
+  } catch(e) { console.log('Error pros:', e); }
+}
+
+async function buscarProfesionales(todos=false) {
+  const esp = todos ? '' : document.getElementById('search-esp').value;
+  const zona = todos ? '' : document.getElementById('search-zona').value;
+  let url = `${API}/profesionales?`;
+  if (esp) url += `especialidad=${encodeURIComponent(esp)}&`;
+  if (zona) url += `zona=${encodeURIComponent(zona)}`;
+  showLoading(true);
+  try {
+    const r = await fetch(url); const pros = await r.json(); showLoading(false);
+    renderPros(pros, 'search-results');
+    if (pros.length===0) showToast('No se encontraron profesionales con esos filtros','error');
+  } catch(e) { showLoading(false); showToast('Error al buscar','error'); }
+}
+
+function renderPros(pros, containerId) {
+  const c = document.getElementById(containerId); if (!c) return;
+  if (pros.length === 0) {
+    c.innerHTML = '<div style="font-size:14px;color:var(--gray-400);text-align:center;padding:40px;grid-column:span 3">No hay profesionales todavía.</div>';
+    return;
+  }
+  c.innerHTML = pros.map((p,i) => {
+    const ini = ((p.nombre||'')[0]+((p.apellido||'')[0]||'')).toUpperCase();
+    const grad = grads[(p.id||i) % grads.length];
+    const fotoHtml = p.foto ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">` : `<div class="avatar ${grad}" style="width:52px;height:52px;border-radius:14px;font-size:20px">${ini}</div>`;
+    return `<div class="pro-card" onclick="showProProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="pro-card-header">
+        <div class="pro-avatar-wrap">${fotoHtml}</div>
+        <div class="pro-info">
+          <div class="pro-name">${p.nombre} ${p.apellido||''}</div>
+          <div class="pro-specialty">${p.especialidad||'Profesional'}</div>
+          <div class="pro-location">📍 ${p.zona||'Argentina'}</div>
+        </div>
+      </div>
+      <div class="pro-stats"><div class="pro-stat-item">📅 <strong>${p.experiencia||0} años</strong></div></div>
+      <div class="pro-card-actions">
+        <button class="btn btn-secondary btn-sm" style="border:1.5px solid var(--blue);color:var(--blue);background:transparent">Ver perfil</button>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();if(!currentUser){showScreen('login');return;}activeChatUser={id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}};openChat({id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}})">Contactar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showProProfile(pro) {
+  window._currentPro = pro;
+  const avWrap = document.getElementById('pp-avatar-wrap');
+  const ini = ((pro.nombre||'')[0]+((pro.apellido||'')[0]||'')).toUpperCase();
+  if (pro.foto) avWrap.innerHTML=`<img src="${pro.foto}" style="width:100%;height:100%;object-fit:cover">`;
+  else avWrap.textContent=ini;
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  s('pp-name',`${pro.nombre} ${pro.apellido||''}`);
+  s('pp-esp',pro.especialidad||'Profesional');
+  s('pp-zona',`📍 ${pro.zona||'Argentina'}`);
+  s('pp-exp',`📅 ${pro.experiencia||0} años de experiencia`);
+  s('pp-desc',pro.descripcion||'Profesional registrado en KIP.');
+  showScreen('pro-profile');
+}
+
+// ── FOTO DE PERFIL ─────────────────────────────
+function previewFoto(input) {
+  if (!input.files[0]) return;
+  selectedFotoFile = input.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const pfp = document.getElementById('profile-foto-preview');
+    pfp.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(selectedFotoFile);
+  document.getElementById('btn-subir-foto').style.display = 'flex';
+}
+
+async function subirFoto() {
+  if (!selectedFotoFile || !currentToken) return showToast('Seleccioná una foto primero','error');
+  const formData = new FormData();
+  formData.append('foto', selectedFotoFile);
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/foto`,{method:'POST',headers:{'Authorization':`Bearer ${currentToken}`},body:formData});
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      currentUser.foto = d.foto;
+      showToast('¡Foto actualizada!');
+      document.getElementById('btn-subir-foto').style.display='none';
+      selectedFotoFile=null;
+      // Actualizar avatares navbar
+      updateUIAfterLogin();
+    } else showToast(d.error||'Error al subir foto','error');
+  } catch(e) { showLoading(false); showToast('Error al subir foto','error'); }
+}
+
+async function guardarPerfil() {
+  if (!currentToken) return;
+  const body = {
+    nombre: document.getElementById('profile-nombre').value,
+    apellido: document.getElementById('profile-apellido').value,
+    telefono: document.getElementById('profile-tel').value,
+    zona: document.getElementById('profile-zona')?.value||'',
+    especialidad: currentUser.especialidad||'',
+    descripcion: document.getElementById('profile-desc')?.value||'',
+    experiencia: currentUser.experiencia||0,
+  };
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/perfil`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${currentToken}`},body:JSON.stringify(body)});
+    const d = await r.json(); showLoading(false);
+    if (d.ok) { currentUser={...currentUser,...d.usuario}; showToast('¡Perfil actualizado!'); }
+    else showToast('Error al guardar','error');
+  } catch(e) { showLoading(false); showToast('Error al guardar','error'); }
+}
+
+// ── UTILS ──────────────────────────────────────
+function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function formatTime(iso) {
+  const d = new Date(iso), now = new Date();
+  const diff = (now-d)/1000;
+  if (diff < 86400) return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+  if (diff < 604800) return ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d.getDay()];
+  return `${d.getDate()}/${d.getMonth()+1}`;
+}
+function calcBudget() {
+  const v = parseFloat(document.getElementById('budget-precio').value)||0;
+  const com = v*0.05; const neto = v-com;
+  document.getElementById('bc-total').textContent=`$${v.toLocaleString('es-AR')}`;
+  document.getElementById('bc-comision').textContent=`-$${com.toLocaleString('es-AR')}`;
+  document.getElementById('bc-inicio').textContent=`$${(neto/2).toLocaleString('es-AR')}`;
+  document.getElementById('bc-fin').textContent=`$${(neto/2).toLocaleString('es-AR')}`;
+}
+function switchTab(btn) {
+  btn.closest('.jobs-tabs').querySelectorAll('.job-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function setRating(val) {
+  document.getElementById('stars-general').querySelectorAll('span').forEach((s,i)=>s.classList.toggle('active',i<val));
+}
+</script>
+</body>
+</html>
