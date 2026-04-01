@@ -874,7 +874,7 @@ async function autoLogin(email,password) {
   try {
     const r = await fetch(`${API}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d = await r.json(); showLoading(false);
-    if (d.ok) { currentUser=d.usuario; currentToken=d.token; updateUIAfterLogin(); }
+    if (d.ok) { currentUser=d.usuario; currentToken=d.token; localStorage.setItem('kip_token',d.token); localStorage.setItem('kip_user',JSON.stringify(d.usuario)); updateUIAfterLogin(); }
     else showToast(d.error||'Email o contraseña incorrectos','error');
   } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
 }
@@ -924,6 +924,7 @@ function updateUIAfterLogin() {
 function doLogout() {
   if (socket) { socket.disconnect(); socket=null; }
   currentUser=null; currentToken=null; activeChatUser=null;
+  localStorage.removeItem('kip_token'); localStorage.removeItem('kip_user');
   showToast('Sesión cerrada'); showScreen('home');
 }
 
@@ -1196,6 +1197,11 @@ function switchTab(btn) {
   btn.closest('.jobs-tabs').querySelectorAll('.job-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
+// Auto-login desde localStorage
+const _t=localStorage.getItem('kip_token');
+const _u=localStorage.getItem('kip_user');
+if(_t&&_u){currentToken=_t;currentUser=JSON.parse(_u);updateUIAfterLogin();}
+
 function setRating(val) {
   document.getElementById('stars-general').querySelectorAll('span').forEach((s,i)=>s.classList.toggle('active',i<val));
 }
