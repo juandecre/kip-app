@@ -229,6 +229,29 @@ input,textarea,select{font-family:var(--font-body)}
 /* Chat vacío */
 .chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gray-400);gap:12px}
 .chat-empty-icon{font-size:48px;opacity:.4}
+
+/* ══ RESPONSIVE MOBILE ══ */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main-content{margin-left:0;padding:16px}
+  .app-layout{padding-top:64px}
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
+  .content-grid{grid-template-columns:1fr}
+  .pro-grid{grid-template-columns:1fr}
+  .chat-layout{grid-template-columns:1fr;height:calc(100vh - 80px)}
+  .chat-sidebar{display:none}
+  .input-row{grid-template-columns:1fr}
+  .hero-title{font-size:36px;letter-spacing:-1px}
+  .hero-sub{font-size:15px}
+  .stats-bar{gap:20px;padding:20px 12px;flex-wrap:wrap}
+  .stat-num{font-size:24px}
+  .categories-grid{grid-template-columns:repeat(2,1fr)}
+  .how-grid{grid-template-columns:1fr}
+  .auth-card{padding:24px}
+  .profile-hero{flex-direction:column;padding:24px}
+  .navbar{padding:0 16px;gap:8px}
+  .navbar-logo{font-size:18px}
+}
 </style>
 </head>
 <body>
