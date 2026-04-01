@@ -694,7 +694,7 @@ input,textarea,select{font-family:var(--font-body)}
         <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
       </div>
       <div class="input-group"><label class="input-label">Comentario</label><textarea class="input-field" rows="4" placeholder="Contá tu experiencia..."></textarea></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="showToast('¡Calificación enviada!','success');showScreen('dashboard-client')">Enviar calificación</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="enviarCalificacion()">Enviar calificación</button>
     </div></div>
   </div>
 </div>
@@ -1201,6 +1201,20 @@ function switchTab(btn) {
 const _t=localStorage.getItem('kip_token');
 const _u=localStorage.getItem('kip_user');
 if(_t&&_u){currentToken=_t;currentUser=JSON.parse(_u);updateUIAfterLogin();}
+
+async function enviarCalificacion() {
+  const estrellas = document.querySelectorAll('#stars-general span.active').length;
+  const comentario = document.querySelector('#screen-rating textarea').value;
+  if (!estrellas) return showToast('Seleccioná una calificación','error');
+  if (!currentToken || !window._ratingProId) return showToast('Error: falta el profesional','error');
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/calificaciones`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${currentToken}`},body:JSON.stringify({para_usuario:window._ratingProId,estrellas,comentario,trabajo_desc:'Trabajo en KIP'})});
+    const d = await r.json(); showLoading(false);
+    if(d.ok){showToast('¡Calificación enviada!');showScreen('dashboard-client');}
+    else showToast(d.error||'Error','error');
+  } catch(e){showLoading(false);showToast('Error al enviar','error');}
+}
 
 function setRating(val) {
   document.getElementById('stars-general').querySelectorAll('span').forEach((s,i)=>s.classList.toggle('active',i<val));
