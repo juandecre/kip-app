@@ -223,6 +223,29 @@ io.on('connection', (socket) => {
   });
 });
 
+// ── CALIFICACIONES ──────────────────────────────
+app.post('/api/calificaciones', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Sin autorización' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { para_usuario, trabajo_desc, estrellas, comentario } = req.body;
+    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (id INTEGER PRIMARY KEY AUTOINCREMENT, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
+    db.prepare('INSERT INTO calificaciones (de_usuario,para_usuario,estrellas,comentario,trabajo_desc) VALUES (?,?,?,?,?)').run(decoded.id, para_usuario, estrellas, comentario, trabajo_desc);
+    const avg = db.prepare('SELECT AVG(estrellas) as avg FROM calificaciones WHERE para_usuario=?').get(para_usuario);
+    db.prepare('UPDATE usuarios SET calificacion=? WHERE id=?').run(Math.round(avg.avg*10)/10, para_usuario);
+    res.json({ok:true});
+  } catch(e) { res.status(401).json({error:e.message}); }
+});
+
+app.get('/api/calificaciones/:id', (req, res) => {
+  try {
+    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (id INTEGER PRIMARY KEY AUTOINCREMENT, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
+    const cals = db.prepare(`SELECT c.*, u.nombre, u.apellido FROM calificaciones c JOIN usuarios u ON c.de_usuario=u.id WHERE c.para_usuario=? ORDER BY c.creado_en DESC`).all(req.params.id);
+    res.json(cals);
+  } catch(e) { res.json([]); }
+});
+
 // ── INICIO ────────────────────────────────────
 server.listen(PORT, () => {
   console.log(`✅ Servidor KIP corriendo en http://localhost:${PORT}`);
