@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KIP – Knowledge Is Power</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="/socket.io/socket.io.js"></script>
 <style>
 :root {
   --bg-dark: #0A0A0A;
+  --navy: #0A0A0A;
   --bg-deep: #111111;
   --surface: #1A1A1A;
   --surface-soft: #2A2A2A;
@@ -20,8 +21,8 @@
   --border: rgba(204,204,204,0.12);
   --radius: 22px;
   --radius-sm: 14px;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -745,6 +746,50 @@ textarea:focus {
 .foto-upload-area:hover {
   background: rgba(255,255,255,0.03);
 }
+.image-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.82);
+  z-index: 10001;
+  padding: 28px;
+}
+.image-modal-overlay.show {
+  display: flex;
+}
+.image-modal-content {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(10,10,10,0.96);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+}
+.image-modal-content img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.image-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(15,15,15,0.9);
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
 .foto-preview {
   border: 2px solid rgba(255,107,43,0.2);
 }
@@ -994,6 +1039,48 @@ textarea:focus {
     font-size: 18px;
   }
 }
+.avatar { display:flex; align-items:center; justify-content:center; font-weight:700; font-family:'Syne',sans-serif; flex-shrink:0; }
+.av-grad-1 { background:linear-gradient(135deg,#FF6B2B,#FF8C4B); color:#fff; }
+.av-grad-2 { background:linear-gradient(135deg,#3b82f6,#06b6d4); color:#fff; }
+.av-grad-3 { background:linear-gradient(135deg,#8b5cf6,#ec4899); color:#fff; }
+.av-grad-4 { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; }
+.av-grad-5 { background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; }
+.av-grad-6 { background:linear-gradient(135deg,#14b8a6,#0ea5e9); color:#fff; }
+.navbar-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#FF6B2B,#FF8C4B); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:white; cursor:pointer; overflow:hidden; }
+.app-layout { display:flex; min-height:100vh; padding-top:72px; }
+.sidebar { width:240px; background:#111111; border-right:1px solid rgba(204,204,204,0.12); flex-shrink:0; position:sticky; top:72px; height:calc(100vh - 72px); overflow-y:auto; display:flex; flex-direction:column; }
+.sidebar-section { padding:16px; }
+.sidebar-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#888888; padding:8px 12px 4px; }
+.sidebar-item { width:100%; text-align:left; padding:10px 14px; border-radius:12px; font-size:14px; font-weight:500; color:#CCCCCC; background:transparent; display:flex; align-items:center; gap:10px; margin-bottom:2px; transition:background 160ms ease; }
+.sidebar-item:hover { background:rgba(255,255,255,0.05); color:#FFFFFF; }
+.sidebar-item.active { background:rgba(255,107,43,0.12); color:#FFFFFF; }
+.sidebar-badge { margin-left:auto; background:#FF6B2B; color:white; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; }
+.card-header { padding:20px 22px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.card-body { padding:0 22px 22px; }
+.home-section { padding:80px 24px; max-width:1100px; margin:0 auto; }
+.stars { color:#FFB68B; }
+.rating-stars-input { display:flex; justify-content:center; gap:8px; font-size:36px; margin:12px 0 20px; cursor:pointer; }
+.badge-green { background:rgba(34,197,94,0.12); color:#22c55e; }
+.badge-blue  { background:rgba(59,130,246,0.12); color:#3b82f6; }
+.stat-card-icon { font-size:24px; margin-bottom:12px; }
+.stat-card-change { font-size:12px; color:#888888; margin-top:4px; }
+.stat-card.blue .stat-card-val { color:#3b82f6; }
+.stat-card.green .stat-card-val { color:#22c55e; }
+.stat-card.orange .stat-card-val { color:#FF6B2B; }
+.stat-card.cyan .stat-card-val { color:#06b6d4; }
+.pro-name { font-size:15px; font-weight:700; color:#FFFFFF; margin-bottom:4px; }
+.pro-location { font-size:12px; color:#888888; margin-top:2px; }
+.pro-card-actions { display:flex; gap:10px; margin-top:14px; }
+.seniority-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-size:12px; font-weight:700; }
+.seniority-pro { background:rgba(255,107,43,0.1); color:#FF8C4B; }
+.notif-dot { width:8px; height:8px; border-radius:50%; background:#FF6B2B; flex-shrink:0; margin-top:4px; }
+.notif-icon-wrap.green { background:rgba(34,197,94,0.1); }
+.profile-hero { background:#111111; border:1px solid rgba(204,204,204,0.12); border-radius:22px; padding:38px; margin-bottom:22px; display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; }
+.profile-name { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:#FFFFFF; }
+.payment-summary { padding:28px; border-radius:22px; background:linear-gradient(135deg,#111111 0%,#1A1A1A 100%); color:#FFFFFF; margin-bottom:20px; }
+.ps-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid rgba(255,255,255,0.06); }
+.review-card { padding:22px; background:#1A1A1A; border:1px solid rgba(204,204,204,0.12); border-radius:16px; margin-bottom:12px; }
+.stat-label { font-size:13px; color:#888888; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -1002,8 +1089,8 @@ textarea:focus {
 <div class="loading-overlay" id="loading"><div class="spinner"></div></div>
 
 <!-- ══════════ HOME ══════════ -->
-<div class="screen active" id="screen-home" style="background:var(--navy)">
-  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,24,41,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;display:flex;align-items:center;padding:0 24px;gap:16px">
+<div class="screen active" id="screen-home" style="background:var(--bg-dark)">
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(204,204,204,0.1);height:64px;display:flex;align-items:center;padding:0 24px;gap:16px">
     <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div>
     <div style="flex:1"></div>
     <button class="nav-link" onclick="showScreen('login')">Iniciar sesión</button>
@@ -1480,7 +1567,7 @@ textarea:focus {
     <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px">
       <div>
         <div class="card" style="text-align:center;padding:24px">
-          <div id="profile-foto-preview" style="width:90px;height:90px;border-radius:50%;margin:0 auto 16px;overflow:hidden;background:linear-gradient(135deg,#fa709a,#fee140);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:white;font-family:var(--font-display)"></div>
+          <div id="profile-foto-preview" onclick="openProfileImageModal()" title="Ver foto de perfil" style="width:90px;height:90px;border-radius:50%;margin:0 auto 16px;overflow:hidden;background:linear-gradient(135deg,#fa709a,#fee140);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:white;font-family:var(--font-display);cursor:pointer"></div>
           <div style="font-size:16px;font-weight:700" id="profile-fullname">Usuario</div>
           <div style="font-size:13px;color:var(--gray-400);margin:4px 0 20px" id="profile-tipo">KIP</div>
           <div class="foto-upload-area">
@@ -1511,6 +1598,13 @@ textarea:focus {
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="profile-image-modal" class="image-modal-overlay" onclick="if(event.target===this) closeProfileImageModal()">
+  <div class="image-modal-content">
+    <button class="image-modal-close" onclick="closeProfileImageModal()" aria-label="Cerrar vista de imagen">×</button>
+    <img id="profile-image-modal-img" src="" alt="Foto de perfil ampliada">
   </div>
 </div>
 
@@ -1898,6 +1992,30 @@ function previewFoto(input) {
   reader.readAsDataURL(selectedFotoFile);
   document.getElementById('btn-subir-foto').style.display = 'flex';
 }
+
+function openProfileImageModal() {
+  const modal = document.getElementById('profile-image-modal');
+  const modalImg = document.getElementById('profile-image-modal-img');
+  const previewImg = document.getElementById('profile-foto-preview')?.querySelector('img');
+  const src = previewImg?.src || currentUser?.foto;
+  if (!modal || !modalImg || !src) return;
+  modalImg.src = src;
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfileImageModal() {
+  const modal = document.getElementById('profile-image-modal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeProfileImageModal();
+  }
+});
 
 async function subirFoto() {
   if (!selectedFotoFile || !currentToken) return showToast('Seleccioná una foto primero','error');
