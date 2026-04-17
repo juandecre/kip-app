@@ -1094,7 +1094,7 @@ textarea:focus {
     <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div>
     <div style="flex:1"></div>
     <button class="nav-link" onclick="showScreen('login')">Iniciar sesión</button>
-    <button class="btn-nav-primary" onclick="showScreen('register-client')">Registrarme</button>
+    <button class="btn-nav-primary" onclick="showScreen('register')">Registrarme</button>
   </nav>
   <section class="hero">
     <div style="position:absolute;inset:0;pointer-events:none"><div class="hero-dots"></div><div class="hero-glow"></div></div>
@@ -1109,11 +1109,11 @@ textarea:focus {
       <div class="hero-search-wrap">
         <span style="font-size:18px">🔍</span>
         <input class="hero-search-input" placeholder="¿Qué servicio necesitás?" type="text">
-        <button class="hero-search-btn" onclick="showScreen('register-client')">Buscar</button>
+        <button class="hero-search-btn" onclick="showScreen('register')">Buscar</button>
       </div>
       <div class="hero-cta-group">
-        <button class="btn btn-primary btn-lg" onclick="showScreen('register-client')">Encontrar un profesional</button>
-        <button class="btn-hero-outline" onclick="showScreen('register-pro')">Ofrecer mis servicios</button>
+        <button class="btn btn-primary btn-lg" onclick="showScreen('register')">Encontrar un profesional</button>
+        <button class="btn-hero-outline" onclick="showScreen('register')">Ofrecer mis servicios</button>
       </div>
     </div>
   </section>
@@ -1126,14 +1126,14 @@ textarea:focus {
   <section class="home-section">
     <div class="section-header"><div class="section-eyebrow">Categorías</div><h2 class="section-title">¿Qué necesitás hoy?</h2></div>
     <div class="categories-grid">
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">⚡</span><div class="cat-name">Electricista</div><div class="cat-count">340 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🔧</span><div class="cat-name">Plomero</div><div class="cat-count">218 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🪵</span><div class="cat-name">Carpintero</div><div class="cat-count">165 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🧱</span><div class="cat-name">Albañil</div><div class="cat-count">290 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🏗️</span><div class="cat-name">Arquitecto</div><div class="cat-count">87 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">💰</span><div class="cat-name">Contador</div><div class="cat-count">124 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">💻</span><div class="cat-name">Programador</div><div class="cat-count">203 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register-client')"><span class="cat-icon">🎨</span><div class="cat-name">Diseñador</div><div class="cat-count">156 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">⚡</span><div class="cat-name">Electricista</div><div class="cat-count">340 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🔧</span><div class="cat-name">Plomero</div><div class="cat-count">218 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🪵</span><div class="cat-name">Carpintero</div><div class="cat-count">165 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🧱</span><div class="cat-name">Albañil</div><div class="cat-count">290 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🏗️</span><div class="cat-name">Arquitecto</div><div class="cat-count">87 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">💰</span><div class="cat-name">Contador</div><div class="cat-count">124 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">💻</span><div class="cat-name">Programador</div><div class="cat-count">203 pros</div></div>
+      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🎨</span><div class="cat-name">Diseñador</div><div class="cat-count">156 pros</div></div>
     </div>
   </section>
   <section class="home-section" style="background:rgba(255,255,255,0.02)">
@@ -1155,69 +1155,84 @@ textarea:focus {
       <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
       <h2 class="auth-title">Bienvenido de vuelta</h2>
       <p class="auth-sub">Ingresá a tu cuenta para continuar</p>
+      <div id="login-warning" class="auth-note" style="display:none;margin-bottom:16px"></div>
       <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="login-email" placeholder="tu@email.com"></div>
       <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="doLogin()">Iniciar sesión</button>
-      <p class="auth-footer-text">¿No tenés cuenta? <span class="auth-link" onclick="showScreen('register-client')">Registrate gratis</span></p>
+      <p class="auth-footer-text">¿No tenés cuenta? <span class="auth-link" onclick="showScreen('register')">Registrate gratis</span></p>
       <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
     </div>
   </div>
 </div>
 
-<!-- ══════════ REGISTER CLIENT ══════════ -->
-<div class="screen" id="screen-register-client" style="display:none">
+<!-- ══════════ REGISTER ══════════ -->
+<div class="screen" id="screen-register" style="display:none">
   <div class="auth-wrap">
     <div class="auth-card">
       <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
-      <h2 class="auth-title">Crear cuenta</h2>
-      <p class="auth-sub">Unirte es gratis</p>
+      <h2 class="auth-title">Comenzá con KIP</h2>
+      <p class="auth-sub">Elegí tu perfil y verificá tu email para seguir</p>
       <div class="type-toggle">
-        <button class="type-btn active" onclick="showScreen('register-client')">👤 Soy cliente</button>
-        <button class="type-btn" onclick="showScreen('register-pro')">🔧 Soy profesional</button>
+        <button id="register-role-client" class="type-btn active" onclick="setRegisterRole('cliente')">👤 Cliente</button>
+        <button id="register-role-pro" class="type-btn" onclick="setRegisterRole('profesional')">🔧 Profesional</button>
       </div>
       <div class="input-row">
-        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="rc-nombre" placeholder="Juan"></div>
-        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="rc-apellido" placeholder="Rodríguez"></div>
+        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="register-firstname" placeholder="Juan"></div>
+        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="register-lastname" placeholder="Rodríguez"></div>
       </div>
-      <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="rc-email" placeholder="tu@email.com"></div>
-      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="rc-telefono" placeholder="+54 11 1234-5678"></div>
-      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="rc-password" placeholder="Mínimo 8 caracteres"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegistroCliente()">Crear mi cuenta</button>
+      <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="register-email" placeholder="tu@email.com"></div>
+      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="register-phone" placeholder="+54 11 1234-5678"></div>
+      <div id="register-pro-specialty-area" style="display:none;margin-top:16px"></div>
+      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="register-password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="input-group"><label class="input-label">Confirmar contraseña</label><input class="input-field" type="password" id="register-password-confirm" placeholder="Repetí la contraseña"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegister()">Crear cuenta</button>
       <p class="auth-footer-text">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
+      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
     </div>
   </div>
 </div>
 
-<!-- ══════════ REGISTER PRO ══════════ -->
-<div class="screen" id="screen-register-pro" style="display:none">
+<!-- ══════════ VERIFY EMAIL ══════════ -->
+<div class="screen" id="screen-verify-email" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
+      <h2 class="auth-title">Verificá tu email</h2>
+      <p class="auth-sub">Te enviamos un link de verificación a</p>
+      <p style="font-size:15px;color:var(--text-strong);text-align:center;margin:16px 0"><span id="verify-email-address"></span></p>
+      <p class="auth-sub" style="margin-top:0;color:var(--text-soft);font-size:14px">Revisá tu bandeja de entrada y carpeta de spam.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:16px" onclick="showScreen('login')">Volver al inicio</button>
+      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ONBOARDING ══════════ -->
+<div class="screen" id="screen-onboarding" style="display:none">
   <div class="auth-wrap">
     <div class="auth-card auth-wide">
       <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
-      <h2 class="auth-title">Registrarme como profesional</h2>
-      <p class="auth-sub">Empezá a conseguir clientes hoy</p>
-      <div class="type-toggle">
-        <button class="type-btn" onclick="showScreen('register-client')">👤 Soy cliente</button>
-        <button class="type-btn active" onclick="showScreen('register-pro')">🔧 Soy profesional</button>
-      </div>
-      <div class="input-row">
-        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="rp-nombre" placeholder="Carlos"></div>
-        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="rp-apellido" placeholder="Martínez"></div>
-      </div>
-      <div class="input-row">
-        <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="rp-email" placeholder="tu@email.com"></div>
-        <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="rp-telefono" placeholder="+54 11"></div>
-      </div>
-      <div class="input-row">
+      <h2 class="auth-title">Completá tu perfil</h2>
+      <p class="auth-sub">Agregá los datos que faltan para empezar</p>
+      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="onboarding-phone" placeholder="+54 11 1234-5678"></div>
+      <div class="input-group"><label class="input-label">Ciudad</label><select class="input-field" id="onboarding-city"><option value="">Seleccioná tu ciudad</option><option value="CABA">CABA</option><option value="GBA Norte">GBA Norte</option><option value="GBA Sur">GBA Sur</option><option value="GBA Oeste">GBA Oeste</option><option value="Interior">Interior</option></select></div>
+      <div id="onboarding-pro-fields" style="display:none">
         <div class="input-group"><label class="input-label">Especialidad</label>
-          <select class="input-field" id="rp-especialidad"><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
+          <select class="input-field" id="onboarding-specialty"><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
         </div>
-        <div class="input-group"><label class="input-label">Años de experiencia</label><input class="input-field" type="number" id="rp-experiencia" placeholder="5"></div>
+        <div class="input-group"><label class="input-label">Descripción</label><textarea class="input-field" rows="3" id="onboarding-description" placeholder="Contá qué servicios ofrecés..."></textarea></div>
       </div>
-      <div class="input-group"><label class="input-label">Zona donde trabajás</label><input class="input-field" id="rp-zona" placeholder="CABA, GBA Norte..."></div>
-      <div class="input-group"><label class="input-label">Descripción de servicios</label><textarea class="input-field" rows="3" id="rp-descripcion" placeholder="Contá qué servicios ofrecés..."></textarea></div>
-      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="rp-password" placeholder="••••••••"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegistroPro()">Registrarme como profesional</button>
-      <p class="auth-footer-text">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
+      <div class="input-group">
+        <label class="input-label">Foto de perfil (opcional)</label>
+        <input class="input-field" type="file" accept="image/*" onchange="handleOnboardingPhoto(event)">
+      </div>
+      <div id="onboarding-photo-preview" style="min-height:120px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;margin-top:12px;overflow:hidden;color:var(--text-soft)">Vista previa de foto</div>
+      <button id="btn-subir-foto" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:12px;display:none" onclick="subirFoto()">⬆️ Subir foto</button>
+      <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+        <button class="btn btn-primary" style="flex:1;min-width:140px" onclick="completeOnboarding()">Finalizar y continuar</button>
+        <button class="btn" style="flex:1;min-width:140px;border:1px solid rgba(255,255,255,0.16);color:var(--text-strong);background:transparent" onclick="skipOnboarding()">Omitir por ahora</button>
+      </div>
+      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
     </div>
   </div>
 </div>
@@ -1297,6 +1312,22 @@ textarea:focus {
         <div style="font-size:12px;color:var(--text-soft);margin-top:4px">156 pros</div>
       </div>
     </div>
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <label for="home-category-filter" style="font-size:14px;color:var(--text-soft);min-width:140px">Filtrar por rubro</label>
+      <select id="home-category-filter" class="input-field" style="max-width:360px" onchange="buscarDesdeHome()">
+        <option value="">Todos los rubros</option>
+        <option>Hogar y construcción</option>
+        <option>Tecnología</option>
+        <option>Salud y bienestar</option>
+        <option>Profesionales universitarios</option>
+        <option>Educación</option>
+        <option>Transporte y logística</option>
+        <option>Eventos</option>
+        <option>Limpieza</option>
+        <option>Mascotas</option>
+        <option>Otro rubro</option>
+      </select>
+    </div>
   </div>
 
   <!-- Resultados -->
@@ -1324,7 +1355,7 @@ textarea:focus {
   <div class="app-layout">
     <div class="sidebar">
       <div style="padding:16px">
-        <div style="background:linear-gradient(135deg,var(--navy),#1a3a5c);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">
+        <div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">
           <div id="pro-sidebar-avatar-wrap" style="width:56px;height:56px;border-radius:14px;margin:0 auto 10px;overflow:hidden;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;font-family:var(--font-display)"></div>
           <div style="font-size:14px;font-weight:700;color:white" id="pro-sidebar-name">Profesional</div>
           <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px" id="pro-sidebar-esp">Especialidad</div>
@@ -1629,6 +1660,54 @@ textarea:focus {
 
 <script>
 const API = 'https://servikip.com.ar/api';
+const CATEGORIAS_PRO = {
+  "Hogar y construcción": [
+    "Electricista", "Plomero", "Gasista", "Albañil", "Pintor",
+    "Carpintero", "Herrero", "Techista", "Yesero", "Ceramista",
+    "Impermeabilizador", "Instalador de aberturas", "Jardinero",
+    "Paisajista", "Fumigador", "Cerrajero", "Instalador de aires",
+    "Instalador de cámaras", "Instalador solar", "Otro"
+  ],
+  "Tecnología": [
+    "Programador web", "Programador mobile", "Diseñador UX/UI",
+    "Diseñador gráfico", "Community manager", "Editor de video",
+    "Fotógrafo", "Soporte técnico", "Reparación de celulares",
+    "Reparación de PC", "Otro"
+  ],
+  "Salud y bienestar": [
+    "Peluquero/a", "Barbero", "Esteticista", "Maquillador/a",
+    "Manicura/pedicura", "Masajista", "Personal trainer",
+    "Nutricionista", "Psicólogo/a", "Enfermero/a", "Cuidador/a",
+    "Otro"
+  ],
+  "Profesionales universitarios": [
+    "Contador/a", "Abogado/a", "Arquitecto/a", "Ingeniero civil",
+    "Ingeniero eléctrico", "Ingeniero mecánico", "Médico/a",
+    "Veterinario/a", "Escribano/a", "Traductor/a", "Otro"
+  ],
+  "Educación": [
+    "Profesor particular (primaria)", "Profesor particular (secundaria)",
+    "Profesor particular (universitario)", "Profesor de idiomas",
+    "Profesor de música", "Profesor de arte", "Tutor educativo", "Otro"
+  ],
+  "Transporte y logística": [
+    "Flete", "Mudanza", "Delivery", "Chofer particular",
+    "Remis / traslados", "Otro"
+  ],
+  "Eventos": [
+    "DJ", "Animador infantil", "Catering", "Decorador de eventos",
+    "Fotógrafo de eventos", "Videógrafo", "Sonido e iluminación", "Otro"
+  ],
+  "Limpieza": [
+    "Limpieza de hogar", "Limpieza de oficinas", "Limpieza de vidrios",
+    "Lavado de autos", "Lavado de tapizados", "Otro"
+  ],
+  "Mascotas": [
+    "Veterinario/a", "Peluquero canino", "Paseador de perros",
+    "Cuidador de mascotas", "Adiestramiento", "Otro"
+  ],
+  "Otro rubro": ["Describir manualmente"]
+};
 let currentScreen = 'home';
 let previousScreen = 'home';
 let currentUser = null;
@@ -1636,12 +1715,21 @@ let currentToken = null;
 let socket = null;
 let activeChatUser = null; // { id, nombre, apellido, foto }
 let selectedFotoFile = null;
+let registerRole = 'cliente';
+let selectedCategoria = '';
+let selectedEspecialidad = '';
 const grads = ['av-grad-1','av-grad-2','av-grad-3','av-grad-4','av-grad-5','av-grad-6'];
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('verified') === 'true') {
+  setTimeout(() => { showToast('Email verificado con éxito'); showScreen('login'); }, 200);
+}
 
 // ── NAVEGACIÓN ─────────────────────────────────
 function showScreen(name) {
   previousScreen = currentScreen; currentScreen = name;
   document.querySelectorAll('.screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  const warning = document.getElementById('login-warning');
+  if (warning && name === 'login') { warning.style.display = 'none'; }
   const t = document.getElementById('screen-'+name);
   if (t) { t.style.display='block'; t.classList.add('active'); window.scrollTo(0,0); }
 }
@@ -1679,58 +1767,218 @@ function setAvatarEl(el, user, size=40, radius='50%', fontSize=16) {
   }
 }
 
+function normalizeUserPayload(payload) {
+  if (!payload) return {};
+  const user = {};
+  if (payload.nombre || payload.apellido) {
+    user.nombre = payload.nombre || '';
+    user.apellido = payload.apellido || '';
+    user.email = payload.email || '';
+    user.tipo = payload.tipo || (payload.role === 'professional' ? 'profesional' : 'cliente');
+    user.foto = payload.foto || payload.profile_image || '';
+    user.especialidad = payload.especialidad || payload.specialty || '';
+    user.zona = payload.zona || payload.city || '';
+    user.onboarding_complete = payload.onboarding_complete ? 1 : 0;
+    user.email_verified = payload.email_verified ? 1 : 0;
+    user.id = payload.id;
+    user.phone = payload.telefono || payload.phone || '';
+  } else {
+    const parts = (payload.name || '').trim().split(' ');
+    user.nombre = parts.shift() || '';
+    user.apellido = parts.join(' ') || '';
+    user.email = payload.email || '';
+    user.tipo = payload.role === 'professional' ? 'profesional' : 'cliente';
+    user.foto = payload.profile_image || payload.foto || '';
+    user.especialidad = payload.specialty || payload.especialidad || '';
+    user.zona = payload.city || payload.zona || '';
+    user.onboarding_complete = payload.onboarding_complete ? 1 : 0;
+    user.email_verified = payload.email_verified ? 1 : 0;
+    user.id = payload.id;
+    user.phone = payload.phone || payload.telefono || '';
+  }
+  return user;
+}
+
+function setRegisterRole(role) {
+  registerRole = role;
+  const clientBtn = document.getElementById('register-role-client');
+  const proBtn = document.getElementById('register-role-pro');
+  if (clientBtn) clientBtn.classList.toggle('active', role === 'cliente');
+  if (proBtn) proBtn.classList.toggle('active', role === 'profesional');
+  const proFields = document.getElementById('onboarding-pro-fields');
+  if (proFields) proFields.style.display = role === 'profesional' ? 'block' : 'none';
+  const proArea = document.getElementById('register-pro-specialty-area');
+  if (proArea) {
+    if (role === 'profesional') {
+      proArea.style.display = 'block';
+      buildSelectorEspecialidad();
+    } else {
+      proArea.style.display = 'none';
+      proArea.innerHTML = '';
+      selectedCategoria = '';
+      selectedEspecialidad = '';
+    }
+  }
+}
+
+function buildSelectorEspecialidad() {
+  const container = document.getElementById('register-pro-specialty-area');
+  if (!container) return;
+  const categoryIcons = {
+    'Hogar y construcción': '🏠',
+    'Tecnología': '💻',
+    'Salud y bienestar': '💆',
+    'Profesionales universitarios': '🎓',
+    'Educación': '📚',
+    'Transporte y logística': '🚚',
+    'Eventos': '🎉',
+    'Limpieza': '🧹',
+    'Mascotas': '🐾',
+    'Otro rubro': '✏️'
+  };
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px">';
+  Object.keys(CATEGORIAS_PRO).forEach(cat => {
+    const active = selectedCategoria === cat;
+    html += `<button type="button" onclick="selectCategoria(${JSON.stringify(cat)})" style="text-align:left;padding:18px;border:1px solid ${active ? 'var(--accent)' : 'var(--border)'};border-radius:18px;background:${active ? 'rgba(255,107,43,0.08)' : 'var(--surface)'};color:var(--text-strong);cursor:pointer;transition:all 180ms ease;display:flex;flex-direction:column;gap:10px;min-height:120px;align-items:flex-start">`;
+    html += `<span style="font-size:24px">${categoryIcons[cat] || '🗂️'}</span>`;
+    html += `<span style="font-weight:700;font-size:14px">${cat}</span>`;
+    html += `</button>`;
+  });
+  html += '</div>';
+  if (selectedCategoria) {
+    const opciones = CATEGORIAS_PRO[selectedCategoria] || [];
+    html += '<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:12px">Seleccioná una subcategoría</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:10px">';
+    opciones.forEach(opt => {
+      const active = selectedEspecialidad === opt;
+      html += `<button type="button" onclick="selectEspecialidad(${JSON.stringify(opt)})" style="padding:12px 14px;border-radius:999px;border:1px solid ${active ? 'var(--accent)' : 'rgba(255,255,255,0.12)'};background:${active ? 'rgba(255,107,43,0.12)' : 'transparent'};color:var(--text-strong);cursor:pointer;min-width:fit-content">${opt}</button>`;
+    });
+    html += '</div></div>';
+  }
+  const showManual = selectedCategoria === 'Otro rubro' || selectedEspecialidad === 'Otro' || selectedEspecialidad === 'Describir manualmente';
+  if (showManual) {
+    const value = selectedEspecialidad && selectedEspecialidad !== 'Otro' && selectedEspecialidad !== 'Describir manualmente' ? selectedEspecialidad : '';
+    html += `<div class="input-group" style="margin-top:10px"><label class="input-label">Describí tu especialidad</label><input class="input-field" type="text" id="register-especialidad-manual" placeholder="Describí tu especialidad" value="${value}" oninput="selectedEspecialidad=this.value"></div>`;
+  }
+  container.innerHTML = html;
+}
+
+function selectCategoria(cat) {
+  selectedCategoria = cat;
+  selectedEspecialidad = '';
+  buildSelectorEspecialidad();
+}
+
+function selectEspecialidad(opt) {
+  selectedEspecialidad = opt;
+  buildSelectorEspecialidad();
+}
+
+function showVerifyScreen(email) {
+  const span = document.getElementById('verify-email-address');
+  if (span) span.textContent = email || '';
+  showScreen('verify-email');
+}
+
+function handleOnboardingPhoto(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  selectedFotoFile = file;
+  const preview = document.getElementById('onboarding-photo-preview');
+  if (preview) {
+    preview.innerHTML = `<img src="${URL.createObjectURL(file)}" style="width:100%;height:100%;object-fit:cover;">`;
+  }
+  const uploadButton = document.getElementById('btn-subir-foto');
+  if (uploadButton) uploadButton.style.display = 'flex';
+}
+
+async function completeOnboarding(skip = false) {
+  const phone = document.getElementById('onboarding-phone')?.value.trim();
+  const city = document.getElementById('onboarding-city')?.value.trim();
+  if (!currentToken) return showToast('Iniciá sesión primero','error');
+  const phoneValue = phone || currentUser?.phone || '';
+  const cityValue = city || currentUser?.zona || 'CABA';
+  if (!skip && (!phone || !city)) return showToast('Completá teléfono y ciudad','error');
+  showLoading(true);
+  try {
+    const body = { phone: phoneValue, city: cityValue, role: currentUser?.tipo === 'profesional' ? 'professional' : 'client' };
+    const r = await fetch(`${API}/auth/onboarding`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` }, body: JSON.stringify(body) });
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      currentUser = normalizeUserPayload(d.user);
+      localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      showToast('¡Perfil completo!');
+      updateUIAfterLogin();
+    } else {
+      showToast(d.error || 'Error al completar onboarding','error');
+    }
+  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
+function skipOnboarding() {
+  completeOnboarding(true);
+}
+
+function populateOnboardingForm() {
+  setRegisterRole(currentUser?.tipo || 'cliente');
+  const phone = document.getElementById('onboarding-phone'); if (phone) phone.value = currentUser?.phone || '';
+  const city = document.getElementById('onboarding-city'); if (city) city.value = currentUser?.zona || '';
+  const specialty = document.getElementById('onboarding-specialty'); if (specialty) specialty.value = currentUser?.especialidad || 'Electricista';
+  const description = document.getElementById('onboarding-description'); if (description) description.value = currentUser?.descripcion || '';
+}
+
 // ── REGISTRO ───────────────────────────────────
-async function doRegistroCliente() {
-  const nombre=document.getElementById('rc-nombre').value.trim();
-  const apellido=document.getElementById('rc-apellido').value.trim();
-  const email=document.getElementById('rc-email').value.trim();
-  const telefono=document.getElementById('rc-telefono').value.trim();
-  const password=document.getElementById('rc-password').value;
-  if (!nombre||!email||!password) return showToast('Completá nombre, email y contraseña','error');
-  showLoading(true);
-  try {
-    const r = await fetch(`${API}/registro`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellido,email,telefono,password,tipo:'cliente'})});
-    const d = await r.json(); showLoading(false);
-    if (d.ok) { showToast('¡Cuenta creada!'); await autoLogin(email,password); }
-    else showToast(d.error||'Error al registrar','error');
-  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
-}
-
-async function doRegistroPro() {
-  const nombre=document.getElementById('rp-nombre').value.trim();
-  const apellido=document.getElementById('rp-apellido').value.trim();
-  const email=document.getElementById('rp-email').value.trim();
-  const telefono=document.getElementById('rp-telefono').value.trim();
-  const password=document.getElementById('rp-password').value;
-  const especialidad=document.getElementById('rp-especialidad').value;
-  const experiencia=document.getElementById('rp-experiencia').value;
-  const zona=document.getElementById('rp-zona').value.trim();
-  const descripcion=document.getElementById('rp-descripcion').value.trim();
-  if (!nombre||!email||!password) return showToast('Completá nombre, email y contraseña','error');
-  showLoading(true);
-  try {
-    const r = await fetch(`${API}/registro`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellido,email,telefono,password,tipo:'profesional',especialidad,experiencia:parseInt(experiencia)||0,zona,descripcion})});
-    const d = await r.json(); showLoading(false);
-    if (d.ok) { showToast('¡Perfil profesional creado!'); await autoLogin(email,password); }
-    else showToast(d.error||'Error al registrar','error');
-  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
-}
-
-// ── LOGIN ──────────────────────────────────────
+// ── LOGIN / REGISTRO ──────────────────────────────────────
 async function doLogin() {
+  const warning = document.getElementById('login-warning');
+  if (warning) warning.style.display='none';
   const email=document.getElementById('login-email').value.trim();
   const password=document.getElementById('login-password').value;
   if (!email||!password) return showToast('Completá email y contraseña','error');
   await autoLogin(email,password);
 }
 
+async function doRegister() {
+  const nombre=document.getElementById('register-firstname').value.trim();
+  const apellido=document.getElementById('register-lastname').value.trim();
+  const email=document.getElementById('register-email').value.trim();
+  const telefono=document.getElementById('register-phone').value.trim();
+  const password=document.getElementById('register-password').value;
+  const passwordConfirm=document.getElementById('register-password-confirm').value;
+  if (!nombre||!apellido||!email||!password) return showToast('Completá todos los campos obligatorios','error');
+  if (password !== passwordConfirm) return showToast('Las contraseñas no coinciden','error');
+  if (registerRole === 'profesional' && (!selectedCategoria || !selectedEspecialidad)) return showToast('Elegí categoría y especialidad','error');
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name: `${nombre} ${apellido}`.trim(), email, password, role: registerRole === 'profesional' ? 'professional' : 'client', phone: telefono, categoria: selectedCategoria, especialidad: selectedEspecialidad }) });
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      showToast('¡Cuenta creada! Revisá tu email');
+      showVerifyScreen(email);
+    } else {
+      showToast(d.error || 'Error al registrar','error');
+    }
+  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
 async function autoLogin(email,password) {
   showLoading(true);
   try {
-    const r = await fetch(`${API}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const r = await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d = await r.json(); showLoading(false);
-    if (d.ok) { currentUser=d.usuario; currentToken=d.token; localStorage.setItem('kip_token',d.token); localStorage.setItem('kip_user',JSON.stringify(d.usuario)); updateUIAfterLogin(); }
-    else showToast(d.error||'Email o contraseña incorrectos','error');
+    if (d.ok) {
+      currentUser = normalizeUserPayload(d.user || d.usuario);
+      currentToken = d.token;
+      localStorage.setItem('kip_token', d.token);
+      localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      updateUIAfterLogin();
+    } else {
+      if (d.needsVerification) {
+        const warning = document.getElementById('login-warning');
+        if (warning) { warning.textContent = d.error || 'Debés verificar tu email primero'; warning.style.display = 'block'; }
+      }
+      showToast(d.error || 'Email o contraseña incorrectos','error');
+    }
   } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
 }
 
@@ -1772,6 +2020,11 @@ function updateUIAfterLogin() {
   // Socket
   initSocket();
   showToast(`¡Bienvenido, ${currentUser.nombre}!`);
+  if (!currentUser.onboarding_complete) {
+    populateOnboardingForm();
+    showScreen('onboarding');
+    return;
+  }
   if (currentUser.tipo==='profesional') { showScreen('dashboard-pro'); }
   else { showScreen('dashboard-client'); loadProfesionales('pros-list'); }
 }
@@ -2121,21 +2374,24 @@ function setRating(val) {
 
 function buscarDesdeHome() {
   const q = document.getElementById('search-query-home').value.trim();
+  const categoria = document.getElementById('home-category-filter')?.value || '';
   document.getElementById('search-query') && (document.getElementById('search-query').value = q);
-  buscarProfesionalesEnHome(q, '');
+  buscarProfesionalesEnHome(q, '', categoria);
 }
 
 function buscarCategoria(esp) {
   document.getElementById('search-query-home').value = esp;
-  buscarProfesionalesEnHome('', esp);
+  document.getElementById('home-category-filter').value = '';
+  buscarProfesionalesEnHome('', esp, '');
 }
 
-async function buscarProfesionalesEnHome(q, esp) {
+async function buscarProfesionalesEnHome(q, esp, categoria) {
   const results = document.getElementById('home-search-results');
   results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:20px">Buscando...</div>';
   let url = `${API}/profesionales?`;
   if (esp) url += `especialidad=${encodeURIComponent(esp)}&`;
-  if (q)   url += `q=${encodeURIComponent(q)}`;
+  if (categoria) url += `categoria=${encodeURIComponent(categoria)}&`;
+  if (q) url += `q=${encodeURIComponent(q)}`;
   try {
     const r = await fetch(url);
     const pros = await r.json();
