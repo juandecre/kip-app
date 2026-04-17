@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const crypto = require('crypto');
 const multer = require('multer');
 const fs = require('fs');
@@ -19,13 +19,9 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'kip_secret_2025';
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+console.log('RESEND_API_KEY loaded:', !!process.env.RESEND_API_KEY);
+if (!process.env.RESEND_API_KEY) console.error('WARNING: RESEND_API_KEY is not configured. Email verification will fail.');
 
 // Carpeta para fotos
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -100,6 +96,7 @@ db.exec(`
     profile_image TEXT,
     google_id TEXT,
     onboarding_complete INTEGER DEFAULT 0,
+    categoria TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -111,6 +108,9 @@ db.exec(`
     used INTEGER DEFAULT 0
   );
 `);
+
+try { db.prepare('ALTER TABLE users ADD COLUMN categoria TEXT').run(); } catch (e) {}
+try { db.prepare('ALTER TABLE usuarios ADD COLUMN categoria TEXT').run(); } catch (e) {}
 
 app.use(cors());
 app.use(express.json());
@@ -142,35 +142,40 @@ function getUserPayload(user) {
     profile_image: user.profile_image,
     onboarding_complete: user.onboarding_complete,
     email_verified: user.email_verified,
-    phone_verified: user.phone_verified
+    phone_verified: user.phone_verified,
+    categoria: user.categoria || null
   };
 }
 
-function sendVerificationEmail(email, token) {
+async function sendVerificationEmail(email, token) {
   const verifyUrl = `https://servikip.com.ar/api/auth/verify-email?token=${encodeURIComponent(token)}`;
   const html = `
-    <div style="background:#000;color:#fff;padding:32px;font-family:Arial,sans-serif;">
-      <div style="max-width:600px;margin:0 auto;background:#090909;border:1px solid rgba(255,107,43,0.18);border-radius:24px;overflow:hidden;">
-        <div style="padding:32px;text-align:center;background:#111;">
-          <div style="font-size:48px;font-weight:800;color:#FF6B2B;">K</div>
-          <div style="font-size:24px;font-weight:700;color:#fff;">ServiKIP</div>
-        </div>
-        <div style="padding:32px;">
-          <h2 style="color:#fff;font-size:24px;margin-bottom:8px;">Verificá tu cuenta en ServiKIP</h2>
-          <p style="color:#ccc;font-size:16px;line-height:1.6;margin-bottom:28px;">
-            Gracias por registrarte. Hacé click en el botón de abajo para verificar tu email.
-          </p>
-          <a href="${verifyUrl}" style="background:#FF6B2B;color:#111;font-weight:700;text-decoration:none;padding:14px 24px;border-radius:999px;display:inline-block;">Verificar mi cuenta</a>
-          <p style="color:#777;font-size:12px;margin-top:28px;">Si no solicitaste este email, ignoralo.</p>
-        </div>
+    <div style="font-family:sans-serif;background:#0A0A0A;color:white;padding:40px;max-width:500px;margin:0 auto;border-radius:16px">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="width:48px;height:48px;background:#FF6B2B;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white">K</div>
+        <h1 style="font-size:22px;margin-top:16px;color:white">Verificá tu cuenta en ServiKIP</h1>
       </div>
+      <p style="color:#CCCCCC;line-height:1.6">Hacé click en el botón para confirmar tu email y empezar a usar ServiKIP.</p>
+      <div style="text-align:center;margin:32px 0">
+        <a href="${verifyUrl}"
+           style="background:#FF6B2B;color:white;padding:16px 32px;border-radius:999px;text-decoration:none;font-weight:700;font-size:16px">
+          ✓ Verificar mi cuenta
+        </a>
+      </div>
+      <p style="color:#888;font-size:13px;text-align:center">Si no creaste una cuenta en ServiKIP, ignorá este email.</p>
     </div>`;
-  transporter.sendMail({
-    from: 'ServiKIP <noreply@servikip.com.ar>',
-    to: email,
-    subject: 'Verificá tu cuenta en ServiKIP',
-    html
-  }).catch(err => console.error('Error enviando email de verificación:', err));
+  try {
+    const response = await resend.emails.send({
+      from: 'ServiKIP <onboarding@resend.dev>',
+      to: email,
+      subject: 'Verificá tu cuenta en ServiKIP',
+      html
+    });
+    console.log('Resend email sent:', response.id || response);
+  } catch (err) {
+    console.error('Error enviando email de verificación con Resend:', err);
+    throw err;
+  }
 }
 
 function findAuthUserByEmail(email) {
@@ -181,14 +186,14 @@ function findLegacyUserByEmail(email) {
   return db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
 }
 
-function registerAuthAccount({ name, email, password, role, legacyData }) {
+async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
   if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
   const existingAuth = findAuthUserByEmail(email);
   const existingLegacy = findLegacyUserByEmail(email);
   if (existingAuth || existingLegacy) return { ok: false, error: 'El email ya existe' };
   const hash = bcrypt.hashSync(password, 12);
-  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete) VALUES (?, ?, ?, ?, 0, 0, 0)');
-  const userResult = createUser.run(name, email, hash, role);
+  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria) VALUES (?, ?, ?, ?, 0, 0, 0, ?)');
+  const userResult = createUser.run(name, email, hash, role, categoria || null);
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(userResult.lastInsertRowid, token, expiresAt);
@@ -196,22 +201,23 @@ function registerAuthAccount({ name, email, password, role, legacyData }) {
   const [firstName, ...rest] = name.trim().split(' ');
   const lastName = rest.join(' ');
   const legacy = legacyData || {};
-  const createLegacy = db.prepare('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+  const createLegacy = db.prepare('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
   const legacyResult = createLegacy.run(
     firstName || name,
     lastName,
     email,
     hash,
     legacy.telefono || null,
-    role,
+    role === 'professional' ? 'profesional' : role === 'client' ? 'cliente' : role,
     legacy.zona || null,
     legacy.especialidad || null,
     legacy.descripcion || null,
     legacy.experiencia || null,
-    null
+    null,
+    legacy.categoria || null
   );
 
-  sendVerificationEmail(email, token);
+  await sendVerificationEmail(email, token);
   return { ok: true, userId: userResult.lastInsertRowid, legacyId: legacyResult.lastInsertRowid, token };
 }
 
@@ -220,19 +226,25 @@ app.get('/', (req, res) => {
 });
 
 // ── REGISTRO ──────────────────────────────────
-app.post('/api/registro', (req, res) => {
-  const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia } = req.body;
+app.post('/api/registro', async (req, res) => {
+  const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, categoria } = req.body;
   const name = `${nombre || ''} ${apellido || ''}`.trim();
   if (!name || !email || !password || !tipo) return res.status(400).json({ error: 'Faltan datos obligatorios' });
-  const result = registerAuthAccount({
-    name,
-    email,
-    password,
-    role: tipo,
-    legacyData: { telefono, zona, especialidad, descripcion, experiencia }
-  });
-  if (!result.ok) return res.status(400).json({ error: result.error });
-  res.json({ ok: true, id: result.legacyId });
+  try {
+    const result = await registerAuthAccount({
+      name,
+      email,
+      password,
+      role: tipo,
+      categoria,
+      legacyData: { telefono, zona, especialidad, descripcion, experiencia, categoria }
+    });
+    if (!result.ok) return res.status(400).json({ error: result.error });
+    res.json({ ok: true, id: result.legacyId });
+  } catch (err) {
+    console.error('Error en /api/registro:', err);
+    res.status(500).json({ ok: false, error: 'Error al enviar email de verificación' });
+  }
 });
 
 // ── LOGIN ─────────────────────────────────────
@@ -259,11 +271,16 @@ app.post('/api/login', (req, res) => {
 });
 
 // ── AUTH ─────────────────────────────────────
-app.post('/api/auth/register', (req, res) => {
-  const { name, email, password, role } = req.body;
-  const result = registerAuthAccount({ name, email, password, role });
-  if (!result.ok) return res.status(400).json({ ok: false, error: result.error });
-  res.json({ ok: true, message: 'Revisá tu email para verificar tu cuenta' });
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, password, role, categoria, especialidad } = req.body;
+  try {
+    const result = await registerAuthAccount({ name, email, password, role, categoria, legacyData: { especialidad, categoria } });
+    if (!result.ok) return res.status(400).json({ ok: false, error: result.error });
+    res.json({ ok: true, message: 'Revisá tu email para verificar tu cuenta' });
+  } catch (err) {
+    console.error('Error en /api/auth/register:', err);
+    res.status(500).json({ ok: false, error: 'Error al enviar email de verificación' });
+  }
 });
 
 app.post('/api/auth/login', (req, res) => {
@@ -306,11 +323,13 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
 
 // ── PROFESIONALES ─────────────────────────────
 app.get('/api/profesionales', (req, res) => {
-  const { especialidad, zona } = req.query;
-  let query = "SELECT id, nombre, apellido, especialidad, zona, descripcion, experiencia, foto FROM usuarios WHERE tipo = 'profesional'";
+  const { categoria, especialidad, zona, q } = req.query;
+  let query = "SELECT id, nombre, apellido, especialidad, categoria, zona, descripcion, experiencia, foto FROM usuarios WHERE tipo = 'profesional'";
   const params = [];
+  if (categoria) { query += ' AND categoria = ?'; params.push(categoria); }
   if (especialidad) { query += ' AND especialidad LIKE ?'; params.push(`%${especialidad}%`); }
   if (zona) { query += ' AND zona LIKE ?'; params.push(`%${zona}%`); }
+  if (q) { query += ' AND (nombre LIKE ? OR apellido LIKE ? OR especialidad LIKE ? OR descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
   res.json(db.prepare(query).all(...params));
 });
 
