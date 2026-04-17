@@ -39,8 +39,8 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) cb(null, true);
-    else cb(new Error('Solo se permiten imágenes'));
+    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') cb(null, true);
+    else cb(new Error('Solo se permiten imágenes o PDF'));
   }
 });
 
@@ -94,6 +94,8 @@ db.exec(`
     role TEXT DEFAULT 'cliente',
     city TEXT,
     profile_image TEXT,
+    descripcion TEXT,
+    experiencia INTEGER,
     google_id TEXT,
     onboarding_complete INTEGER DEFAULT 0,
     categoria TEXT,
@@ -111,6 +113,15 @@ db.exec(`
 
 try { db.prepare('ALTER TABLE users ADD COLUMN categoria TEXT').run(); } catch (e) {}
 try { db.prepare('ALTER TABLE usuarios ADD COLUMN categoria TEXT').run(); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN verification_level TEXT DEFAULT 'none'`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN verification_status TEXT DEFAULT 'pending'`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN matricula TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN titulo_url TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN dni_url TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN precio_estimado TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN profile_completion INTEGER DEFAULT 0`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN descripcion TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN experiencia INTEGER`); } catch (e) {}
 
 app.use(cors());
 app.use(express.json());
@@ -140,10 +151,19 @@ function getUserPayload(user) {
     role: user.role,
     city: user.city,
     profile_image: user.profile_image,
+    descripcion: user.descripcion || null,
+    experiencia: user.experiencia || null,
     onboarding_complete: user.onboarding_complete,
     email_verified: user.email_verified,
     phone_verified: user.phone_verified,
-    categoria: user.categoria || null
+    categoria: user.categoria || null,
+    verification_level: user.verification_level || 'none',
+    verification_status: user.verification_status || 'pending',
+    matricula: user.matricula || null,
+    titulo_url: user.titulo_url || null,
+    dni_url: user.dni_url || null,
+    precio_estimado: user.precio_estimado || null,
+    profile_completion: user.profile_completion || 0
   };
 }
 
@@ -191,16 +211,19 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
   const existingAuth = findAuthUserByEmail(email);
   const existingLegacy = findLegacyUserByEmail(email);
   if (existingAuth || existingLegacy) return { ok: false, error: 'El email ya existe' };
+
   const hash = bcrypt.hashSync(password, 12);
-  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria) VALUES (?, ?, ?, ?, 0, 0, 0, ?)');
-  const userResult = createUser.run(name, email, hash, role, categoria || null);
+  const legacy = legacyData || {};
+
+  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia) VALUES (?, ?, ?, ?, 0, 0, 0, ?, ?, ?)');
+  const userResult = createUser.run(name, email, hash, role, categoria || null, legacy.descripcion || null, legacy.experiencia || null);
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(userResult.lastInsertRowid, token, expiresAt);
 
   const [firstName, ...rest] = name.trim().split(' ');
   const lastName = rest.join(' ');
-  const legacy = legacyData || {};
+
   const createLegacy = db.prepare('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
   const legacyResult = createLegacy.run(
     firstName || name,
@@ -321,15 +344,93 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
   res.json({ ok: true, user: getUserPayload(user) });
 });
 
+app.put('/api/perfil/verificacion', authMiddleware, (req, res) => {
+  const { verification_level, matricula } = req.body;
+  const validLevels = ['universitario', 'matriculado', 'independiente'];
+  if (!validLevels.includes(verification_level)) return res.status(400).json({ ok: false, error: 'Nivel de verificación inválido' });
+  db.prepare('UPDATE users SET verification_level = ?, matricula = ?, verification_status = ? WHERE id = ?')
+    .run(verification_level, matricula || null, 'pending_review', req.user.id);
+  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  res.json({ ok: true, user: getUserPayload(updated) });
+});
+
+app.post('/api/perfil/documento', authMiddleware, upload.single('documento'), (req, res) => {
+  if (!req.file) return res.status(400).json({ ok: false, error: 'Documento no recibido' });
+  const { tipo } = req.body;
+  const url = `/uploads/${req.file.filename}`;
+  if (tipo === 'titulo') {
+    db.prepare('UPDATE users SET titulo_url = ?, verification_status = ? WHERE id = ?')
+      .run(url, 'pending_review', req.user.id);
+  } else if (tipo === 'dni') {
+    db.prepare('UPDATE users SET dni_url = ?, verification_status = ? WHERE id = ?')
+      .run(url, 'pending_review', req.user.id);
+  } else {
+    return res.status(400).json({ ok: false, error: 'Tipo de documento inválido' });
+  }
+  res.json({ ok: true, url });
+});
+
+app.put('/api/perfil/precio', authMiddleware, (req, res) => {
+  const { precio_estimado } = req.body;
+  if (!precio_estimado) return res.status(400).json({ ok: false, error: 'Precio estimado requerido' });
+  db.prepare('UPDATE users SET precio_estimado = ? WHERE id = ?').run(precio_estimado, req.user.id);
+  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  res.json({ ok: true, user: getUserPayload(updated) });
+});
+
+app.get('/api/perfil/completitud', authMiddleware, (req, res) => {
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  if (!user) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
+  const calificacionesCount = db.prepare('SELECT COUNT(*) AS cnt FROM calificaciones WHERE para_usuario = ?').get(req.user.id)?.cnt || 0;
+  const detalle = {
+    foto: !!user.profile_image,
+    descripcion: !!(user.descripcion && user.descripcion.length > 10),
+    zona: !!(user.city || user.zona),
+    telefono: !!user.phone,
+    nivel_verificacion: !!user.verification_level && user.verification_level !== 'none',
+    documento: !!(user.titulo_url || user.dni_url),
+    matricula: !!user.matricula,
+    calificaciones: calificacionesCount > 0,
+    precio: !!user.precio_estimado,
+    email_verificado: user.email_verified === 1
+  };
+  const porcentaje = Math.min(100,
+    (detalle.foto ? 10 : 0) +
+    (detalle.descripcion ? 10 : 0) +
+    (detalle.zona ? 10 : 0) +
+    (detalle.telefono ? 10 : 0) +
+    (detalle.nivel_verificacion ? 10 : 0) +
+    (detalle.documento ? 20 : 0) +
+    (detalle.matricula ? 15 : 0) +
+    (detalle.calificaciones ? 10 : 0) +
+    (detalle.precio ? 5 : 0) +
+    (detalle.email_verificado ? 10 : 0)
+  );
+  db.prepare('UPDATE users SET profile_completion = ? WHERE id = ?').run(porcentaje, req.user.id);
+  res.json({ ok: true, porcentaje, detalle });
+});
+
 // ── PROFESIONALES ─────────────────────────────
 app.get('/api/profesionales', (req, res) => {
   const { categoria, especialidad, zona, q } = req.query;
-  let query = "SELECT id, nombre, apellido, especialidad, categoria, zona, descripcion, experiencia, foto FROM usuarios WHERE tipo = 'profesional'";
+  let query = `
+    SELECT 
+      u.id, u.nombre, u.apellido, u.especialidad, u.categoria, 
+      u.zona, u.descripcion, u.experiencia, u.foto,
+      us.verification_level, us.verification_status,
+      COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
+      COUNT(c.id) as total_calificaciones
+    FROM usuarios u 
+    LEFT JOIN users us ON us.email = u.email 
+    LEFT JOIN calificaciones c ON c.para_usuario = u.id
+    WHERE u.tipo = 'profesional'
+  `;
   const params = [];
-  if (categoria) { query += ' AND categoria = ?'; params.push(categoria); }
-  if (especialidad) { query += ' AND especialidad LIKE ?'; params.push(`%${especialidad}%`); }
-  if (zona) { query += ' AND zona LIKE ?'; params.push(`%${zona}%`); }
-  if (q) { query += ' AND (nombre LIKE ? OR apellido LIKE ? OR especialidad LIKE ? OR descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+  if (categoria) { query += ' AND u.categoria = ?'; params.push(categoria); }
+  if (especialidad) { query += ' AND u.especialidad LIKE ?'; params.push(`%${especialidad}%`); }
+  if (zona) { query += ' AND u.zona LIKE ?'; params.push(`%${zona}%`); }
+  if (q) { query += ' AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.especialidad LIKE ? OR u.descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+  query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
   res.json(db.prepare(query).all(...params));
 });
 
@@ -341,6 +442,7 @@ app.post('/api/foto', upload.single('foto'), (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const fotoUrl = `/uploads/${req.file.filename}`;
     db.prepare('UPDATE usuarios SET foto = ? WHERE id = ?').run(fotoUrl, decoded.id);
+    db.prepare('UPDATE users SET profile_image = ? WHERE email=(SELECT email FROM usuarios WHERE id=?)').run(fotoUrl, decoded.id);
     res.json({ ok: true, foto: fotoUrl });
   } catch (e) {
     res.status(401).json({ error: 'Token inválido' });
@@ -356,6 +458,8 @@ app.put('/api/perfil', (req, res) => {
     const { nombre, apellido, telefono, zona, especialidad, descripcion, experiencia } = req.body;
     db.prepare('UPDATE usuarios SET nombre=?, apellido=?, telefono=?, zona=?, especialidad=?, descripcion=?, experiencia=? WHERE id=?')
       .run(nombre, apellido, telefono, zona, especialidad, descripcion, experiencia, decoded.id);
+    db.prepare('UPDATE users SET phone=?, city=?, descripcion=?, experiencia=? WHERE email=(SELECT email FROM usuarios WHERE id=?)')
+      .run(telefono, zona, descripcion || null, experiencia || null, decoded.id);
     const usuario = db.prepare('SELECT id, nombre, apellido, email, tipo, especialidad, zona, foto FROM usuarios WHERE id=?').get(decoded.id);
     res.json({ ok: true, usuario });
   } catch (e) {
@@ -455,6 +559,49 @@ app.get('/api/calificaciones/:id', (req, res) => {
     const cals = db.prepare(`SELECT c.*, u.nombre, u.apellido FROM calificaciones c JOIN usuarios u ON c.de_usuario=u.id WHERE c.para_usuario=? ORDER BY c.creado_en DESC`).all(req.params.id);
     res.json(cals);
   } catch(e) { res.json([]); }
+});
+
+// ── PANEL ADMIN ──────────────────────────────
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'kip_admin_2026';
+
+function adminMiddleware(req, res, next) {
+  const secret = req.headers['x-admin-secret'];
+  if (secret !== ADMIN_SECRET) return res.status(401).json({ ok: false, error: 'No autorizado' });
+  next();
+}
+
+app.get('/api/admin/verificaciones', adminMiddleware, (req, res) => {
+  const pendientes = db.prepare(`
+    SELECT u.id, u.name, u.email, u.verification_level, u.verification_status,
+           u.titulo_url, u.dni_url, u.matricula, u.created_at
+    FROM users u
+    WHERE u.role IN ('professional', 'profesional')
+    AND u.verification_level != 'none'
+    AND u.verification_status = 'pending_review'
+    ORDER BY u.created_at DESC
+  `).all();
+  res.json({ ok: true, pendientes });
+});
+
+app.put('/api/admin/verificaciones/:id/aprobar', adminMiddleware, (req, res) => {
+  const { id } = req.params;
+  db.prepare("UPDATE users SET verification_status = 'approved' WHERE id = ?").run(id);
+  res.json({ ok: true, message: 'Verificación aprobada' });
+});
+
+app.put('/api/admin/verificaciones/:id/rechazar', adminMiddleware, (req, res) => {
+  const { id } = req.params;
+  db.prepare("UPDATE users SET verification_status = 'rejected', verification_level = 'none' WHERE id = ?").run(id);
+  res.json({ ok: true, message: 'Verificación rechazada' });
+});
+
+app.get('/api/admin/usuarios', adminMiddleware, (req, res) => {
+  const usuarios = db.prepare(`
+    SELECT id, name, email, role, verification_level, verification_status, 
+           email_verified, created_at, profile_completion
+    FROM users ORDER BY created_at DESC
+  `).all();
+  res.json({ ok: true, usuarios });
 });
 
 // ── INICIO ────────────────────────────────────

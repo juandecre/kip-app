@@ -1432,7 +1432,7 @@ textarea:focus {
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">
           <h1 class="profile-name" id="pp-name">Profesional</h1>
-          <div class="badge badge-green">✓ Verificado</div>
+          <div id="pp-verification-badge" style="display:none"></div>
         </div>
         <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,194,255,0.15);border:1px solid rgba(0,194,255,0.2);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:12px" id="pp-esp">Especialidad</div>
         <div style="display:flex;gap:20px;flex-wrap:wrap">
@@ -1646,6 +1646,72 @@ textarea:focus {
             </div>
           </div>
         </div>
+        <div class="card" style="margin-top:20px;padding:24px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Completitud del perfil</div>
+            <div id="perfil-pct-num" style="font-size:22px;font-weight:800;color:var(--accent)">0%</div>
+          </div>
+          <div style="height:10px;background:var(--surface-soft);border-radius:999px;overflow:hidden;margin-bottom:20px">
+            <div id="perfil-pct-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:999px;transition:width 600ms ease;width:0%"></div>
+          </div>
+          <div id="perfil-checklist" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+        <div id="card-verificacion" class="card" style="margin-top:20px;padding:24px;display:none">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong);margin-bottom:8px">Nivel de verificación</div>
+          <p style="font-size:13px;color:var(--text-soft);margin-bottom:20px">Elegí tu nivel y subí la documentación correspondiente para obtener el badge en tu perfil.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px" id="verification-level-selector">
+            <div onclick="selectVerificationLevel('universitario')" id="vl-universitario" style="border:2px solid var(--border);border-radius:18px;padding:20px;cursor:pointer;transition:all 180ms ease">
+              <div style="font-size:28px;margin-bottom:10px">🎓</div>
+              <div style="font-weight:700;color:var(--text-strong);margin-bottom:6px">Universitario</div>
+              <div style="font-size:12px;color:var(--text-soft)">Abogado, Contador, Arquitecto, Médico, Ingeniero...</div>
+              <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--accent)">Requiere título universitario</div>
+            </div>
+            <div onclick="selectVerificationLevel('matriculado')" id="vl-matriculado" style="border:2px solid var(--border);border-radius:18px;padding:20px;cursor:pointer;transition:all 180ms ease">
+              <div style="font-size:28px;margin-bottom:10px">🪪</div>
+              <div style="font-weight:700;color:var(--text-strong);margin-bottom:6px">Matriculado</div>
+              <div style="font-size:12px;color:var(--text-soft)">Gasista, Electricista, Plomero, Albañil con seguro...</div>
+              <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--accent)">Requiere número de matrícula</div>
+            </div>
+            <div onclick="selectVerificationLevel('independiente')" id="vl-independiente" style="border:2px solid var(--border);border-radius:18px;padding:20px;cursor:pointer;transition:all 180ms ease">
+              <div style="font-size:28px;margin-bottom:10px">✅</div>
+              <div style="font-weight:700;color:var(--text-strong);margin-bottom:6px">Independiente</div>
+              <div style="font-size:12px;color:var(--text-soft)">Profesor, Peluquero, Empleada doméstica, Niñera...</div>
+              <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--accent)">Requiere DNI</div>
+            </div>
+          </div>
+          <div id="verificacion-docs" style="display:none">
+            <div id="doc-universitario-fields" style="display:none">
+              <div class="input-group">
+                <label class="input-label">📄 Subir título universitario (foto o PDF)</label>
+                <input type="file" accept="image/*,.pdf" class="input-field" onchange="subirDocumento(this,'titulo')">
+              </div>
+              <div id="titulo-status" style="font-size:13px;color:var(--text-soft);margin-top:-10px;margin-bottom:16px"></div>
+            </div>
+            <div id="doc-matriculado-fields" style="display:none">
+              <div class="input-group">
+                <label class="input-label">🔢 Número de matrícula</label>
+                <input class="input-field" id="input-matricula" placeholder="Ej: 12345-AB">
+              </div>
+              <div class="input-group">
+                <label class="input-label">📄 Foto del carnet/habilitación (opcional)</label>
+                <input type="file" accept="image/*,.pdf" class="input-field" onchange="subirDocumento(this,'dni')">
+              </div>
+            </div>
+            <div id="doc-independiente-fields" style="display:none">
+              <div class="input-group">
+                <label class="input-label">🪪 Foto del DNI (frente)</label>
+                <input type="file" accept="image/*" class="input-field" onchange="subirDocumento(this,'dni')">
+              </div>
+              <div id="dni-status" style="font-size:13px;color:var(--text-soft);margin-top:-10px;margin-bottom:16px"></div>
+            </div>
+            <div id="verification-pending-msg" style="display:none;background:rgba(255,107,43,0.08);border:1px solid rgba(255,107,43,0.2);border-radius:14px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--accent)">
+              ⏳ Documentación enviada. Revisaremos tu perfil en 24-48hs hábiles.
+            </div>
+            <button onclick="guardarVerificacion()" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px">
+              Guardar verificación
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1718,8 +1784,20 @@ let selectedFotoFile = null;
 let registerRole = 'cliente';
 let selectedCategoria = '';
 let selectedEspecialidad = '';
+let selectedVerificationLevel = '';
 const grads = ['av-grad-1','av-grad-2','av-grad-3','av-grad-4','av-grad-5','av-grad-6'];
 const urlParams = new URLSearchParams(window.location.search);
+
+function renderVerificationBadge(level, status, inline=false) {
+  if (!level || status !== 'approved') return '';
+  let label = '';
+  let color = 'var(--green)';
+  if (level === 'universitario') { label = '🎓 Universitario'; color = '#D4AF37'; }
+  if (level === 'matriculado') { label = '🪪 Matriculado'; color = '#3B82F6'; }
+  if (level === 'independiente') { label = '✅ Verificado'; color = '#22C55E'; }
+  const style = inline ? 'display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:700;color:white;' : 'display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;font-size:14px;font-weight:700;color:white;';
+  return `<div class="badge" style="${style}background:${color};">${label}</div>`;
+}
 if (urlParams.get('verified') === 'true') {
   setTimeout(() => { showToast('Email verificado con éxito'); showScreen('login'); }, 200);
 }
@@ -1732,6 +1810,7 @@ function showScreen(name) {
   if (warning && name === 'login') { warning.style.display = 'none'; }
   const t = document.getElementById('screen-'+name);
   if (t) { t.style.display='block'; t.classList.add('active'); window.scrollTo(0,0); }
+  if (name === 'profile-user') cargarCompletitud();
 }
 function goBack() { showScreen(previousScreen); }
 
@@ -2025,8 +2104,11 @@ function updateUIAfterLogin() {
     showScreen('onboarding');
     return;
   }
+  const cardV = document.getElementById('card-verificacion');
+  if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
   if (currentUser.tipo==='profesional') { showScreen('dashboard-pro'); }
   else { showScreen('dashboard-client'); loadProfesionales('pros-list'); }
+  setTimeout(cargarCompletitud, 500);
 }
 
 function doLogout() {
@@ -2199,11 +2281,13 @@ function renderPros(pros, containerId) {
     const ini = ((p.nombre||'')[0]+((p.apellido||'')[0]||'')).toUpperCase();
     const grad = grads[(p.id||i) % grads.length];
     const fotoHtml = p.foto ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">` : `<div class="avatar ${grad}" style="width:52px;height:52px;border-radius:14px;font-size:20px">${ini}</div>`;
+    const badgeHtml = renderVerificationBadge(p.verification_level, p.verification_status);
     return `<div class="pro-card" onclick="showProProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
       <div class="pro-card-header">
         <div class="pro-avatar-wrap">${fotoHtml}</div>
         <div class="pro-info">
           <div class="pro-name">${p.nombre} ${p.apellido||''}</div>
+          ${badgeHtml ? `<div style="margin-top:6px">${badgeHtml}</div>` : ''}
           <div class="pro-specialty">${p.especialidad||'Profesional'}</div>
           <div class="pro-location">📍 ${p.zona||'Argentina'}</div>
         </div>
@@ -2229,6 +2313,12 @@ function showProProfile(pro) {
   s('pp-zona',`📍 ${pro.zona||'Argentina'}`);
   s('pp-exp',`📅 ${pro.experiencia||0} años de experiencia`);
   s('pp-desc',pro.descripcion||'Profesional registrado en KIP.');
+  const badgeEl = document.getElementById('pp-verification-badge');
+  if (badgeEl) {
+    const badgeHtml = renderVerificationBadge(pro.verification_level, pro.verification_status);
+    badgeEl.innerHTML = badgeHtml;
+    badgeEl.style.display = badgeHtml ? 'inline-flex' : 'none';
+  }
   // Load ratings
   fetch(API + '/calificaciones/' + pro.id)
     .then(res => res.json())
@@ -2323,9 +2413,109 @@ async function guardarPerfil() {
   try {
     const r = await fetch(`${API}/perfil`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${currentToken}`},body:JSON.stringify(body)});
     const d = await r.json(); showLoading(false);
-    if (d.ok) { currentUser={...currentUser,...d.usuario}; showToast('¡Perfil actualizado!'); }
+    if (d.ok) { currentUser={...currentUser,...d.usuario}; localStorage.setItem('kip_user', JSON.stringify(currentUser)); showToast('¡Perfil actualizado!'); cargarCompletitud(); }
     else showToast('Error al guardar','error');
   } catch(e) { showLoading(false); showToast('Error al guardar','error'); }
+}
+
+function selectVerificationLevel(level) {
+  selectedVerificationLevel = level;
+  ['universitario','matriculado','independiente'].forEach(type => {
+    const card = document.getElementById(`vl-${type}`);
+    if (!card) return;
+    card.style.borderColor = type === level ? 'var(--accent)' : 'var(--border)';
+    card.style.background = type === level ? 'rgba(255,107,43,0.08)' : 'var(--surface)';
+  });
+  const docs = document.getElementById('verificacion-docs');
+  const uniFields = document.getElementById('doc-universitario-fields');
+  const matFields = document.getElementById('doc-matriculado-fields');
+  const indFields = document.getElementById('doc-independiente-fields');
+  if (docs) docs.style.display = 'block';
+  if (uniFields) uniFields.style.display = level === 'universitario' ? 'block' : 'none';
+  if (matFields) matFields.style.display = level === 'matriculado' ? 'block' : 'none';
+  if (indFields) indFields.style.display = level === 'independiente' ? 'block' : 'none';
+}
+
+async function subirDocumento(input, tipo) {
+  const file = input.files && input.files[0];
+  if (!file || !currentToken) return;
+  const formData = new FormData();
+  formData.append('documento', file);
+  formData.append('tipo', tipo);
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/perfil/documento`, { method: 'POST', headers: { 'Authorization': `Bearer ${currentToken}` }, body: formData });
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      if (tipo === 'titulo') document.getElementById('titulo-status').textContent = 'Título cargado correctamente';
+      if (tipo === 'dni') document.getElementById('dni-status').textContent = 'Documento cargado correctamente';
+      currentUser = { ...currentUser, verification_status: 'pending_review', titulo_url: tipo === 'titulo' ? d.url : currentUser.titulo_url, dni_url: tipo === 'dni' ? d.url : currentUser.dni_url };
+      localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      showToast('Documento subido. Queda en revisión.');
+      cargarCompletitud();
+    } else {
+      showToast(d.error || 'Error al subir documento','error');
+    }
+  } catch (e) { showLoading(false); showToast('Error al subir documento','error'); }
+}
+
+async function guardarVerificacion() {
+  if (!currentToken) return showToast('Iniciá sesión primero','error');
+  if (!selectedVerificationLevel) return showToast('Seleccioná un nivel de verificación','error');
+  const matricula = selectedVerificationLevel === 'matriculado' ? document.getElementById('input-matricula')?.value.trim() : '';
+  if (selectedVerificationLevel === 'matriculado' && !matricula) return showToast('Ingresá tu número de matrícula','error');
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/perfil/verificacion`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` }, body: JSON.stringify({ verification_level: selectedVerificationLevel, matricula }) });
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      currentUser = { ...currentUser, verification_level: d.user.verification_level, verification_status: d.user.verification_status, matricula: d.user.matricula };
+      localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      showToast('Nivel de verificación guardado. Queda en revisión.');
+      cargarCompletitud();
+    } else {
+      showToast(d.error || 'Error al guardar verificación','error');
+    }
+  } catch (e) { showLoading(false); showToast('No se pudo guardar la verificación','error'); }
+}
+
+
+async function cargarCompletitud() {
+  if (!currentToken) return;
+  try {
+    const r = await fetch(`${API}/perfil/completitud`, { headers: { 'Authorization': `Bearer ${currentToken}` } });
+    const d = await r.json();
+    if (!d.ok) return;
+    const porcentaje = d.porcentaje;
+    const detalle = d.detalle || {};
+    const pctNum = document.getElementById('perfil-pct-num');
+    const pctBar = document.getElementById('perfil-pct-bar');
+    const checklist = document.getElementById('perfil-checklist');
+    if (pctNum) pctNum.textContent = `${porcentaje}%`;
+    if (pctBar) pctBar.style.width = `${porcentaje}%`;
+    if (checklist) {
+      const items = [
+        { label: 'Foto de perfil', ok: detalle.foto },
+        { label: 'Descripción profesional', ok: detalle.descripcion },
+        { label: 'Zona de trabajo', ok: detalle.zona },
+        { label: 'Teléfono', ok: detalle.telefono },
+        { label: 'Precio estimado', ok: detalle.precio },
+        { label: 'Email verificado', ok: detalle.email_verificado },
+        { label: 'Nivel de verificación seleccionado', ok: detalle.nivel_verificacion },
+        { label: 'Documento subido', ok: detalle.documento },
+        { label: 'Matrícula registrada', ok: detalle.matricula }
+      ];
+      checklist.innerHTML = items.map(item => `<div style="display:flex;align-items:center;gap:10px;color:${item.ok ? '#D1FAE5' : '#FECACA'}"><span style="font-size:18px">${item.ok ? '✔️' : '⏳'}</span><span style="font-size:13px;color:${item.ok ? 'var(--text)' : 'var(--text-soft)'}">${item.label}</span></div>`).join('');
+    }
+    const priceInput = document.getElementById('input-precio');
+    if (priceInput && currentUser && currentUser.precio_estimado) priceInput.value = currentUser.precio_estimado;
+    if (currentUser) {
+      const level = currentUser.verification_level || 'none';
+      if (level !== 'none') selectVerificationLevel(level);
+    }
+  } catch (e) {
+    console.error('Error cargando completitud:', e);
+  }
 }
 
 // ── UTILS ──────────────────────────────────────
