@@ -1222,75 +1222,94 @@ textarea:focus {
   </div>
 </div>
 
-<!-- ══════════ DASHBOARD CLIENTE ══════════ -->
 <div class="screen" id="screen-dashboard-client" style="display:none">
-  <nav class="navbar">
-    <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div><div style="flex:1"></div>
-    <button class="nav-link active">Dashboard</button>
-    <button class="nav-link" onclick="showScreen('search')">Buscar</button>
-    <button class="nav-link" onclick="showScreen('jobs')">Trabajos</button>
-    <button class="nav-link" onclick="openChat(null)">Chat</button>
-    <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
-  </nav>
-  <div class="app-layout">
-    <div class="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-label">Principal</div>
-        <button class="sidebar-item active">🏠 Dashboard</button>
-        <button class="sidebar-item" onclick="showScreen('search')">🔍 Buscar profesionales</button>
-        <button class="sidebar-item" onclick="openChat(null)">💬 Chat <span class="sidebar-badge" id="badge-chat-client">0</span></button>
-        <button class="sidebar-item" onclick="showScreen('jobs')">📋 Mis trabajos</button>
-        <button class="sidebar-item" onclick="showScreen('payments')">💳 Pagos</button>
+<nav class="navbar">
+  <div class="logo-icon">K</div>
+  <div class="navbar-logo">KI<span>P</span></div>
+  <div style="flex:1"></div>
+  <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
+</nav>
+
+<div style="max-width:900px;margin:0 auto;padding:100px 24px 48px">
+
+  <!-- Saludo -->
+  <div style="text-align:center;margin-bottom:40px">
+    <h1 id="dash-greeting" style="font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--text-strong);margin-bottom:8px">¿Qué servicio necesitás?</h1>
+    <p style="color:var(--text-soft);font-size:16px">Encontrá el profesional ideal para tu trabajo</p>
+  </div>
+
+  <!-- Buscador grande -->
+  <div style="display:flex;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:999px;padding:8px 8px 8px 24px;align-items:center;margin-bottom:48px;transition:border-color 200ms ease" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    <span style="font-size:20px;margin-right:12px">🔍</span>
+    <input id="search-query-home" type="text" placeholder="Ej: electricista, plomero, diseñador..."
+      style="flex:1;background:transparent;border:none;outline:none;font-size:17px;color:var(--text-strong);font-family:var(--font-body)"
+      onkeydown="if(event.key==='Enter')buscarDesdeHome()"
+      onfocus="this.parentElement.style.borderColor='var(--accent)'"
+      onblur="this.parentElement.style.borderColor='var(--border)'">
+    <button onclick="buscarDesdeHome()"
+      style="padding:14px 28px;border-radius:999px;background:var(--accent);color:white;font-weight:700;font-size:15px;font-family:var(--font-body);border:none;cursor:pointer;white-space:nowrap">
+      Buscar
+    </button>
+  </div>
+
+  <!-- Categorías -->
+  <div style="margin-bottom:16px">
+    <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:20px">Categorías populares</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px">
+      <div onclick="buscarCategoria('Electricista')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">⚡</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Electricista</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">340 pros</div>
       </div>
-      <div class="sidebar-section">
-        <div class="sidebar-label">Cuenta</div>
-        <button class="sidebar-item" onclick="showScreen('notifications')">🔔 Notificaciones</button>
-        <button class="sidebar-item" onclick="showScreen('profile-user')">👤 Mi perfil</button>
-        <button class="sidebar-item" onclick="doLogout()">🚪 Cerrar sesión</button>
+      <div onclick="buscarCategoria('Plomero')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">🔧</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Plomero</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">218 pros</div>
       </div>
-    </div>
-    <div class="main-content">
-      <div class="page-header">
-        <div><h1 class="page-title" id="dash-greeting">Hola 👋</h1><p class="page-sub">Esto es lo que pasa en tu cuenta</p></div>
-        <button class="btn btn-primary" onclick="showScreen('search')">+ Nuevo servicio</button>
+      <div onclick="buscarCategoria('Carpintero')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">🪵</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Carpintero</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">165 pros</div>
       </div>
-      <div class="stats-row">
-        <div class="stat-card blue"><div class="stat-card-icon">🔧</div><div class="stat-card-label">Trabajos activos</div><div class="stat-card-val">3</div><div class="stat-card-change">↑ 1 esta semana</div></div>
-        <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-card-label">Finalizados</div><div class="stat-card-val">12</div><div class="stat-card-change">↑ 2 este mes</div></div>
-        <div class="stat-card orange"><div class="stat-card-icon">📩</div><div class="stat-card-label">Presupuestos</div><div class="stat-card-val">5</div><div class="stat-card-change">3 pendientes</div></div>
-        <div class="stat-card cyan"><div class="stat-card-icon">⭐</div><div class="stat-card-label">Calificación</div><div class="stat-card-val">4.7</div></div>
+      <div onclick="buscarCategoria('Albañil')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">🧱</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Albañil</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">290 pros</div>
       </div>
-      <div class="content-grid">
-        <div>
-          <div class="card" style="margin-bottom:20px">
-            <div class="card-header"><div><div class="card-title">Profesionales en KIP</div><div class="card-subtitle">Registrados en la plataforma</div></div><button class="btn btn-secondary btn-sm" onclick="loadProfesionales('pros-list')">🔄 Actualizar</button></div>
-            <div class="card-body"><div class="pro-grid" id="pros-list" style="grid-template-columns:1fr 1fr"><div style="font-size:14px;color:var(--gray-400);text-align:center;padding:20px;grid-column:span 2">Cargando...</div></div></div>
-          </div>
-        </div>
-        <div>
-          <div class="card" style="margin-bottom:16px">
-            <div class="card-header"><div class="card-title">Presupuestos recibidos</div></div>
-            <div class="card-body" style="padding:16px">
-              <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--gray-100);border-radius:10px">
-                <div class="avatar av-grad-2" style="width:40px;height:40px;font-size:16px">PC</div>
-                <div style="flex:1"><div style="font-size:13px;font-weight:600">Pedro Castro</div><div style="font-size:12px;color:var(--gray-400)">Pintura interior</div></div>
-                <div style="text-align:right"><div style="font-size:15px;font-weight:800">$38.000</div><button class="btn btn-success btn-sm" style="margin-top:4px" onclick="showScreen('payments')">Aceptar</button></div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">Actividad reciente</div></div>
-            <div class="card-body" style="padding:16px">
-              <div style="display:flex;flex-direction:column;gap:12px">
-                <div style="display:flex;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:6px;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600">Diego finalizó el trabajo</div><div style="font-size:12px;color:var(--gray-400)">Hace 2 horas</div></div></div>
-                <div style="display:flex;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:6px;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600">Presupuesto de Laura Vidal</div><div style="font-size:12px;color:var(--gray-400)">Hace 5 horas</div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div onclick="buscarCategoria('Arquitecto')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">🏗️</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Arquitecto</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">87 pros</div>
+      </div>
+      <div onclick="buscarCategoria('Contador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">💰</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Contador</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">124 pros</div>
+      </div>
+      <div onclick="buscarCategoria('Programador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">💻</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Programador</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">203 pros</div>
+      </div>
+      <div onclick="buscarCategoria('Diseñador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+        <div style="font-size:32px;margin-bottom:10px">🎨</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Diseñador</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">156 pros</div>
       </div>
     </div>
   </div>
+
+  <!-- Resultados -->
+  <div id="home-search-results" style="margin-top:32px"></div>
+
+  <!-- Links secundarios -->
+  <div style="display:flex;justify-content:center;gap:24px;margin-top:48px;padding-top:24px;border-top:1px solid var(--border)">
+    <button onclick="openChat(null)" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">💬 Mis mensajes</button>
+    <button onclick="showScreen('jobs')" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">📋 Mis trabajos</button>
+    <button onclick="showScreen('profile-user')" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">👤 Mi perfil</button>
+    <button onclick="doLogout()" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">🚪 Salir</button>
+  </div>
+
 </div>
 
 <!-- ══════════ DASHBOARD PRO ══════════ -->
@@ -2098,6 +2117,37 @@ async function enviarCalificacion() {
 
 function setRating(val) {
   document.getElementById('stars-general').querySelectorAll('span').forEach((s,i)=>s.classList.toggle('active',i<val));
+}
+
+function buscarDesdeHome() {
+  const q = document.getElementById('search-query-home').value.trim();
+  document.getElementById('search-query') && (document.getElementById('search-query').value = q);
+  buscarProfesionalesEnHome(q, '');
+}
+
+function buscarCategoria(esp) {
+  document.getElementById('search-query-home').value = esp;
+  buscarProfesionalesEnHome('', esp);
+}
+
+async function buscarProfesionalesEnHome(q, esp) {
+  const results = document.getElementById('home-search-results');
+  results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:20px">Buscando...</div>';
+  let url = `${API}/profesionales?`;
+  if (esp) url += `especialidad=${encodeURIComponent(esp)}&`;
+  if (q)   url += `q=${encodeURIComponent(q)}`;
+  try {
+    const r = await fetch(url);
+    const pros = await r.json();
+    if (pros.length === 0) {
+      results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:40px">No encontramos profesionales con esa búsqueda.</div>';
+      return;
+    }
+    results.innerHTML = '<p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:16px">Resultados</p><div class="pro-grid" id="home-pros-grid"></div>';
+    renderPros(pros, 'home-pros-grid');
+  } catch(e) {
+    results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:40px">Error al buscar. Intentá de nuevo.</div>';
+  }
 }
 </script>
 </body>
