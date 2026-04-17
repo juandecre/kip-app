@@ -166,7 +166,7 @@ async function sendVerificationEmail(email, token) {
     </div>`;
   try {
     const response = await resend.emails.send({
-      from: 'ServiKIP <onboarding@resend.dev>',
+      from: 'ServiKIP <noreply@servikip.com.ar>',
       to: email,
       subject: 'Verificá tu cuenta en ServiKIP',
       html
