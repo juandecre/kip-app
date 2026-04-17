@@ -1108,7 +1108,7 @@ textarea:focus {
       <p class="hero-sub">Conectamos personas con técnicos y profesionales verificados para cualquier trabajo en Argentina.</p>
       <div class="hero-search-wrap">
         <span style="font-size:18px">🔍</span>
-        <input class="hero-search-input" placeholder="¿Qué servicio necesitás?" type="text">
+        <input class="hero-search-input" placeholder="¿Qué servicio necesitás?" type="text" autocomplete="off" name="search_kip">
         <button class="hero-search-btn" onclick="showScreen('register')">Buscar</button>
       </div>
       <div class="hero-cta-group">
@@ -1256,7 +1256,7 @@ textarea:focus {
   <!-- Buscador grande -->
   <div style="display:flex;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:999px;padding:8px 8px 8px 24px;align-items:center;margin-bottom:48px;transition:border-color 200ms ease" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
     <span style="font-size:20px;margin-right:12px">🔍</span>
-    <input id="search-query-home" type="text" placeholder="Ej: electricista, plomero, diseñador..."
+    <input id="search-query-home" type="text" placeholder="Ej: electricista, plomero, diseñador..." autocomplete="off"
       style="flex:1;background:transparent;border:none;outline:none;font-size:17px;color:var(--text-strong);font-family:var(--font-body)"
       onkeydown="if(event.key==='Enter')buscarDesdeHome()"
       onfocus="this.parentElement.style.borderColor='var(--accent)'"
@@ -1774,6 +1774,25 @@ const CATEGORIAS_PRO = {
   ],
   "Otro rubro": ["Describir manualmente"]
 };
+const ESPECIALIDADES_KIP = [
+  "Electricista", "Plomero", "Gasista", "Albañil", "Pintor", "Carpintero", "Herrero", "Techista", "Yesero", "Ceramista", "Impermeabilizador",
+  "Instalador de aberturas", "Jardinero", "Paisajista", "Fumigador", "Cerrajero", "Instalador de aires", "Instalador de cámaras", "Instalador solar", "Programador web",
+  "Programador mobile", "Diseñador UX/UI", "Diseñador gráfico", "Community manager", "Editor de video", "Fotógrafo", "Soporte técnico", "Reparación de celulares",
+  "Reparación de PC", "Peluquero/a", "Barbero", "Esteticista", "Maquillador/a", "Manicura/pedicura", "Masajista", "Personal trainer", "Nutricionista", "Psicólogo/a",
+  "Enfermero/a", "Cuidador/a", "Veterinario/a", "Contador/a", "Abogado/a", "Arquitecto/a", "Ingeniero civil", "Ingeniero eléctrico", "Ingeniero mecánico", "Médico/a",
+  "Escribano/a", "Traductor/a", "Profesor particular (primaria)", "Profesor particular (secundaria)", "Profesor particular (universitario)", "Profesor de idiomas", "Profesor de música",
+  "Profesor de arte", "Tutor educativo", "Flete", "Mudanza", "Delivery", "Chofer particular", "Remis / traslados", "DJ", "Animador infantil", "Catering", "Decorador de eventos",
+  "Fotógrafo de eventos", "Videógrafo", "Sonido e iluminación", "Limpieza de hogar", "Limpieza de oficinas", "Limpieza de vidrios", "Lavado de autos", "Lavado de tapizados",
+  "Peluquero canino", "Paseador de perros", "Cuidador de mascotas", "Adiestramiento", "Otro", "Describir manualmente"
+];
+function getCategoriaDeEspecialidad(especialidad) {
+  for (const categoria of Object.keys(CATEGORIAS_PRO)) {
+    if (CATEGORIAS_PRO[categoria].includes(especialidad)) {
+      return categoria;
+    }
+  }
+  return 'Otro rubro';
+}
 let currentScreen = 'home';
 let previousScreen = 'home';
 let currentUser = null;
