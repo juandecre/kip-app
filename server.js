@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const multer = require('multer');
 const fs = require('fs');
 const http = require('http');
@@ -16,7 +18,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = 'kip_secret_2025';
+const JWT_SECRET = process.env.JWT_SECRET || 'kip_secret_2025';
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 // Carpeta para fotos
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -77,12 +86,134 @@ db.exec(`
     texto TEXT,
     creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT,
+    email_verified INTEGER DEFAULT 0,
+    phone TEXT,
+    phone_verified INTEGER DEFAULT 0,
+    role TEXT DEFAULT 'cliente',
+    city TEXT,
+    profile_image TEXT,
+    google_id TEXT,
+    onboarding_complete INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS email_tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used INTEGER DEFAULT 0
+  );
 `);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(uploadsDir));
+
+const allowedCities = ['CABA', 'GBA Norte', 'GBA Sur', 'GBA Oeste', 'Interior'];
+
+function authMiddleware(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ ok: false, error: 'No autorizado' });
+  try {
+    const decoded = jwt.verify(auth.split(' ')[1], JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (e) {
+    res.status(401).json({ ok: false, error: 'Token inválido' });
+  }
+}
+
+function getUserPayload(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    city: user.city,
+    profile_image: user.profile_image,
+    onboarding_complete: user.onboarding_complete,
+    email_verified: user.email_verified,
+    phone_verified: user.phone_verified
+  };
+}
+
+function sendVerificationEmail(email, token) {
+  const verifyUrl = `https://servikip.com.ar/api/auth/verify-email?token=${encodeURIComponent(token)}`;
+  const html = `
+    <div style="background:#000;color:#fff;padding:32px;font-family:Arial,sans-serif;">
+      <div style="max-width:600px;margin:0 auto;background:#090909;border:1px solid rgba(255,107,43,0.18);border-radius:24px;overflow:hidden;">
+        <div style="padding:32px;text-align:center;background:#111;">
+          <div style="font-size:48px;font-weight:800;color:#FF6B2B;">K</div>
+          <div style="font-size:24px;font-weight:700;color:#fff;">ServiKIP</div>
+        </div>
+        <div style="padding:32px;">
+          <h2 style="color:#fff;font-size:24px;margin-bottom:8px;">Verificá tu cuenta en ServiKIP</h2>
+          <p style="color:#ccc;font-size:16px;line-height:1.6;margin-bottom:28px;">
+            Gracias por registrarte. Hacé click en el botón de abajo para verificar tu email.
+          </p>
+          <a href="${verifyUrl}" style="background:#FF6B2B;color:#111;font-weight:700;text-decoration:none;padding:14px 24px;border-radius:999px;display:inline-block;">Verificar mi cuenta</a>
+          <p style="color:#777;font-size:12px;margin-top:28px;">Si no solicitaste este email, ignoralo.</p>
+        </div>
+      </div>
+    </div>`;
+  transporter.sendMail({
+    from: 'ServiKIP <noreply@servikip.com.ar>',
+    to: email,
+    subject: 'Verificá tu cuenta en ServiKIP',
+    html
+  }).catch(err => console.error('Error enviando email de verificación:', err));
+}
+
+function findAuthUserByEmail(email) {
+  return db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+}
+
+function findLegacyUserByEmail(email) {
+  return db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
+}
+
+function registerAuthAccount({ name, email, password, role, legacyData }) {
+  if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
+  const existingAuth = findAuthUserByEmail(email);
+  const existingLegacy = findLegacyUserByEmail(email);
+  if (existingAuth || existingLegacy) return { ok: false, error: 'El email ya existe' };
+  const hash = bcrypt.hashSync(password, 12);
+  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete) VALUES (?, ?, ?, ?, 0, 0, 0)');
+  const userResult = createUser.run(name, email, hash, role);
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(userResult.lastInsertRowid, token, expiresAt);
+
+  const [firstName, ...rest] = name.trim().split(' ');
+  const lastName = rest.join(' ');
+  const legacy = legacyData || {};
+  const createLegacy = db.prepare('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+  const legacyResult = createLegacy.run(
+    firstName || name,
+    lastName,
+    email,
+    hash,
+    legacy.telefono || null,
+    role,
+    legacy.zona || null,
+    legacy.especialidad || null,
+    legacy.descripcion || null,
+    legacy.experiencia || null,
+    null
+  );
+
+  sendVerificationEmail(email, token);
+  return { ok: true, userId: userResult.lastInsertRowid, legacyId: legacyResult.lastInsertRowid, token };
+}
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'kip-app.html'));
@@ -91,29 +222,86 @@ app.get('/', (req, res) => {
 // ── REGISTRO ──────────────────────────────────
 app.post('/api/registro', (req, res) => {
   const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia } = req.body;
-  if (!nombre || !email || !password || !tipo) return res.status(400).json({ error: 'Faltan datos obligatorios' });
-  const hash = bcrypt.hashSync(password, 10);
-  try {
-    const stmt = db.prepare(`INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    const result = stmt.run(nombre, apellido, email, hash, telefono, tipo, zona, especialidad, descripcion, experiencia);
-    res.json({ ok: true, id: result.lastInsertRowid });
-  } catch (e) {
-    res.status(400).json({ error: 'El email ya está registrado' });
-  }
+  const name = `${nombre || ''} ${apellido || ''}`.trim();
+  if (!name || !email || !password || !tipo) return res.status(400).json({ error: 'Faltan datos obligatorios' });
+  const result = registerAuthAccount({
+    name,
+    email,
+    password,
+    role: tipo,
+    legacyData: { telefono, zona, especialidad, descripcion, experiencia }
+  });
+  if (!result.ok) return res.status(400).json({ error: result.error });
+  res.json({ ok: true, id: result.legacyId });
 });
 
 // ── LOGIN ─────────────────────────────────────
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
+  const authUser = findAuthUserByEmail(email);
+  if (authUser) {
+    const ok = authUser.password && bcrypt.compareSync(password, authUser.password);
+    if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+    if (authUser.email_verified === 0) return res.json({ ok: false, error: 'Debés verificar tu email primero', needsVerification: true });
+    const token = jwt.sign({ id: authUser.id, email: authUser.email, role: authUser.role, name: authUser.name }, JWT_SECRET, { expiresIn: '7d' });
+    return res.json({ ok: true, token, user: getUserPayload(authUser) });
+  }
+
   const usuario = db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
   if (!usuario) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
   const ok = bcrypt.compareSync(password, usuario.password);
   if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-  const token = jwt.sign({ id: usuario.id, tipo: usuario.tipo }, JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: usuario.id, email: usuario.email, role: usuario.tipo, name: `${usuario.nombre} ${usuario.apellido || ''}`.trim() }, JWT_SECRET, { expiresIn: '7d' });
   res.json({
     ok: true, token,
     usuario: { id: usuario.id, nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email, tipo: usuario.tipo, especialidad: usuario.especialidad, zona: usuario.zona, foto: usuario.foto }
   });
+});
+
+// ── AUTH ─────────────────────────────────────
+app.post('/api/auth/register', (req, res) => {
+  const { name, email, password, role } = req.body;
+  const result = registerAuthAccount({ name, email, password, role });
+  if (!result.ok) return res.status(400).json({ ok: false, error: result.error });
+  res.json({ ok: true, message: 'Revisá tu email para verificar tu cuenta' });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  const user = findAuthUserByEmail(email);
+  if (!user) return res.status(401).json({ ok: false, error: 'Email o contraseña incorrectos' });
+  const ok = user.password && bcrypt.compareSync(password, user.password);
+  if (!ok) return res.status(401).json({ ok: false, error: 'Email o contraseña incorrectos' });
+  if (user.email_verified === 0) return res.json({ ok: false, error: 'Debés verificar tu email primero', needsVerification: true });
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ ok: true, token, user: getUserPayload(user) });
+});
+
+app.get('/api/auth/verify-email', (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).send('<h1>Token inválido</h1>');
+  const tokenRow = db.prepare('SELECT * FROM email_tokens WHERE token = ? AND used = 0 AND expires_at > ?').get(token, new Date().toISOString());
+  if (!tokenRow) {
+    return res.status(400).send('<h1>Token inválido o expirado</h1>');
+  }
+  db.prepare('UPDATE email_tokens SET used = 1 WHERE id = ?').run(tokenRow.id);
+  db.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').run(tokenRow.user_id);
+  res.redirect('https://servikip.com.ar/kip-app.html?verified=true');
+});
+
+app.put('/api/auth/onboarding', authMiddleware, (req, res) => {
+  const { phone, city, role } = req.body;
+  if (!allowedCities.includes(city)) return res.status(400).json({ ok: false, error: 'Ciudad inválida' });
+  db.prepare('UPDATE users SET phone = ?, city = ?, role = ?, onboarding_complete = 1 WHERE id = ?')
+    .run(phone, city, role, req.user.id);
+  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  res.json({ ok: true, user: getUserPayload(updated) });
+});
+
+app.get('/api/auth/me', authMiddleware, (req, res) => {
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  if (!user) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
+  res.json({ ok: true, user: getUserPayload(user) });
 });
 
 // ── PROFESIONALES ─────────────────────────────
