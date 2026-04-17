@@ -84,6 +84,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(uploadsDir));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'kip-app.html'));
+});
+
 // ── REGISTRO ──────────────────────────────────
 app.post('/api/registro', (req, res) => {
   const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia } = req.body;
