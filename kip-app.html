@@ -1158,13 +1158,32 @@ textarea:focus {
           onkeydown="if(event.key==='Enter')heroSearch()"
         >
         <div style="width:1px;height:28px;background:rgba(0,0,0,0.1);margin:0 8px"></div>
-        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(0,0,0,0.5);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
-          <option value="">📍 Toda Argentina</option>
-          <option value="CABA">📍 CABA</option>
-          <option value="GBA Norte">📍 GBA Norte</option>
-          <option value="GBA Sur">📍 GBA Sur</option>
-          <option value="GBA Oeste">📍 GBA Oeste</option>
-          <option value="Interior">📍 Interior</option>
+        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(255,255,255,0.7);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
+  <option value="">📍 Toda Argentina</option>
+  <option value="Buenos Aires">Buenos Aires</option>
+  <option value="CABA">CABA</option>
+  <option value="Catamarca">Catamarca</option>
+  <option value="Chaco">Chaco</option>
+  <option value="Chubut">Chubut</option>
+  <option value="Córdoba">Córdoba</option>
+  <option value="Corrientes">Corrientes</option>
+  <option value="Entre Ríos">Entre Ríos</option>
+  <option value="Formosa">Formosa</option>
+  <option value="Jujuy">Jujuy</option>
+  <option value="La Pampa">La Pampa</option>
+  <option value="La Rioja">La Rioja</option>
+  <option value="Mendoza">Mendoza</option>
+  <option value="Misiones">Misiones</option>
+  <option value="Neuquén">Neuquén</option>
+  <option value="Río Negro">Río Negro</option>
+  <option value="Salta">Salta</option>
+  <option value="San Juan">San Juan</option>
+  <option value="San Luis">San Luis</option>
+  <option value="Santa Cruz">Santa Cruz</option>
+  <option value="Santa Fe">Santa Fe</option>
+  <option value="Santiago del Estero">Santiago del Estero</option>
+  <option value="Tierra del Fuego">Tierra del Fuego</option>
+  <option value="Tucumán">Tucumán</option>
         </select>
         <button onclick="heroSearch()" style="padding:14px 28px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:15px;font-family:var(--font-body);border:none;cursor:pointer;white-space:nowrap;transition:background 150ms ease" onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
           Buscar
@@ -1760,7 +1779,33 @@ textarea:focus {
     <div class="search-filters">
       <input class="search-main-input" placeholder="🔍 ¿Qué servicio buscás?" id="search-query" type="text" onkeydown="if(event.key==='Enter')buscarProfesionales()">
       <select class="filter-select" id="search-esp"><option value="">Todos los rubros</option><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
-      <select class="filter-select" id="search-zona"><option value="">Toda la zona</option><option>CABA</option><option>GBA Norte</option><option>GBA Sur</option><option>Córdoba</option></select>
+      <select class="filter-select" id="search-zona">
+  <option value="">Toda Argentina</option>
+  <option value="Buenos Aires">Buenos Aires</option>
+  <option value="CABA">CABA</option>
+  <option value="Catamarca">Catamarca</option>
+  <option value="Chaco">Chaco</option>
+  <option value="Chubut">Chubut</option>
+  <option value="Córdoba">Córdoba</option>
+  <option value="Corrientes">Corrientes</option>
+  <option value="Entre Ríos">Entre Ríos</option>
+  <option value="Formosa">Formosa</option>
+  <option value="Jujuy">Jujuy</option>
+  <option value="La Pampa">La Pampa</option>
+  <option value="La Rioja">La Rioja</option>
+  <option value="Mendoza">Mendoza</option>
+  <option value="Misiones">Misiones</option>
+  <option value="Neuquén">Neuquén</option>
+  <option value="Río Negro">Río Negro</option>
+  <option value="Salta">Salta</option>
+  <option value="San Juan">San Juan</option>
+  <option value="San Luis">San Luis</option>
+  <option value="Santa Cruz">Santa Cruz</option>
+  <option value="Santa Fe">Santa Fe</option>
+  <option value="Santiago del Estero">Santiago del Estero</option>
+  <option value="Tierra del Fuego">Tierra del Fuego</option>
+  <option value="Tucumán">Tucumán</option>
+      </select>
       <button class="btn btn-primary btn-sm" onclick="buscarProfesionales()">Buscar</button>
       <button class="btn btn-secondary btn-sm" onclick="buscarProfesionales(true)">Ver todos</button>
     </div>
