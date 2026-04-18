@@ -8,17 +8,17 @@
 <script src="/socket.io/socket.io.js"></script>
 <style>
 :root {
-  --bg-dark: #0A0A0A;
-  --navy: #0A0A0A;
-  --bg-deep: #111111;
-  --surface: #1A1A1A;
-  --surface-soft: #2A2A2A;
-  --text: #CCCCCC;
+  --bg-dark: #F5F5F7;
+  --navy: #1A1A2E;
+  --bg-deep: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-soft: #F0F0F5;
+  --text: #444444;
   --text-soft: #888888;
-  --text-strong: #FFFFFF;
+  --text-strong: #1A1A2E;
   --accent: #FF6B2B;
   --accent-light: #FF8C4B;
-  --border: rgba(204,204,204,0.12);
+  --border: rgba(0,0,0,0.08);
   --radius: 22px;
   --radius-sm: 14px;
   --font-display: 'Plus Jakarta Sans', sans-serif;
@@ -34,7 +34,7 @@ html {
 }
 body {
   font-family: var(--font-body);
-  background: var(--bg-dark);
+  background: #F5F5F7;
   color: var(--text);
   overflow-x: hidden;
 }
@@ -76,8 +76,8 @@ button {
   justify-content: space-between;
   gap: 16px;
   padding: 0 28px;
-  background: rgba(10,10,10,0.94);
-  border-bottom: 1px solid rgba(204,204,204,0.1);
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
   backdrop-filter: blur(16px);
 }
 .logo-icon {
@@ -93,7 +93,7 @@ button {
 }
 .navbar-logo {
   font-family: var(--font-display);
-  color: var(--text-strong);
+  color: #1A1A2E;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
@@ -107,7 +107,7 @@ button {
 }
 .nav-link {
   padding: 12px 16px;
-  color: var(--text-soft);
+  color: #444444;
   background: transparent;
   font-weight: 500;
 }
@@ -236,9 +236,9 @@ textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--bg-deep);
-  color: var(--text);
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #F5F5F7;
+  color: #1A1A2E;
   outline: none;
   transition: border-color 180ms ease, background 180ms ease;
 }
@@ -248,7 +248,7 @@ textarea {
 .filter-select:focus,
 textarea:focus {
   border-color: rgba(255,107,43,0.4);
-  background: #111111;
+  background: #FFFFFF;
 }
 .input-field::placeholder,
 .chat-search::placeholder,
@@ -338,7 +338,7 @@ textarea:focus {
 }
 .auth-wrap {
   min-height: 100vh;
-  background: linear-gradient(180deg, #111111 0%, #0A0A0A 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F7 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,8 +348,8 @@ textarea:focus {
   width: 100%;
   max-width: 530px;
   padding: 42px;
-  background: #111111;
-  border: 1px solid rgba(204,204,204,0.08);
+  background: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.08);
 }
 .auth-logo {
   display: flex;
@@ -802,11 +802,11 @@ textarea:focus {
   padding: 100px 24px 80px;
   position: relative;
   overflow: hidden;
-  background: var(--bg-dark);
+  background: linear-gradient(180deg, #EEF0FF 0%, #F5F5F7 60%);
 }
 .hero-dots {
   inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 .hero-glow {
@@ -827,20 +827,20 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,107,43,0.1);
+  border: 1px solid rgba(255,107,43,0.25);
   border-radius: 999px;
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 700;
-  color: #CCCCCC;
+  color: #FF8C4B;
   margin-bottom: 28px;
 }
 .hero-title {
   font-family: var(--font-display);
   font-size: clamp(42px, 7vw, 76px);
   font-weight: 800;
-  color: var(--text-strong);
+  color: #1A1A2E;
   line-height: 1.02;
   margin-bottom: 24px;
 }
@@ -849,15 +849,15 @@ textarea:focus {
 }
 .hero-sub {
   font-size: 18px;
-  color: rgba(204,204,204,0.88);
+  color: #666666;
   line-height: 1.7;
   margin-bottom: 44px;
 }
 .hero-search-wrap {
   width: 100%;
   max-width: 620px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: 999px;
   padding: 12px 14px;
   display: flex;
@@ -871,10 +871,10 @@ textarea:focus {
   border: none;
   outline: none;
   font-size: 15px;
-  color: var(--text-strong);
+  color: #1A1A2E;
 }
 .hero-search-input::placeholder {
-  color: rgba(255,255,255,0.45);
+  color: rgba(0,0,0,0.3);
 }
 .hero-search-btn {
   padding: 14px 28px;
@@ -893,16 +893,16 @@ textarea:focus {
   padding: 14px 28px;
   border-radius: 999px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.16);
-  color: #CCCCCC;
+  border: 1px solid rgba(0,0,0,0.15);
+  color: #444444;
 }
 .stats-bar {
   display: flex;
   justify-content: center;
   gap: 52px;
   padding: 34px 24px;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  background: rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background: #FFFFFF;
 }
 .stat-num {
   font-family: var(--font-display);
@@ -910,7 +910,7 @@ textarea:focus {
   font-weight: 800;
 }
 .stat-num span {
-  color: var(--accent);
+  color: #FF6B2B;
 }
 .section-header {
   text-align: center;
@@ -1085,6 +1085,20 @@ textarea:focus {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+@media (max-width: 900px) {
+  #home-pros-lista,
+  #home-search-results {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 768px) {
+  .two-col-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .side-panel {
+    display: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -1096,10 +1110,10 @@ textarea:focus {
 <div class="screen active" id="screen-home" style="background:#0A0A0A">
 
   <!-- NAVBAR -->
-  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;display:flex;align-items:center;padding:0 32px;gap:16px">
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.08);height:68px;display:flex;align-items:center;padding:0 32px;gap:16px">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="logo-icon">K</div>
-      <span style="font-family:var(--font-display);font-size:20px;font-weight:800;color:white;letter-spacing:-0.5px">servi<span style="color:#FF6B2B">KIP</span></span>
+      <span style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#1A1A2E;letter-spacing:-0.5px">servi<span style="color:#FF6B2B">KIP</span></span>
     </div>
     <div style="flex:1"></div>
     <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Cómo funciona</button>
@@ -1110,10 +1124,10 @@ textarea:focus {
   </nav>
 
   <!-- HERO -->
-  <section style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 60px;position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,43,0.12) 0%, transparent 70%), #0A0A0A">
+  <section style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 60px;position:relative;overflow:hidden;background:linear-gradient(180deg, #EEF0FF 0%, #F5F5F7 60%)">
     
     <!-- Dot grid background -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);background-size:32px 32px;pointer-events:none"></div>
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);background-size:32px 32px;pointer-events:none"></div>
 
     <div style="position:relative;z-index:1;text-align:center;max-width:820px;width:100%">
       
@@ -1124,27 +1138,27 @@ textarea:focus {
       </div>
 
       <!-- Título -->
-      <h1 style="font-family:var(--font-display);font-size:clamp(36px,6vw,72px);font-weight:800;color:white;line-height:1.05;margin-bottom:20px;letter-spacing:-1.5px">
+      <h1 style="font-family:var(--font-display);font-size:clamp(36px,6vw,72px);font-weight:800;color:#1A1A2E;line-height:1.05;margin-bottom:20px;letter-spacing:-1.5px">
         Encontrá profesionales<br>
         <span style="color:#FF6B2B">cerca tuyo</span> en minutos.
       </h1>
-      <p style="font-size:18px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:44px;max-width:560px;margin-left:auto;margin-right:auto">
+      <p style="font-size:18px;color:#666666;line-height:1.7;margin-bottom:44px;max-width:560px;margin-left:auto;margin-right:auto">
         Electricistas, plomeros, técnicos y más.<br>Verificados y con calificaciones reales.
       </p>
 
       <!-- Buscador -->
-      <div style="display:flex;gap:0;background:#161616;border:1.5px solid rgba(255,255,255,0.1);border-radius:18px;padding:8px;align-items:center;max-width:680px;margin:0 auto 20px;box-shadow:0 0 0 1px rgba(255,107,43,0) , 0 24px 48px rgba(0,0,0,0.4);transition:border-color 200ms ease" onfocusin="this.style.borderColor='rgba(255,107,43,0.4)'" onfocusout="this.style.borderColor='rgba(255,255,255,0.1)'">
+      <div style="display:flex;gap:0;background:#FFFFFF;border:1.5px solid rgba(0,0,0,0.1);border-radius:18px;padding:8px;align-items:center;max-width:680px;margin:0 auto 20px;box-shadow:0 0 0 1px rgba(255,107,43,0) , 0 24px 48px rgba(0,0,0,0.1);transition:border-color 200ms ease" onfocusin="this.style.borderColor='rgba(255,107,43,0.4)'" onfocusout="this.style.borderColor='rgba(0,0,0,0.1)'">
         <span style="font-size:18px;padding:0 14px;opacity:0.5">🔍</span>
         <input 
           id="hero-search-input-new"
           type="text" 
           autocomplete="off"
           placeholder="¿Qué necesitás? (ej: plomero, electricista...)"
-          style="flex:1;background:transparent;border:none;outline:none;font-size:16px;color:white;font-family:var(--font-body)"
+          style="flex:1;background:transparent;border:none;outline:none;font-size:16px;color:#1A1A2E;font-family:var(--font-body)"
           onkeydown="if(event.key==='Enter')heroSearch()"
         >
-        <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);margin:0 8px"></div>
-        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(255,255,255,0.7);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
+        <div style="width:1px;height:28px;background:rgba(0,0,0,0.1);margin:0 8px"></div>
+        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(0,0,0,0.5);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
           <option value="">📍 Toda Argentina</option>
           <option value="CABA">📍 CABA</option>
           <option value="GBA Norte">📍 GBA Norte</option>
@@ -1159,13 +1173,13 @@ textarea:focus {
 
       <!-- Trust pills -->
       <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:56px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#666666">
           <span>🛡️</span> Pagás solo si aceptás el trabajo
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#666666">
           <span>✅</span> Profesionales verificados
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#666666">
           <span>💬</span> Soporte siempre disponible
         </div>
       </div>
@@ -1194,73 +1208,100 @@ textarea:focus {
   </section>
 
   <!-- FILTROS RÁPIDOS -->
-  <section style="padding:48px 24px 0;max-width:1100px;margin:0 auto">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px">
-      <button onclick="heroSearchCategoria('')" class="filtro-rapido filtro-active" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.5);background:rgba(255,107,43,0.1);color:#FF8C4B;font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease">Todos</button>
-      <button onclick="heroSearchCategoria('Electricista')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">⚡ Electricista</button>
-      <button onclick="heroSearchCategoria('Plomero/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🔧 Plomero</button>
-      <button onclick="heroSearchCategoria('Pintor/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🎨 Pintor</button>
-      <button onclick="heroSearchCategoria('Limpieza de hogar y oficinas')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧹 Limpieza</button>
-      <button onclick="heroSearchCategoria('Albañil')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧱 Albañil</button>
-      <button onclick="heroSearchCategoria('Peluquero/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">✂️ Peluquero</button>
+  
+  <section style="padding:48px 24px 64px;max-width:1200px;margin:0 auto">
+    
+    <!-- Filtros rápidos -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+      <button onclick="heroSearchCategoria('')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.4);background:rgba(255,107,43,0.1);color:#FF6B2B;font-weight:600;font-size:14px;cursor:pointer">Todos</button>
+      <button onclick="heroSearchCategoria('Electricista')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">⚡ Electricista</button>
+      <button onclick="heroSearchCategoria('Plomero/a')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🔧 Plomero</button>
+      <button onclick="heroSearchCategoria('Pintor/a')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🎨 Pintor</button>
+      <button onclick="heroSearchCategoria('Limpieza de hogar y oficinas')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🧹 Limpieza</button>
+      <button onclick="heroSearchCategoria('Albañil')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🧱 Albañil</button>
+      <button onclick="heroSearchCategoria('Peluquero/a')" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:#FFFFFF;color:#444444;font-weight:600;font-size:14px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">✂️ Peluquero</button>
     </div>
 
-    <!-- Título sección profesionales -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <h2 id="home-pros-titulo" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:white">Profesionales recomendados</h2>
-      <button onclick="showScreen('register')" style="font-size:13px;color:#FF6B2B;background:transparent;border:none;cursor:pointer;font-weight:600">Ver todos →</button>
-    </div>
-
-    <!-- Lista de profesionales -->
-    <div id="home-pros-lista" style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
-      <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:14px">Cargando profesionales...</div>
-    </div>
-
-    <div style="text-align:center;margin-bottom:64px">
-      <button onclick="showScreen('register')" class="btn btn-primary" style="padding:16px 40px;font-size:16px;border-radius:14px">
-        Ver todos los profesionales →
-      </button>
-    </div>
-  </section>
-
-  <!-- CÓMO FUNCIONA -->
-  <section style="padding:64px 24px;background:#0D0D0D;border-top:1px solid rgba(255,255,255,0.05)">
-    <div style="max-width:900px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:48px">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:#FF6B2B;margin-bottom:10px">Simple y rápido</div>
-        <h2 style="font-family:var(--font-display);font-size:clamp(26px,4vw,40px);font-weight:800;color:white">¿Cómo funciona ServiKIP?</h2>
+    <!-- Layout dos columnas -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
+      
+      <!-- COLUMNA IZQUIERDA: Lista de profesionales -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 id="home-pros-titulo" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#1A1A2E">Profesionales recomendados</h2>
+          <span id="home-pros-count" style="font-size:13px;color:rgba(0,0,0,0.3)"></span>
+        </div>
+        <div id="home-pros-lista" style="display:flex;flex-direction:column;gap:12px">
+          <div style="text-align:center;padding:40px;color:rgba(0,0,0,0.3);font-size:14px">Cargando...</div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px">
-        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
-          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">1</div>
-          <div style="font-size:32px;margin-bottom:14px">🔍</div>
-          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Describí qué necesitás</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Buscá por rubro, zona y calificación.</div>
+
+      <!-- COLUMNA DERECHA: Panel lateral -->
+      <div style="position:sticky;top:88px;display:flex;flex-direction:column;gap:16px">
+        
+        <!-- Card: Contratá tranquilo -->
+        <div style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:20px;padding:24px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <div style="width:44px;height:44px;background:rgba(255,107,43,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">🛡️</div>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A2E">Contratá tranquilo</div>
+              <div style="font-size:12px;color:#888888">Servicio con garantía</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="width:28px;height:28px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">✅</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#1A1A2E">Garantía ServiKIP</div>
+                <div style="font-size:12px;color:#888888;line-height:1.5">Te acompañamos en cada paso del servicio.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="width:28px;height:28px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💳</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#1A1A2E">Pago seguro</div>
+                <div style="font-size:12px;color:#888888;line-height:1.5">Pagás solo cuando el trabajo está aprobado.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="width:28px;height:28px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💬</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#1A1A2E">Soporte personalizado</div>
+                <div style="font-size:12px;color:#888888;line-height:1.5">Estamos para ayudarte antes, durante y después.</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
-          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">2</div>
-          <div style="font-size:32px;margin-bottom:14px">👤</div>
-          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Elegí el profesional</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Revisá calificaciones reales y verificaciones.</div>
+
+        <!-- Card: Solicitar presupuesto -->
+        <div style="background:#FFFFFF;border:1px solid rgba(255,107,43,0.3);border-radius:20px;padding:24px">
+          <div style="font-size:18px;font-weight:800;color:#1A1A2E;margin-bottom:6px">Te encontramos el<br><span style="color:#FF6B2B">mejor profesional</span></div>
+          <div style="font-size:13px;color:#888888;margin-bottom:18px">Contanos qué necesitás y recibí presupuestos rápido.</div>
+          <textarea 
+            id="home-solicitud-texto"
+            placeholder="Describí tu problema..."
+            style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.12);border-radius:14px;padding:14px;color:#1A1A2E;font-size:14px;font-family:var(--font-body);resize:none;outline:none;margin-bottom:12px;transition:border-color 180ms ease"
+            rows="3"
+            onfocus="this.style.borderColor='rgba(255,107,43,0.4)'"
+            onblur="this.style.borderColor='rgba(0,0,0,0.12)'"
+          ></textarea>
+          <button onclick="enviarSolicitudHome()" style="width:100%;padding:14px;border-radius:14px;background:#FF6B2B;color:white;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:background 150ms ease" onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
+            Solicitar presupuestos →
+          </button>
         </div>
-        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
-          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">3</div>
-          <div style="font-size:32px;margin-bottom:14px">💬</div>
-          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Contactá y acordá</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Chateá, pedí presupuesto y coordiná.</div>
+
+        <!-- Stats pequeños -->
+        <div style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:18px;text-align:center">
+          <div id="stat-pros-side" style="font-family:var(--font-display);font-size:26px;font-weight:800;color:#FF6B2B">—</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.3);margin-top:2px">profesionales listos para ayudarte</div>
         </div>
-        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
-          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">4</div>
-          <div style="font-size:32px;margin-bottom:14px">⭐</div>
-          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Calificá el trabajo</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Tu opinión ayuda a toda la comunidad.</div>
-        </div>
+
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <div style="text-align:center;padding:28px;font-size:13px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05)">
+  <div style="text-align:center;padding:28px;font-size:13px;color:rgba(0,0,0,0.3);border-top:1px solid rgba(0,0,0,0.08)">
     © 2026 ServiKIP — Conectando Argentina
   </div>
 
@@ -1287,24 +1328,35 @@ textarea:focus {
 <div class="screen" id="screen-register" style="display:none">
   <div class="auth-wrap">
     <div class="auth-card">
-      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
-      <h2 class="auth-title">Comenzá con KIP</h2>
-      <p class="auth-sub">Elegí tu perfil y verificá tu email para seguir</p>
-      <div class="type-toggle">
-        <button id="register-role-client" class="type-btn active" onclick="setRegisterRole('cliente')">👤 Cliente</button>
-        <button id="register-role-pro" class="type-btn" onclick="setRegisterRole('profesional')">🔧 Profesional</button>
-      </div>
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">serviKIP</span></div>
+      <h2 class="auth-title">Crear cuenta</h2>
+      <p class="auth-sub">Gratis, rápido y sin complicaciones</p>
       <div class="input-row">
-        <div class="input-group"><label class="input-label">Nombre</label><input class="input-field" id="register-firstname" placeholder="Juan"></div>
-        <div class="input-group"><label class="input-label">Apellido</label><input class="input-field" id="register-lastname" placeholder="Rodríguez"></div>
+        <div class="input-group">
+          <label class="input-label">Nombre</label>
+          <input class="input-field" id="register-firstname" placeholder="Juan">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Apellido</label>
+          <input class="input-field" id="register-lastname" placeholder="Rodríguez">
+        </div>
       </div>
-      <div class="input-group"><label class="input-label">Email</label><input class="input-field" type="email" id="register-email" placeholder="tu@email.com"></div>
-      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="register-phone" placeholder="+54 11 1234-5678"></div>
-      <div id="register-pro-specialty-area" style="display:none;margin-top:16px"></div>
-      <div class="input-group"><label class="input-label">Contraseña</label><input class="input-field" type="password" id="register-password" placeholder="Mínimo 8 caracteres"></div>
-      <div class="input-group"><label class="input-label">Confirmar contraseña</label><input class="input-field" type="password" id="register-password-confirm" placeholder="Repetí la contraseña"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px" onclick="doRegister()">Crear cuenta</button>
-      <p class="auth-footer-text">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
+      <div class="input-group">
+        <label class="input-label">Email</label>
+        <input class="input-field" type="email" id="register-email" placeholder="tu@email.com">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Contraseña</label>
+        <input class="input-field" type="password" id="register-password" placeholder="Mínimo 8 caracteres">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Confirmar contraseña</label>
+        <input class="input-field" type="password" id="register-password-confirm" placeholder="Repetí la contraseña">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:16px;margin-top:8px;font-size:16px" onclick="doRegister()">
+        Crear mi cuenta gratis
+      </button>
+      <p class="auth-footer-text" style="margin-top:16px">¿Ya tenés cuenta? <span class="auth-link" onclick="showScreen('login')">Iniciá sesión</span></p>
       <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
     </div>
   </div>
@@ -1325,32 +1377,188 @@ textarea:focus {
   </div>
 </div>
 
-<!-- ══════════ ONBOARDING ══════════ -->
 <div class="screen" id="screen-onboarding" style="display:none">
   <div class="auth-wrap">
-    <div class="auth-card auth-wide">
-      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">KIP</span></div>
-      <h2 class="auth-title">Completá tu perfil</h2>
-      <p class="auth-sub">Agregá los datos que faltan para empezar</p>
-      <div class="input-group"><label class="input-label">Teléfono</label><input class="input-field" id="onboarding-phone" placeholder="+54 11 1234-5678"></div>
-      <div class="input-group"><label class="input-label">Ciudad</label><select class="input-field" id="onboarding-city"><option value="">Seleccioná tu ciudad</option><option value="CABA">CABA</option><option value="GBA Norte">GBA Norte</option><option value="GBA Sur">GBA Sur</option><option value="GBA Oeste">GBA Oeste</option><option value="Interior">Interior</option></select></div>
-      <div id="onboarding-pro-fields" style="display:none">
-        <div class="input-group"><label class="input-label">Especialidad</label>
-          <select class="input-field" id="onboarding-specialty"><option>Electricista</option><option>Plomero</option><option>Carpintero</option><option>Albañil</option><option>Arquitecto</option><option>Contador</option><option>Programador</option><option>Diseñador</option></select>
-        </div>
-        <div class="input-group"><label class="input-label">Descripción</label><textarea class="input-field" rows="3" id="onboarding-description" placeholder="Contá qué servicios ofrecés..."></textarea></div>
-      </div>
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">serviKIP</span></div>
+      <h2 class="auth-title">¡Bienvenido/a! 👋</h2>
+      <p class="auth-sub">Un último dato para personalizar tu experiencia</p>
+      
       <div class="input-group">
-        <label class="input-label">Foto de perfil (opcional)</label>
+        <label class="input-label">¿De dónde sos?</label>
+        <input class="input-field" id="onboarding-localidad" 
+          placeholder="Ej: Palermo, Córdoba, Mar del Plata..."
+          autocomplete="off">
+        <div style="font-size:12px;color:var(--text-soft);margin-top:6px">
+          Escribí tu barrio, ciudad o localidad
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Código postal <span style="color:var(--text-soft);font-weight:400">(opcional)</span></label>
+        <input class="input-field" id="onboarding-cp" 
+          placeholder="Ej: 1425"
+          type="text"
+          maxlength="8">
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Foto de perfil <span style="color:var(--text-soft);font-weight:400">(opcional)</span></label>
         <input class="input-field" type="file" accept="image/*" onchange="handleOnboardingPhoto(event)">
       </div>
-      <div id="onboarding-photo-preview" style="min-height:120px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;margin-top:12px;overflow:hidden;color:var(--text-soft)">Vista previa de foto</div>
-      <button id="btn-subir-foto" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:12px;display:none" onclick="subirFoto()">⬆️ Subir foto</button>
-      <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
-        <button class="btn btn-primary" style="flex:1;min-width:140px" onclick="completeOnboarding()">Finalizar y continuar</button>
-        <button class="btn" style="flex:1;min-width:140px;border:1px solid rgba(255,255,255,0.16);color:var(--text-strong);background:transparent" onclick="skipOnboarding()">Omitir por ahora</button>
+      <div id="onboarding-photo-preview" style="min-height:80px;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;margin-top:8px;overflow:hidden">
+        <img id="onboarding-preview-img" style="width:100%;height:100%;object-fit:cover">
       </div>
-      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
+      <button id="btn-subir-foto" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:10px;display:none" onclick="subirFoto()">⬆️ Subir foto</button>
+
+      <div style="display:flex;gap:12px;margin-top:20px">
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:14px" onclick="completeOnboarding()">
+          Empezar a explorar →
+        </button>
+        <button class="btn" style="padding:14px 18px;border:1px solid rgba(255,255,255,0.12);color:var(--text-soft);background:transparent;border-radius:var(--radius-sm)" onclick="skipOnboarding()">
+          Omitir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-activar-pro" style="display:none">
+  <div class="auth-wrap" style="padding:80px 24px">
+    <div class="auth-card" style="max-width:600px">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:48px;margin-bottom:16px">💼</div>
+        <h2 class="auth-title">Ganá dinero con lo que sabés hacer</h2>
+        <p class="auth-sub">Miles de personas cerca tuyo necesitan tu ayuda. Publicá tu perfil gratis.</p>
+      </div>
+
+      <!-- Barra de progreso -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:32px">
+        <div id="pro-step-1-dot" style="width:32px;height:32px;border-radius:50%;background:#FF6B2B;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0">1</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:999px"><div id="pro-step-bar" style="height:100%;background:#FF6B2B;border-radius:999px;width:0%;transition:width 400ms ease"></div></div>
+        <div id="pro-step-2-dot" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0">2</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:999px"></div>
+        <div id="pro-step-3-dot" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0">3</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:999px"></div>
+        <div id="pro-step-4-dot" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0">4</div>
+      </div>
+
+      <!-- PASO 1: Especialidad -->
+      <div id="pro-step-1" style="display:block">
+        <div style="font-size:18px;font-weight:700;color:white;margin-bottom:6px">¿Qué sabés hacer?</div>
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:20px">Escribí tu especialidad y seleccioná de la lista</p>
+        <div class="input-group">
+          <label class="input-label">Tu especialidad</label>
+          <div style="position:relative">
+            <input type="text" id="pro-especialidad-search" class="input-field"
+              placeholder="Ej: Electricista, Barman, Arquitecto..."
+              autocomplete="off"
+              oninput="filtrarEspecialidadesPro(this.value)"
+              onkeydown="handleProEspKey(event)">
+            <div id="pro-esp-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:#1A1A1A;border:1px solid rgba(255,107,43,0.3);border-radius:16px;max-height:200px;overflow-y:auto;z-index:1000;margin-top:6px;box-shadow:0 8px 32px rgba(0,0,0,0.4)"></div>
+          </div>
+          <div id="pro-esp-seleccionada" style="display:none;margin-top:10px;background:rgba(255,107,43,0.08);border:1px solid rgba(255,107,43,0.3);border-radius:12px;padding:12px 16px;display:none;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:12px;color:var(--text-soft);margin-bottom:2px">Seleccionaste</div>
+              <div id="pro-esp-seleccionada-texto" style="font-size:15px;font-weight:700;color:white"></div>
+            </div>
+            <button type="button" onclick="limpiarProEsp()" style="background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--text-soft);border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer">Cambiar</button>
+          </div>
+        </div>
+        <button onclick="proNextStep(2)" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:8px">
+          Continuar →
+        </button>
+        <button onclick="showScreen('dashboard-client')" style="width:100%;padding:12px;background:transparent;border:none;color:var(--text-soft);font-size:13px;cursor:pointer;margin-top:8px">
+          Ahora no, quizás más tarde
+        </button>
+      </div>
+
+      <!-- PASO 2: Descripción y experiencia -->
+      <div id="pro-step-2" style="display:none">
+        <div style="font-size:18px;font-weight:700;color:white;margin-bottom:6px">Contanos más sobre vos</div>
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:20px">Esto aparecerá en tu perfil público</p>
+        <div class="input-group">
+          <label class="input-label">Descripción breve</label>
+          <textarea class="input-field" id="pro-descripcion" rows="3"
+            placeholder="Ej: Electricista matriculado con 8 años de experiencia en instalaciones residenciales y comerciales..."
+            maxlength="300"></textarea>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:4px">Máx 300 caracteres</div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Años de experiencia</label>
+          <input class="input-field" type="number" id="pro-experiencia" placeholder="5" min="0" max="60">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Zona donde trabajás</label>
+          <input class="input-field" id="pro-zona"
+            placeholder="Ej: Palermo, CABA, GBA Norte..."
+            autocomplete="off">
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button onclick="proNextStep(1)" class="btn btn-secondary" style="padding:14px 20px">← Volver</button>
+          <button onclick="proNextStep(3)" class="btn btn-primary" style="flex:1;justify-content:center;padding:14px">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASO 3: Verificación -->
+      <div id="pro-step-3" style="display:none">
+        <div style="font-size:18px;font-weight:700;color:white;margin-bottom:6px">¿Tenés alguna habilitación?</div>
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:20px">Esto genera más confianza y te destaca. Podés completarlo después.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <div onclick="selectProVerification('independiente')" id="pvl-independiente" style="border:2px solid var(--border);border-radius:16px;padding:16px 20px;cursor:pointer;transition:all 180ms ease">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:24px">✅</span>
+              <div>
+                <div style="font-weight:700;color:white;font-size:14px">Independiente</div>
+                <div style="font-size:12px;color:var(--text-soft)">Trabajo por cuenta propia · Solo DNI</div>
+              </div>
+            </div>
+          </div>
+          <div onclick="selectProVerification('matriculado')" id="pvl-matriculado" style="border:2px solid var(--border);border-radius:16px;padding:16px 20px;cursor:pointer;transition:all 180ms ease">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:24px">🪪</span>
+              <div>
+                <div style="font-weight:700;color:white;font-size:14px">Matriculado / Habilitado</div>
+                <div style="font-size:12px;color:var(--text-soft)">Gasista, Electricista, Plomero, Albañil con seguro...</div>
+              </div>
+            </div>
+          </div>
+          <div onclick="selectProVerification('universitario')" id="pvl-universitario" style="border:2px solid var(--border);border-radius:16px;padding:16px 20px;cursor:pointer;transition:all 180ms ease">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:24px">🎓</span>
+              <div>
+                <div style="font-weight:700;color:white;font-size:14px">Profesional universitario</div>
+                <div style="font-size:12px;color:var(--text-soft)">Abogado, Contador, Arquitecto, Médico...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button onclick="proNextStep(2)" class="btn btn-secondary" style="padding:14px 20px">← Volver</button>
+          <button onclick="proNextStep(4)" class="btn btn-primary" style="flex:1;justify-content:center;padding:14px">Continuar →</button>
+        </div>
+        <button onclick="proNextStep(4)" style="width:100%;padding:10px;background:transparent;border:none;color:var(--text-soft);font-size:13px;cursor:pointer;margin-top:8px">
+          Completar verificación después
+        </button>
+      </div>
+
+      <!-- PASO 4: Confirmación -->
+      <div id="pro-step-4" style="display:none;text-align:center">
+        <div style="font-size:56px;margin-bottom:16px">🎉</div>
+        <div style="font-size:22px;font-weight:800;color:white;margin-bottom:8px">¡Tu perfil está listo!</div>
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:28px;line-height:1.7">
+          Ya sos parte de ServiKIP.<br>
+          Completá tu perfil para recibir más trabajo.
+        </p>
+        <div style="background:#111111;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;margin-bottom:24px;text-align:left">
+          <div style="font-size:13px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Tu perfil al publicarse</div>
+          <div id="pro-resumen" style="font-size:14px;color:white;line-height:1.8"></div>
+        </div>
+        <button onclick="publicarPerfilPro()" class="btn btn-primary" style="width:100%;justify-content:center;padding:16px;font-size:16px">
+          ¡Publicar mi perfil! 🚀
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1358,105 +1566,122 @@ textarea:focus {
 <div class="screen" id="screen-dashboard-client" style="display:none">
 <nav class="navbar">
   <div class="logo-icon">K</div>
-  <div class="navbar-logo">KI<span>P</span></div>
+  <div class="navbar-logo">servi<span>KIP</span></div>
   <div style="flex:1"></div>
-  <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button onclick="openChat(null)" class="nav-link" style="font-size:14px">💬 Mensajes</button>
+    <button onclick="showScreen('jobs')" class="nav-link" style="font-size:14px">📋 Mis trabajos</button>
+    <button onclick="showScreen('profile-user')" class="nav-link" style="font-size:14px">👤 Mi perfil</button>
+    <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
+  </div>
 </nav>
 
 <div style="max-width:900px;margin:0 auto;padding:100px 24px 48px">
 
   <!-- Saludo -->
   <div style="text-align:center;margin-bottom:40px">
-    <h1 id="dash-greeting" style="font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--text-strong);margin-bottom:8px">¿Qué servicio necesitás?</h1>
-    <p style="color:var(--text-soft);font-size:16px">Encontrá el profesional ideal para tu trabajo</p>
+    <h1 id="dash-greeting" style="font-family:var(--font-display);font-size:32px;font-weight:800;color:#1A1A2E;margin-bottom:8px">¿Qué servicio necesitás?</h1>
+    <p style="color:#888888;font-size:16px">Encontrá el profesional ideal para tu trabajo</p>
   </div>
 
-  <!-- Buscador grande -->
-  <div style="display:flex;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:999px;padding:8px 8px 8px 24px;align-items:center;margin-bottom:48px;transition:border-color 200ms ease" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-    <span style="font-size:20px;margin-right:12px">🔍</span>
-    <input id="search-query-home" type="text" placeholder="Ej: electricista, plomero, diseñador..." autocomplete="off"
-      style="flex:1;background:transparent;border:none;outline:none;font-size:17px;color:var(--text-strong);font-family:var(--font-body)"
-      onkeydown="if(event.key==='Enter')buscarDesdeHome()"
-      onfocus="this.parentElement.style.borderColor='var(--accent)'"
-      onblur="this.parentElement.style.borderColor='var(--border)'">
-    <button onclick="buscarDesdeHome()"
-      style="padding:14px 28px;border-radius:999px;background:var(--accent);color:white;font-weight:700;font-size:15px;font-family:var(--font-body);border:none;cursor:pointer;white-space:nowrap">
+  <!-- Buscador -->
+  <div style="display:flex;gap:0;background:#FFFFFF;border:1.5px solid rgba(0,0,0,0.1);border-radius:16px;padding:8px;align-items:center;margin-bottom:24px;max-width:700px;transition:border-color 200ms ease" onfocusin="this.style.borderColor='rgba(255,107,43,0.4)'" onfocusout="this.style.borderColor='rgba(0,0,0,0.1)'">
+    <span style="font-size:18px;padding:0 14px;opacity:0.5">🔍</span>
+    <input id="search-query-home" type="text" autocomplete="off"
+      placeholder="Ej: electricista, plomero, diseñador..."
+      style="flex:1;background:transparent;border:none;outline:none;font-size:16px;color:#1A1A2E;font-family:var(--font-body)"
+      onkeydown="if(event.key==='Enter')buscarDesdeHome()">
+    <select id="home-category-filter" style="background:transparent;border:none;outline:none;color:rgba(0,0,0,0.5);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer" onchange="buscarDesdeHome()">
+      <option value="">Todos los rubros</option>
+      <option>Hogar y construcción</option>
+      <option>Tecnología</option>
+      <option>Salud y bienestar</option>
+      <option>Profesionales universitarios</option>
+      <option>Educación</option>
+      <option>Transporte y logística</option>
+      <option>Eventos</option>
+      <option>Limpieza</option>
+      <option>Mascotas</option>
+    </select>
+    <button onclick="buscarDesdeHome()" style="padding:12px 24px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer;white-space:nowrap">
       Buscar
     </button>
   </div>
 
-  <!-- Categorías -->
-  <div style="margin-bottom:16px">
-    <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:20px">Categorías populares</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px">
-      <div onclick="buscarCategoria('Electricista')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">⚡</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Electricista</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">340 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Plomero')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">🔧</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Plomero</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">218 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Carpintero')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">🪵</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Carpintero</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">165 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Albañil')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">🧱</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Albañil</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">290 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Arquitecto')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">🏗️</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Arquitecto</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">87 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Contador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">💰</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Contador</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">124 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Programador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">💻</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Programador</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">203 pros</div>
-      </div>
-      <div onclick="buscarCategoria('Diseñador')" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-        <div style="font-size:32px;margin-bottom:10px">🎨</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong)">Diseñador</div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:4px">156 pros</div>
-      </div>
-    </div>
-    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-      <label for="home-category-filter" style="font-size:14px;color:var(--text-soft);min-width:140px">Filtrar por rubro</label>
-      <select id="home-category-filter" class="input-field" style="max-width:360px" onchange="buscarDesdeHome()">
-        <option value="">Todos los rubros</option>
-        <option>Hogar y construcción</option>
-        <option>Tecnología</option>
-        <option>Salud y bienestar</option>
-        <option>Profesionales universitarios</option>
-        <option>Educación</option>
-        <option>Transporte y logística</option>
-        <option>Eventos</option>
-        <option>Limpieza</option>
-        <option>Mascotas</option>
-        <option>Otro rubro</option>
-      </select>
-    </div>
+  <!-- Filtros rápidos -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px">
+    <button onclick="buscarCategoria('')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.5);background:rgba(255,107,43,0.1);color:#FF8C4B;font-weight:600;font-size:13px;cursor:pointer">Todos</button>
+    <button onclick="buscarCategoria('Electricista')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">⚡ Electricista</button>
+    <button onclick="buscarCategoria('Plomero/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🔧 Plomero</button>
+    <button onclick="buscarCategoria('Pintor/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🎨 Pintor</button>
+    <button onclick="buscarCategoria('Limpieza de hogar y oficinas')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧹 Limpieza</button>
+    <button onclick="buscarCategoria('Albañil')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">✂️ Peluquero</button>
   </div>
 
-  <!-- Resultados -->
-  <div id="home-search-results" style="margin-top:32px"></div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h2 style="font-size:18px;font-weight:700;color:#1A1A2E">Profesionales disponibles</h2>
+        <span id="client-pros-count" style="font-size:13px;color:rgba(0,0,0,0.3)"></span>
+      </div>
+      <div id="home-search-results" style="display:flex;flex-direction:column;gap:12px">
+        <div style="text-align:center;padding:40px;color:rgba(0,0,0,0.3);font-size:14px">Cargando profesionales...</div>
+      </div>
+    </div>
 
-  <!-- Links secundarios -->
-  <div style="display:flex;justify-content:center;gap:24px;margin-top:48px;padding-top:24px;border-top:1px solid var(--border)">
-    <button onclick="openChat(null)" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">💬 Mis mensajes</button>
-    <button onclick="showScreen('jobs')" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">📋 Mis trabajos</button>
-    <button onclick="showScreen('profile-user')" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">👤 Mi perfil</button>
-    <button onclick="doLogout()" style="background:transparent;color:var(--text-soft);font-size:14px;border:none;cursor:pointer">🚪 Salir</button>
+    <div style="position:sticky;top:88px;display:flex;flex-direction:column;gap:14px">
+      <div id="cta-activar-pro" style="background:linear-gradient(135deg,#FFF0E6,#FFE6D0);border:1px solid rgba(255,107,43,0.2);border-radius:20px;padding:22px;margin-bottom:14px">
+        <div style="font-size:22px;margin-bottom:10px">💼</div>
+        <div style="font-size:16px;font-weight:800;color:#1A1A2E;margin-bottom:6px">¿Querés ganar dinero?</div>
+        <div style="font-size:13px;color:#888888;margin-bottom:16px;line-height:1.6">
+          Ofrecé tus servicios en ServiKIP y conseguí clientes cerca tuyo.
+        </div>
+        <button onclick="showScreen('activar-pro')" style="width:100%;padding:13px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer">
+          Activar modo profesional →
+        </button>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid rgba(255,107,43,0.3);border-radius:20px;padding:22px">
+        <div style="font-size:17px;font-weight:800;color:#1A1A2E;margin-bottom:6px">Te encontramos el<br><span style="color:#FF6B2B">mejor profesional</span> por vos</div>
+        <div style="font-size:13px;color:#888888;margin-bottom:16px">Contanos qué necesitás y recibí presupuestos rápido.</div>
+        <textarea
+          id="client-solicitud-texto"
+          placeholder="Describí tu problema..."
+          style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.12);border-radius:12px;padding:12px;color:#1A1A2E;font-size:14px;font-family:var(--font-body);resize:none;outline:none;margin-bottom:10px;transition:border-color 180ms ease"
+          rows="3"
+          onfocus="this.style.borderColor='rgba(255,107,43,0.4)'"
+          onblur="this.style.borderColor='rgba(0,0,0,0.12)'"
+        ></textarea>
+        <button onclick="enviarSolicitudCliente()" style="width:100%;padding:13px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:background 150ms ease" onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
+          Solicitar presupuestos →
+        </button>
+      </div>
+
+      <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:22px">
+        <div style="font-size:15px;font-weight:700;color:white;margin-bottom:16px">¿Cómo Funciona?</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="width:30px;height:30px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📍</span>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5">Describí qué necesitás y <strong style="color:white">filtrá por zona</strong></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="width:30px;height:30px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">⭐</span>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5">Elegí al mejor profesional según <strong style="color:white">calificaciones</strong></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="width:30px;height:30px;background:rgba(255,107,43,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🔒</span>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5">Pagá seguro y recibí el <strong style="color:white">servicio garantizado</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="openChat(null)" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">💬 Mis mensajes</button>
+        <button onclick="showScreen('jobs')" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">📋 Mis trabajos</button>
+        <button onclick="showScreen('profile-user')" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">👤 Mi perfil</button>
+        <button onclick="doLogout()" style="width:100%;padding:12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-size:13px;font-weight:600;cursor:pointer;text-align:left">🚪 Cerrar sesión</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1918,7 +2143,6 @@ let currentToken = null;
 let socket = null;
 let activeChatUser = null; // { id, nombre, apellido, foto }
 let selectedFotoFile = null;
-let registerRole = 'cliente';
 let selectedCategoria = '';
 let selectedEspecialidad = '';
 let selectedVerificationLevel = '';
@@ -2015,80 +2239,148 @@ function normalizeUserPayload(payload) {
   return user;
 }
 
-function setRegisterRole(role) {
-  registerRole = role;
-  const clientBtn = document.getElementById('register-role-client');
-  const proBtn = document.getElementById('register-role-pro');
-  if (clientBtn) clientBtn.classList.toggle('active', role === 'cliente');
-  if (proBtn) proBtn.classList.toggle('active', role === 'profesional');
-  const proFields = document.getElementById('onboarding-pro-fields');
-  if (proFields) proFields.style.display = role === 'profesional' ? 'block' : 'none';
-  const proArea = document.getElementById('register-pro-specialty-area');
-  if (proArea) {
-    if (role === 'profesional') {
-      proArea.style.display = 'block';
-      buildSelectorEspecialidad();
-    } else {
-      proArea.style.display = 'none';
-      proArea.innerHTML = '';
-      selectedCategoria = '';
-      selectedEspecialidad = '';
-    }
-  }
-}
-
 function buildSelectorEspecialidad() {
   const container = document.getElementById('register-pro-specialty-area');
   if (!container) return;
-  const categoryIcons = {
-    'Hogar y construcción': '🏠',
-    'Tecnología': '💻',
-    'Salud y bienestar': '💆',
-    'Profesionales universitarios': '🎓',
-    'Educación': '📚',
-    'Transporte y logística': '🚚',
-    'Eventos': '🎉',
-    'Limpieza': '🧹',
-    'Mascotas': '🐾',
-    'Otro rubro': '✏️'
-  };
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px">';
-  Object.keys(CATEGORIAS_PRO).forEach(cat => {
-    const active = selectedCategoria === cat;
-    html += `<button type="button" onclick="selectCategoria(${JSON.stringify(cat)})" style="text-align:left;padding:18px;border:1px solid ${active ? 'var(--accent)' : 'var(--border)'};border-radius:18px;background:${active ? 'rgba(255,107,43,0.08)' : 'var(--surface)'};color:var(--text-strong);cursor:pointer;transition:all 180ms ease;display:flex;flex-direction:column;gap:10px;min-height:120px;align-items:flex-start">`;
-    html += `<span style="font-size:24px">${categoryIcons[cat] || '🗂️'}</span>`;
-    html += `<span style="font-weight:700;font-size:14px">${cat}</span>`;
-    html += `</button>`;
-  });
-  html += '</div>';
-  if (selectedCategoria) {
-    const opciones = CATEGORIAS_PRO[selectedCategoria] || [];
-    html += '<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:12px">Seleccioná una subcategoría</div>';
-    html += '<div style="display:flex;flex-wrap:wrap;gap:10px">';
-    opciones.forEach(opt => {
-      const active = selectedEspecialidad === opt;
-      html += `<button type="button" onclick="selectEspecialidad(${JSON.stringify(opt)})" style="padding:12px 14px;border-radius:999px;border:1px solid ${active ? 'var(--accent)' : 'rgba(255,255,255,0.12)'};background:${active ? 'rgba(255,107,43,0.12)' : 'transparent'};color:var(--text-strong);cursor:pointer;min-width:fit-content">${opt}</button>`;
-    });
-    html += '</div></div>';
-  }
-  const showManual = selectedCategoria === 'Otro rubro' || selectedEspecialidad === 'Otro' || selectedEspecialidad === 'Describir manualmente';
-  if (showManual) {
-    const value = selectedEspecialidad && selectedEspecialidad !== 'Otro' && selectedEspecialidad !== 'Describir manualmente' ? selectedEspecialidad : '';
-    html += `<div class="input-group" style="margin-top:10px"><label class="input-label">Describí tu especialidad</label><input class="input-field" type="text" id="register-especialidad-manual" placeholder="Describí tu especialidad" value="${value}" oninput="selectedEspecialidad=this.value"></div>`;
-  }
-  container.innerHTML = html;
+  container.innerHTML = `
+    <div class="input-group" style="margin-bottom:8px">
+      <label class="input-label">¿Qué servicio ofrecés?</label>
+      <div style="position:relative">
+        <input 
+          type="text" 
+          id="especialidad-search" 
+          class="input-field" 
+          placeholder="Ej: Electricista, Barman, Arquitecto..."
+          autocomplete="off"
+          oninput="filtrarEspecialidades(this.value)"
+          onkeydown="handleEspecialidadKey(event)"
+        >
+        <div id="especialidad-dropdown" style="
+          display:none;
+          position:absolute;
+          top:100%;
+          left:0;
+          right:0;
+          background:#1A1A1A;
+          border:1px solid rgba(255,107,43,0.3);
+          border-radius:16px;
+          max-height:220px;
+          overflow-y:auto;
+          z-index:1000;
+          margin-top:6px;
+          box-shadow:0 8px 32px rgba(0,0,0,0.4);
+        "></div>
+      </div>
+    </div>
+    <div id="especialidad-seleccionada" style="display:none;
+      background:rgba(255,107,43,0.08);
+      border:1px solid rgba(255,107,43,0.3);
+      border-radius:14px;
+      padding:14px 18px;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px
+    ">
+      <div>
+        <div style="font-size:12px;color:var(--text-soft);margin-bottom:2px">Especialidad seleccionada</div>
+        <div id="especialidad-seleccionada-texto" style="font-size:15px;font-weight:700;color:var(--text-strong)"></div>
+      </div>
+      <button type="button" onclick="limpiarEspecialidad()" style="
+        background:transparent;
+        border:1px solid rgba(255,255,255,0.15);
+        color:var(--text-soft);
+        border-radius:999px;
+        padding:6px 12px;
+        font-size:12px;
+        cursor:pointer
+      ">Cambiar</button>
+    </div>
+    <div id="especialidad-manual-wrap" style="display:none">
+      <div class="input-group">
+        <label class="input-label">Describí tu especialidad</label>
+        <input class="input-field" type="text" id="register-especialidad-manual" 
+          placeholder="Ej: Instructor de yoga, Astrólogo..."
+          oninput="selectedEspecialidad=this.value">
+      </div>
+    </div>
+  `;
 }
 
-function selectCategoria(cat) {
-  selectedCategoria = cat;
+function filtrarEspecialidades(query) {
+  const dropdown = document.getElementById('especialidad-dropdown');
+  if (!query || query.length < 1) {
+    dropdown.style.display = 'none';
+    return;
+  }
+  const q = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const matches = ESPECIALIDADES_KIP.filter(e => {
+    const norm = e.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return norm.includes(q);
+  }).slice(0, 8);
+  if (matches.length === 0) {
+    dropdown.innerHTML = `<div style="padding:14px 18px;font-size:14px;color:var(--text-soft)">
+      No encontramos esa especialidad. 
+      <span style="color:var(--accent);cursor:pointer;font-weight:600" 
+        onclick="seleccionarEspecialidad('Otro (describir)')">
+        Escribila manualmente →
+      </span>
+    </div>`;
+    dropdown.style.display = 'block';
+    return;
+  }
+  dropdown.innerHTML = matches.map(esp => `
+    <div 
+      onclick="seleccionarEspecialidad('${esp.replace(/'/g, "\\'")}')"
+      style="padding:14px 18px;cursor:pointer;font-size:14px;color:var(--text-strong);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
+      onmouseover="this.style.background='rgba(255,107,43,0.08)'"
+      onmouseout="this.style.background='transparent'"
+    >${esp}</div>
+  `).join('');
+  dropdown.style.display = 'block';
+}
+
+function seleccionarEspecialidad(esp) {
+  selectedEspecialidad = esp;
+  selectedCategoria = getCategoriaDeEspecialidad(esp);
+  const dropdown = document.getElementById('especialidad-dropdown');
+  const searchInput = document.getElementById('especialidad-search');
+  const selDiv = document.getElementById('especialidad-seleccionada');
+  const selTexto = document.getElementById('especialidad-seleccionada-texto');
+  const manualWrap = document.getElementById('especialidad-manual-wrap');
+  if (dropdown) dropdown.style.display = 'none';
+  if (searchInput) searchInput.style.display = 'none';
+  if (selDiv) selDiv.style.display = 'flex';
+  if (selTexto) selTexto.textContent = esp;
+  if (manualWrap) manualWrap.style.display = esp === 'Otro (describir)' ? 'block' : 'none';
+  if (esp === 'Otro (describir)') selectedEspecialidad = '';
+}
+
+function limpiarEspecialidad() {
   selectedEspecialidad = '';
-  buildSelectorEspecialidad();
+  selectedCategoria = '';
+  const searchInput = document.getElementById('especialidad-search');
+  const selDiv = document.getElementById('especialidad-seleccionada');
+  const manualWrap = document.getElementById('especialidad-manual-wrap');
+  if (searchInput) { searchInput.value = ''; searchInput.style.display = 'block'; }
+  if (selDiv) selDiv.style.display = 'none';
+  if (manualWrap) manualWrap.style.display = 'none';
 }
 
-function selectEspecialidad(opt) {
-  selectedEspecialidad = opt;
-  buildSelectorEspecialidad();
+function handleEspecialidadKey(event) {
+  const dropdown = document.getElementById('especialidad-dropdown');
+  const items = dropdown?.querySelectorAll('div[onclick]');
+  if (!items || items.length === 0) return;
+  if (event.key === 'Enter') items[0]?.click();
 }
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#especialidad-search') && 
+      !e.target.closest('#especialidad-dropdown')) {
+    const dropdown = document.getElementById('especialidad-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+  }
+});
 
 function showVerifyScreen(email) {
   const span = document.getElementById('verify-email-address');
@@ -2109,26 +2401,34 @@ function handleOnboardingPhoto(event) {
 }
 
 async function completeOnboarding(skip = false) {
-  const phone = document.getElementById('onboarding-phone')?.value.trim();
-  const city = document.getElementById('onboarding-city')?.value.trim();
   if (!currentToken) return showToast('Iniciá sesión primero','error');
-  const phoneValue = phone || currentUser?.phone || '';
-  const cityValue = city || currentUser?.zona || 'CABA';
-  if (!skip && (!phone || !city)) return showToast('Completá teléfono y ciudad','error');
+  const localidad = document.getElementById('onboarding-localidad')?.value.trim() || '';
+  const cp = document.getElementById('onboarding-cp')?.value.trim() || '';
   showLoading(true);
   try {
-    const body = { phone: phoneValue, city: cityValue, role: currentUser?.tipo === 'profesional' ? 'professional' : 'client' };
-    const r = await fetch(`${API}/auth/onboarding`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` }, body: JSON.stringify(body) });
-    const d = await r.json(); showLoading(false);
+    const r = await fetch(`${API}/auth/onboarding`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+      body: JSON.stringify({ phone: currentUser?.phone || '', city: localidad || 'Argentina', role: 'client' })
+    });
+    const d = await r.json();
+    if (cp && d.ok) {
+      await fetch(`${API}/perfil/localidad`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+        body: JSON.stringify({ localidad, codigo_postal: cp })
+      });
+    }
+    showLoading(false);
     if (d.ok) {
       currentUser = normalizeUserPayload(d.user);
       localStorage.setItem('kip_user', JSON.stringify(currentUser));
-      showToast('¡Perfil completo!');
-      updateUIAfterLogin();
+      showToast('¡Bienvenido/a a ServiKIP!');
+      showScreen('dashboard-client');
     } else {
-      showToast(d.error || 'Error al completar onboarding','error');
+      showToast(d.error || 'Error al completar','error');
     }
-  } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+  } catch(e) { showLoading(false); showToast('Error al conectar','error'); }
 }
 
 function skipOnboarding() {
@@ -2136,11 +2436,10 @@ function skipOnboarding() {
 }
 
 function populateOnboardingForm() {
-  setRegisterRole(currentUser?.tipo || 'cliente');
-  const phone = document.getElementById('onboarding-phone'); if (phone) phone.value = currentUser?.phone || '';
-  const city = document.getElementById('onboarding-city'); if (city) city.value = currentUser?.zona || '';
-  const specialty = document.getElementById('onboarding-specialty'); if (specialty) specialty.value = currentUser?.especialidad || 'Electricista';
-  const description = document.getElementById('onboarding-description'); if (description) description.value = currentUser?.descripcion || '';
+  const localidad = document.getElementById('onboarding-localidad');
+  if (localidad) localidad.value = currentUser?.zona || currentUser?.localidad || '';
+  const cp = document.getElementById('onboarding-cp');
+  if (cp) cp.value = currentUser?.codigo_postal || '';
 }
 
 // ── REGISTRO ───────────────────────────────────
@@ -2158,15 +2457,13 @@ async function doRegister() {
   const nombre=document.getElementById('register-firstname').value.trim();
   const apellido=document.getElementById('register-lastname').value.trim();
   const email=document.getElementById('register-email').value.trim();
-  const telefono=document.getElementById('register-phone').value.trim();
   const password=document.getElementById('register-password').value;
   const passwordConfirm=document.getElementById('register-password-confirm').value;
   if (!nombre||!apellido||!email||!password) return showToast('Completá todos los campos obligatorios','error');
   if (password !== passwordConfirm) return showToast('Las contraseñas no coinciden','error');
-  if (registerRole === 'profesional' && (!selectedCategoria || !selectedEspecialidad)) return showToast('Elegí categoría y especialidad','error');
   showLoading(true);
   try {
-    const r = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name: `${nombre} ${apellido}`.trim(), email, password, role: registerRole === 'profesional' ? 'professional' : 'client', phone: telefono, categoria: selectedCategoria, especialidad: selectedEspecialidad }) });
+    const r = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name: `${nombre} ${apellido}`.trim(), email, password, role: 'client' }) });
     const d = await r.json(); showLoading(false);
     if (d.ok) {
       showToast('¡Cuenta creada! Revisá tu email');
@@ -2414,12 +2711,51 @@ function renderPros(pros, containerId) {
     c.innerHTML = '<div style="font-size:14px;color:var(--gray-400);text-align:center;padding:40px;grid-column:span 3">No hay profesionales todavía.</div>';
     return;
   }
+  if (containerId === 'home-pros-grid') {
+    c.innerHTML = pros.map((p, i) => {
+      const ini = ((p.nombre||'')[0]+((p.apellido||'')[0]||'')).toUpperCase();
+      const grad = grads[(p.id||i) % grads.length];
+      const fotoHtml = p.foto 
+        ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">`
+        : `<span style="font-size:20px;font-weight:700;color:white">${ini}</span>`;
+      const badgeHtml = renderVerificationBadge(p.verification_level, p.verification_status, true);
+      const calStr = p.calificacion_promedio > 0 
+        ? `<span style="color:#FFB68B;font-weight:600;font-size:13px">${'★'.repeat(Math.round(p.calificacion_promedio))} ${p.calificacion_promedio}</span>` 
+        : '';
+      const reseñasStr = p.total_calificaciones > 0
+        ? `<span style="font-size:12px;color:rgba(255,255,255,0.3)">${p.total_calificaciones} reseñas</span>`
+        : '';
+      return `<div onclick="showProProfile(${p.id})"
+        style="display:flex;align-items:center;gap:16px;background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px 20px;cursor:pointer;transition:all 180ms ease"
+        onmouseover="this.style.borderColor='rgba(255,107,43,0.3)';this.style.background='#151515'"
+        onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.background='#111111'">
+        <div class="avatar ${grad}" style="width:54px;height:54px;border-radius:14px;flex-shrink:0;overflow:hidden">${fotoHtml}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
+            <span style="font-size:15px;font-weight:700;color:white">${p.nombre} ${p.apellido||''}</span>
+            ${badgeHtml}
+          </div>
+          <div style="font-size:13px;color:#FF8C4B;font-weight:600;margin-bottom:5px">${p.especialidad||'Profesional'}</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            ${calStr} ${reseñasStr}
+            <span style="font-size:12px;color:rgba(255,255,255,0.3)">📍 ${p.zona||'Argentina'}</span>
+          </div>
+        </div>
+        <button onclick="event.stopPropagation();if(!currentUser){showScreen('login');return;}activeChatUser={id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}};openChat({id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}})"
+          style="padding:11px 20px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:13px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background 150ms ease"
+          onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
+          Contactar
+        </button>
+      </div>`;
+    }).join('');
+    return;
+  }
   c.innerHTML = pros.map((p,i) => {
     const ini = ((p.nombre||'')[0]+((p.apellido||'')[0]||'')).toUpperCase();
     const grad = grads[(p.id||i) % grads.length];
     const fotoHtml = p.foto ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">` : `<div class="avatar ${grad}" style="width:52px;height:52px;border-radius:14px;font-size:20px">${ini}</div>`;
     const badgeHtml = renderVerificationBadge(p.verification_level, p.verification_status);
-    return `<div class="pro-card" onclick="showProProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    return `<div class="pro-card" onclick="showProProfile(${p.id})">
       <div class="pro-card-header">
         <div class="pro-avatar-wrap">${fotoHtml}</div>
         <div class="pro-info">
@@ -2439,44 +2775,56 @@ function renderPros(pros, containerId) {
 }
 
 function showProProfile(pro) {
-  window._currentPro = pro;
-  const avWrap = document.getElementById('pp-avatar-wrap');
-  const ini = ((pro.nombre||'')[0]+((pro.apellido||'')[0]||'')).toUpperCase();
-  if (pro.foto) avWrap.innerHTML=`<img src="${pro.foto}" style="width:100%;height:100%;object-fit:cover">`;
-  else avWrap.textContent=ini;
-  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  s('pp-name',`${pro.nombre} ${pro.apellido||''}`);
-  s('pp-esp',pro.especialidad||'Profesional');
-  s('pp-zona',`📍 ${pro.zona||'Argentina'}`);
-  s('pp-exp',`📅 ${pro.experiencia||0} años de experiencia`);
-  s('pp-desc',pro.descripcion||'Profesional registrado en KIP.');
-  const badgeEl = document.getElementById('pp-verification-badge');
-  if (badgeEl) {
-    const badgeHtml = renderVerificationBadge(pro.verification_level, pro.verification_status);
-    badgeEl.innerHTML = badgeHtml;
-    badgeEl.style.display = badgeHtml ? 'inline-flex' : 'none';
+  const initProfile = (profile) => {
+    window._currentPro = profile;
+    const avWrap = document.getElementById('pp-avatar-wrap');
+    const ini = ((profile.nombre||'')[0]+((profile.apellido||'')[0]||'')).toUpperCase();
+    if (profile.foto) avWrap.innerHTML=`<img src="${profile.foto}" style="width:100%;height:100%;object-fit:cover">`;
+    else avWrap.textContent=ini;
+    const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+    s('pp-name',`${profile.nombre} ${profile.apellido||''}`);
+    s('pp-esp',profile.especialidad||'Profesional');
+    s('pp-zona',`📍 ${profile.zona||'Argentina'}`);
+    s('pp-exp',`📅 ${profile.experiencia||0} años de experiencia`);
+    s('pp-desc',profile.descripcion||'Profesional registrado en KIP.');
+    const badgeEl = document.getElementById('pp-verification-badge');
+    if (badgeEl) {
+      const badgeHtml = renderVerificationBadge(profile.verification_level, profile.verification_status);
+      badgeEl.innerHTML = badgeHtml;
+      badgeEl.style.display = badgeHtml ? 'inline-flex' : 'none';
+    }
+    fetch(API + '/calificaciones/' + profile.id)
+      .then(res => res.json())
+      .then(ratings => {
+        const container = document.getElementById('reviews-container');
+        if (ratings.length === 0) {
+          container.innerHTML = '<div style="text-align:center;color:var(--gray-400)">No hay reseñas aún.</div>';
+        } else {
+          container.innerHTML = ratings.map((r, i) => {
+            const stars = '★'.repeat(r.estrellas) + '☆'.repeat(5 - r.estrellas);
+            const ini = (r.nombre + ' ' + (r.apellido||'')).split(' ').map(n => n[0]).join('').toUpperCase();
+            const gradClass = 'av-grad-' + ((i % 6) + 1);
+            return `<div class="review-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div class="avatar ${gradClass}" style="width:36px;height:36px;font-size:14px">${ini}</div><div><div style="font-size:14px;font-weight:600">${r.nombre + ' ' + (r.apellido||'')}</div><div class="stars" style="font-size:12px">${stars}</div></div></div><div style="font-size:14px;color:var(--gray-600)">"${r.comentario}"</div></div>`;
+          }).join('');
+        }
+      })
+      .catch(err => {
+        console.error('Error loading ratings:', err);
+        document.getElementById('reviews-container').innerHTML = '<div style="text-align:center;color:var(--red)">Error al cargar reseñas.</div>';
+      });
+    showScreen('pro-profile');
+  };
+  if (typeof pro === 'number' || (typeof pro === 'string' && pro.match(/^\d+$/))) {
+    fetch(`${API}/profesionales/${encodeURIComponent(pro)}`)
+      .then(res => res.json())
+      .then(data => initProfile(data))
+      .catch(err => {
+        console.error('Error loading profesional:', err);
+        showToast('Error al cargar profesional','error');
+      });
+  } else {
+    initProfile(pro);
   }
-  // Load ratings
-  fetch(API + '/calificaciones/' + pro.id)
-    .then(res => res.json())
-    .then(ratings => {
-      const container = document.getElementById('reviews-container');
-      if (ratings.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:var(--gray-400)">No hay reseñas aún.</div>';
-      } else {
-        container.innerHTML = ratings.map((r, i) => {
-          const stars = '★'.repeat(r.estrellas) + '☆'.repeat(5 - r.estrellas);
-          const ini = (r.nombre + ' ' + (r.apellido||'')).split(' ').map(n => n[0]).join('').toUpperCase();
-          const gradClass = 'av-grad-' + ((i % 6) + 1);
-          return `<div class="review-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div class="avatar ${gradClass}" style="width:36px;height:36px;font-size:14px">${ini}</div><div><div style="font-size:14px;font-weight:600">${r.nombre + ' ' + (r.apellido||'')}</div><div class="stars" style="font-size:12px">${stars}</div></div></div><div style="font-size:14px;color:var(--gray-600)">"${r.comentario}"</div></div>`;
-        }).join('');
-      }
-    })
-    .catch(err => {
-      console.error('Error loading ratings:', err);
-      document.getElementById('reviews-container').innerHTML = '<div style="text-align:center;color:var(--red)">Error al cargar reseñas.</div>';
-    });
-  showScreen('pro-profile');
 }
 
 // ── FOTO DE PERFIL ─────────────────────────────
@@ -2712,6 +3060,19 @@ function buscarCategoria(esp) {
   buscarProfesionalesEnHome('', esp, '');
 }
 
+function enviarSolicitudHome() {
+  const texto = document.getElementById('home-solicitud-texto')?.value.trim();
+  if (!texto) return showToast('Describí qué necesitás primero', 'error');
+  showScreen('register');
+}
+
+function enviarSolicitudCliente() {
+  const texto = document.getElementById('client-solicitud-texto')?.value.trim();
+  if (!texto) return showToast('Describí qué necesitás primero', 'error');
+  showToast('¡Solicitud enviada! Pronto te contactamos.');
+  document.getElementById('client-solicitud-texto').value = '';
+}
+
 async function buscarProfesionalesEnHome(q, esp, categoria) {
   const results = document.getElementById('home-search-results');
   results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:20px">Buscando...</div>';
@@ -2724,10 +3085,14 @@ async function buscarProfesionalesEnHome(q, esp, categoria) {
     const pros = await r.json();
     if (pros.length === 0) {
       results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:40px">No encontramos profesionales con esa búsqueda.</div>';
+      const countEl = document.getElementById('client-pros-count');
+      if (countEl) countEl.textContent = '';
       return;
     }
     results.innerHTML = '<p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-soft);margin-bottom:16px">Resultados</p><div class="pro-grid" id="home-pros-grid"></div>';
     renderPros(pros, 'home-pros-grid');
+    const countEl = document.getElementById('client-pros-count');
+    if (countEl) countEl.textContent = pros.length > 0 ? `${pros.length} disponibles` : '';
   } catch(e) {
     results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:40px">Error al buscar. Intentá de nuevo.</div>';
   }
@@ -2811,6 +3176,136 @@ function heroSearchCategoria(esp) {
 // Cargar stats y pros al iniciar
 cargarStatsHome();
 cargarProsHome();
+
+let proSelectedEspecialidad = '';
+let proSelectedCategoria = '';
+let proSelectedVerification = '';
+let proCurrentStep = 1;
+
+function filtrarEspecialidadesPro(query) {
+  const dropdown = document.getElementById('pro-esp-dropdown');
+  if (!query || query.length < 1) { dropdown.style.display='none'; return; }
+  const q = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const matches = ESPECIALIDADES_KIP.filter(e => {
+    const norm = e.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return norm.includes(q);
+  }).slice(0, 8);
+  if (matches.length === 0) {
+    dropdown.innerHTML = `<div style="padding:14px 18px;font-size:14px;color:var(--text-soft)">No encontramos esa especialidad. <span style="color:var(--accent);cursor:pointer;font-weight:600" onclick="seleccionarProEsp('Otro (describir)')">Escribila manualmente →</span></div>`;
+    dropdown.style.display = 'block'; return;
+  }
+  dropdown.innerHTML = matches.map(esp => `
+    <div onclick="seleccionarProEsp('${esp.replace(/'/g,"\\'")}')"
+      style="padding:14px 18px;cursor:pointer;font-size:14px;color:var(--text-strong);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
+      onmouseover="this.style.background='rgba(255,107,43,0.08)'"
+      onmouseout="this.style.background='transparent'">${esp}</div>
+  `).join('');
+  dropdown.style.display = 'block';
+}
+
+function seleccionarProEsp(esp) {
+  proSelectedEspecialidad = esp;
+  proSelectedCategoria = getCategoriaDeEspecialidad(esp);
+  document.getElementById('pro-esp-dropdown').style.display = 'none';
+  document.getElementById('pro-especialidad-search').style.display = 'none';
+  const sel = document.getElementById('pro-esp-seleccionada');
+  sel.style.display = 'flex';
+  document.getElementById('pro-esp-seleccionada-texto').textContent = esp;
+}
+
+function limpiarProEsp() {
+  proSelectedEspecialidad = '';
+  proSelectedCategoria = '';
+  const search = document.getElementById('pro-especialidad-search');
+  search.value = ''; search.style.display = 'block';
+  document.getElementById('pro-esp-seleccionada').style.display = 'none';
+}
+
+function handleProEspKey(event) {
+  const items = document.getElementById('pro-esp-dropdown')?.querySelectorAll('div[onclick]');
+  if (event.key === 'Enter' && items?.length > 0) items[0].click();
+}
+
+function selectProVerification(level) {
+  proSelectedVerification = level;
+  ['independiente','matriculado','universitario'].forEach(l => {
+    const el = document.getElementById('pvl-' + l);
+    if (el) {
+      el.style.borderColor = l === level ? 'var(--accent)' : 'var(--border)';
+      el.style.background = l === level ? 'rgba(255,107,43,0.06)' : 'transparent';
+    }
+  });
+}
+
+function proNextStep(step) {
+  if (step === 2 && !proSelectedEspecialidad) {
+    return showToast('Seleccioná tu especialidad primero','error');
+  }
+  proCurrentStep = step;
+  [1,2,3,4].forEach(s => {
+    const el = document.getElementById('pro-step-' + s);
+    if (el) el.style.display = s === step ? 'block' : 'none';
+    const dot = document.getElementById('pro-step-' + s + '-dot');
+    if (dot) {
+      dot.style.background = s < step ? '#22c55e' : s === step ? '#FF6B2B' : 'rgba(255,255,255,0.1)';
+      dot.style.color = s <= step ? 'white' : 'rgba(255,255,255,0.4)';
+      dot.textContent = s < step ? '✓' : String(s);
+    }
+  });
+  const bar = document.getElementById('pro-step-bar');
+  if (bar) bar.style.width = ((step - 1) / 3 * 100) + '%';
+  if (step === 4) {
+    const resumen = document.getElementById('pro-resumen');
+    if (resumen) {
+      resumen.innerHTML = `
+        <div>🔧 <strong>${proSelectedEspecialidad}</strong></div>
+        <div>📍 ${document.getElementById('pro-zona')?.value || 'Sin zona definida'}</div>
+        <div>📅 ${document.getElementById('pro-experiencia')?.value || '0'} años de experiencia</div>
+        <div>🛡️ ${proSelectedVerification || 'Verificación pendiente'}</div>
+      `;
+    }
+  }
+}
+
+async function publicarPerfilPro() {
+  if (!currentToken) return showToast('Iniciá sesión primero','error');
+  const descripcion = document.getElementById('pro-descripcion')?.value.trim() || '';
+  const experiencia = parseInt(document.getElementById('pro-experiencia')?.value) || 0;
+  const zona = document.getElementById('pro-zona')?.value.trim() || '';
+  showLoading(true);
+  try {
+    const r = await fetch(`${API}/pro/activar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+      body: JSON.stringify({
+        especialidad: proSelectedEspecialidad,
+        categoria: proSelectedCategoria,
+        descripcion,
+        experiencia_anios: experiencia,
+        zona
+      })
+    });
+    const d = await r.json(); showLoading(false);
+    if (d.ok) {
+      currentUser = normalizeUserPayload(d.user);
+      currentUser.tipo = 'profesional';
+      localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      localStorage.setItem('kip_token', currentToken);
+      showToast('¡Perfil profesional publicado! 🎉');
+      if (proSelectedVerification) {
+        await fetch(`${API}/perfil/verificacion`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+          body: JSON.stringify({ verification_level: proSelectedVerification, matricula: '' })
+        });
+      }
+      updateUIAfterLogin();
+      showScreen('dashboard-pro');
+    } else {
+      showToast(d.error || 'Error al publicar perfil','error');
+    }
+  } catch(e) { showLoading(false); showToast('Error al conectar','error'); }
+}
 </script>
 </body>
 </html>

@@ -122,13 +122,36 @@ try { db.exec(`ALTER TABLE users ADD COLUMN precio_estimado TEXT`); } catch (e) 
 try { db.exec(`ALTER TABLE users ADD COLUMN profile_completion INTEGER DEFAULT 0`); } catch (e) {}
 try { db.exec(`ALTER TABLE users ADD COLUMN descripcion TEXT`); } catch (e) {}
 try { db.exec(`ALTER TABLE users ADD COLUMN experiencia INTEGER`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN localidad TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN codigo_postal TEXT`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN es_profesional INTEGER DEFAULT 0`); } catch (e) {}
+try { db.exec(`ALTER TABLE users ADD COLUMN pro_onboarding_step INTEGER DEFAULT 0`); } catch (e) {}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS profesional_profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    especialidad TEXT,
+    categoria TEXT,
+    descripcion TEXT,
+    experiencia_anios INTEGER DEFAULT 0,
+    zona TEXT,
+    fotos_portfolio TEXT DEFAULT '[]',
+    telefono TEXT,
+    verification_level TEXT DEFAULT 'none',
+    verification_status TEXT DEFAULT 'pending',
+    matricula TEXT,
+    titulo_url TEXT,
+    dni_url TEXT,
+    activo INTEGER DEFAULT 1,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(uploadsDir));
-
-const allowedCities = ['CABA', 'GBA Norte', 'GBA Sur', 'GBA Oeste', 'Interior'];
 
 function authMiddleware(req, res, next) {
   const auth = req.headers.authorization;
@@ -163,7 +186,11 @@ function getUserPayload(user) {
     titulo_url: user.titulo_url || null,
     dni_url: user.dni_url || null,
     precio_estimado: user.precio_estimado || null,
-    profile_completion: user.profile_completion || 0
+    profile_completion: user.profile_completion || 0,
+    es_profesional: user.es_profesional === 1,
+    localidad: user.localidad || null,
+    codigo_postal: user.codigo_postal || null,
+    pro_onboarding_step: user.pro_onboarding_step || 0
   };
 }
 
@@ -331,7 +358,6 @@ app.get('/api/auth/verify-email', (req, res) => {
 
 app.put('/api/auth/onboarding', authMiddleware, (req, res) => {
   const { phone, city, role } = req.body;
-  if (!allowedCities.includes(city)) return res.status(400).json({ ok: false, error: 'Ciudad inválida' });
   db.prepare('UPDATE users SET phone = ?, city = ?, role = ?, onboarding_complete = 1 WHERE id = ?')
     .run(phone, city, role, req.user.id);
   const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
@@ -620,6 +646,67 @@ app.get('/api/stats', (req, res) => {
     });
   } catch(e) {
     res.json({ ok: true, profesionales: 0, clientes: 0, trabajos: 0, calificacion_promedio: 0 });
+  }
+});
+
+// Activar modo profesional - paso 1: especialidad
+app.post('/api/pro/activar', authMiddleware, (req, res) => {
+  const { especialidad, categoria, descripcion, experiencia_anios, zona } = req.body;
+  if (!especialidad) return res.status(400).json({ ok: false, error: 'La especialidad es obligatoria' });
+  const existing = db.prepare('SELECT id FROM profesional_profiles WHERE user_id = ?').get(req.user.id);
+  if (existing) {
+    db.prepare('UPDATE profesional_profiles SET especialidad=?, categoria=?, descripcion=?, experiencia_anios=?, zona=? WHERE user_id=?')
+      .run(especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null, req.user.id);
+  } else {
+    db.prepare('INSERT INTO profesional_profiles (user_id, especialidad, categoria, descripcion, experiencia_anios, zona) VALUES (?,?,?,?,?,?)')
+      .run(req.user.id, especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null);
+  }
+  db.prepare('UPDATE users SET es_profesional=1, pro_onboarding_step=1, role=? WHERE id=?')
+    .run('professional', req.user.id);
+  // Sincronizar con tabla usuarios legacy
+  db.prepare('UPDATE usuarios SET tipo=?, especialidad=?, descripcion=?, categoria=? WHERE email=(SELECT email FROM users WHERE id=?)')
+    .run('profesional', especialidad, descripcion||null, categoria||null, req.user.id);
+  const updated = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
+  res.json({ ok: true, user: getUserPayload(updated) });
+});
+
+// Actualizar localidad del usuario
+app.put('/api/perfil/localidad', authMiddleware, (req, res) => {
+  const { localidad, codigo_postal } = req.body;
+  db.prepare('UPDATE users SET localidad=?, codigo_postal=? WHERE id=?')
+    .run(localidad||null, codigo_postal||null, req.user.id);
+  db.prepare('UPDATE usuarios SET zona=? WHERE email=(SELECT email FROM users WHERE id=?)')
+    .run(localidad||null, req.user.id);
+  const updated = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
+  res.json({ ok: true, user: getUserPayload(updated) });
+});
+
+// Obtener perfil profesional
+app.get('/api/pro/perfil', authMiddleware, (req, res) => {
+  const profile = db.prepare('SELECT * FROM profesional_profiles WHERE user_id=?').get(req.user.id);
+  res.json({ ok: true, profile: profile || null });
+});
+
+app.get('/api/profesionales/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    const pro = db.prepare(`
+      SELECT 
+        u.id, u.nombre, u.apellido, u.especialidad, u.categoria,
+        u.zona, u.descripcion, u.experiencia, u.foto,
+        us.verification_level, us.verification_status,
+        COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
+        COUNT(c.id) as total_calificaciones
+      FROM usuarios u
+      LEFT JOIN users us ON us.email = u.email
+      LEFT JOIN calificaciones c ON c.para_usuario = u.id
+      WHERE u.id = ? AND u.tipo = 'profesional'
+      GROUP BY u.id
+    `).get(id);
+    if (!pro) return res.status(404).json({ ok: false, error: 'Profesional no encontrado' });
+    res.json(pro);
+  } catch(e) {
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
