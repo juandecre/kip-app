@@ -1117,7 +1117,7 @@ textarea:focus {
     </div>
     <div style="flex:1"></div>
     <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Cómo funciona</button>
-    <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Testimonios</button>
+    <button class="nav-link" style="font-size:14px" onclick="showScreen('faq')">Preguntas frecuentes</button>
     <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Ayuda</button>
     <button class="nav-link" onclick="showScreen('login')" style="font-size:14px">Ingresar</button>
     <button class="btn-nav-primary" onclick="showScreen('register')" style="font-size:14px">Registrate gratis</button>
@@ -1290,19 +1290,21 @@ textarea:focus {
           </button>
         </div>
 
-        <!-- Stats pequeños -->
-        <div style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:18px;text-align:center">
-          <div id="stat-pros-side" style="font-family:var(--font-display);font-size:26px;font-weight:800;color:#FF6B2B">—</div>
-          <div style="font-size:12px;color:rgba(0,0,0,0.3);margin-top:2px">profesionales listos para ayudarte</div>
-        </div>
+
 
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <div style="text-align:center;padding:28px;font-size:13px;color:rgba(0,0,0,0.3);border-top:1px solid rgba(0,0,0,0.08)">
-    © 2026 ServiKIP — Conectando Argentina
+  <div style="text-align:center;padding:32px 24px;font-size:13px;color:var(--text-soft);border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:16px">
+      <span onclick="showScreen('faq')" style="cursor:pointer;color:var(--text-soft);transition:color 150ms ease" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-soft)'">Preguntas frecuentes</span>
+      <span onclick="showScreen('politicas')" style="cursor:pointer;color:var(--text-soft);transition:color 150ms ease" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-soft)'">Políticas y términos</span>
+      <span onclick="showScreen('login')" style="cursor:pointer;color:var(--text-soft);transition:color 150ms ease" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-soft)'">Iniciar sesión</span>
+      <span onclick="showScreen('register')" style="cursor:pointer;color:var(--text-soft);transition:color 150ms ease" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-soft)'">Registrarse</span>
+    </div>
+    <div>© 2026 ServiKIP — Conectando Argentina</div>
   </div>
 
 </div>
@@ -2064,6 +2066,140 @@ textarea:focus {
   <div class="image-modal-content">
     <button class="image-modal-close" onclick="closeProfileImageModal()" aria-label="Cerrar vista de imagen">×</button>
     <img id="profile-image-modal-img" src="" alt="Foto de perfil ampliada">
+  </div>
+</div>
+
+<!-- ══════════ FAQ ══════════ -->
+<div class="screen" id="screen-faq" style="display:none">
+  <nav class="navbar">
+    <div class="logo-icon">K</div>
+    <div class="navbar-logo">servi<span>KIP</span></div>
+    <div style="flex:1"></div>
+    <button class="nav-link" onclick="showScreen('home')">← Volver</button>
+  </nav>
+  <div style="max-width:780px;margin:0 auto;padding:100px 24px 64px">
+    <div style="text-align:center;margin-bottom:48px">
+      <h1 style="font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--text-strong);margin-bottom:12px">Preguntas frecuentes</h1>
+      <p style="color:var(--text-soft);font-size:16px">Todo lo que necesitás saber sobre ServiKIP</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Cómo funciona ServiKIP?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          ServiKIP es una plataforma que conecta personas que necesitan servicios con profesionales verificados. Buscás el profesional, lo contactás por chat, acordán el trabajo y lo calificás al finalizar.
+        </div>
+      </div>
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Es gratis registrarse?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          Sí, registrarse y usar ServiKIP es completamente gratuito tanto para clientes como para profesionales. Solo aplicamos una pequeña comisión del 5% sobre los trabajos completados.
+        </div>
+      </div>
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Cómo sé que el profesional es confiable?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          Todos los profesionales pasan por un proceso de verificación de identidad. Además, podés ver sus calificaciones reales dejadas por otros clientes antes de contratarlos.
+        </div>
+      </div>
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Qué pasa si tengo un problema con el profesional?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          Podés contactarnos por el chat de soporte. Recordá que ServiKIP es una plataforma intermediaria — la responsabilidad por la ejecución del trabajo es exclusivamente del profesional contratado. Te ayudamos a gestionar el conflicto pero no somos parte de la relación contractual.
+        </div>
+      </div>
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Puedo ser cliente y profesional al mismo tiempo?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          Sí. Con una sola cuenta podés buscar servicios como cliente y también activar el modo profesional para ofrecer tus propios servicios. No necesitás crear dos cuentas.
+        </div>
+      </div>
+      <div class="card" style="padding:24px;cursor:pointer" onclick="toggleFaq(this)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:16px;font-weight:700;color:var(--text-strong)">¿Cómo me registro como profesional?</div>
+          <span style="font-size:20px;color:var(--accent)">+</span>
+        </div>
+        <div style="display:none;margin-top:14px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          Primero creás una cuenta normal. Una vez dentro, vas a ver el botón "Ganar dinero ofreciendo servicios" en tu dashboard. Hacés click, completás el perfil profesional en 4 pasos y listo.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ POLÍTICAS Y TÉRMINOS ══════════ -->
+<div class="screen" id="screen-politicas" style="display:none">
+  <nav class="navbar">
+    <div class="logo-icon">K</div>
+    <div class="navbar-logo">servi<span>KIP</span></div>
+    <div style="flex:1"></div>
+    <button class="nav-link" onclick="showScreen('home')">← Volver</button>
+  </nav>
+  <div style="max-width:780px;margin:0 auto;padding:100px 24px 64px">
+    <div style="text-align:center;margin-bottom:48px">
+      <h1 style="font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--text-strong);margin-bottom:12px">Políticas y términos de uso</h1>
+      <p style="color:var(--text-soft);font-size:14px">Última actualización: abril 2026</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:32px;font-size:15px;line-height:1.9;color:var(--text)">
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">1. Naturaleza de la plataforma</h2>
+        <p>ServiKIP es una plataforma digital de intermediación que facilita el contacto entre personas que buscan servicios y profesionales independientes que los ofrecen. ServiKIP actúa exclusivamente como un canal de conexión y no es parte de ningún acuerdo, contrato ni relación laboral entre los usuarios.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">2. Limitación de responsabilidad</h2>
+        <p>ServiKIP <strong>no se hace responsable</strong> bajo ninguna circunstancia por:</p>
+        <ul style="margin-top:12px;padding-left:20px;display:flex;flex-direction:column;gap:8px">
+          <li>La calidad, seguridad o resultado de los servicios prestados por los profesionales.</li>
+          <li>Daños materiales, personales o de cualquier otra índole que pudieran surgir como consecuencia de los servicios contratados.</li>
+          <li>Incumplimientos, fraudes, accidentes o disputas entre clientes y profesionales.</li>
+          <li>La veracidad de la información provista por los usuarios al momento de registrarse.</li>
+          <li>Cualquier hecho, acto u omisión ocurrido fuera de la plataforma digital.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">3. Responsabilidad del profesional</h2>
+        <p>El profesional es el único y exclusivo responsable por la ejecución del servicio contratado, incluyendo pero no limitado a: la calidad del trabajo realizado, el cumplimiento de la legislación vigente, los materiales utilizados, los plazos acordados y cualquier daño que pudiera causar en el ejercicio de su actividad. Al registrarse en ServiKIP, el profesional acepta esta responsabilidad de manera expresa.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">4. Responsabilidad del cliente</h2>
+        <p>El cliente es responsable de verificar las condiciones del servicio antes de contratarlo, de acordar los términos directamente con el profesional y de realizar los pagos conforme a lo pactado. ServiKIP no interviene en la negociación ni garantiza los resultados del servicio.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">5. Uso aceptable</h2>
+        <p>Queda prohibido utilizar ServiKIP para actividades ilegales, fraudulentas o que violen derechos de terceros. ServiKIP se reserva el derecho de suspender o eliminar cuentas que incumplan estas políticas sin previo aviso.</p>
+      </div>
+
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text-strong);margin-bottom:12px">6. Modificaciones</h2>
+        <p>ServiKIP puede modificar estos términos en cualquier momento. El uso continuado de la plataforma implica la aceptación de los términos vigentes.</p>
+      </div>
+
+      <div style="background:rgba(255,107,43,0.06);border:1px solid rgba(255,107,43,0.2);border-radius:16px;padding:24px;margin-top:8px">
+        <p style="font-size:14px;color:var(--text-soft);line-height:1.8">
+          <strong style="color:var(--accent)">Resumen simple:</strong> ServiKIP conecta personas con profesionales, pero no es responsable de lo que ocurra entre ellos. Cada usuario es responsable de sus propios actos. Usá la plataforma con buena fe.
+        </p>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -3305,6 +3441,14 @@ async function publicarPerfilPro() {
       showToast(d.error || 'Error al publicar perfil','error');
     }
   } catch(e) { showLoading(false); showToast('Error al conectar','error'); }
+}
+function toggleFaq(card) {
+  const content = card.querySelector('div[style*="display:none"], div[style*="display: none"]');
+  const icon = card.querySelector('span');
+  if (!content) return;
+  const isOpen = content.style.display === 'block';
+  content.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.textContent = isOpen ? '+' : '−';
 }
 </script>
 </body>
