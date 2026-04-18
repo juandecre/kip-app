@@ -1081,6 +1081,10 @@ textarea:focus {
 .ps-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid rgba(255,255,255,0.06); }
 .review-card { padding:22px; background:#1A1A1A; border:1px solid rgba(204,204,204,0.12); border-radius:16px; margin-bottom:12px; }
 .stat-label { font-size:13px; color:#888888; margin-top:4px; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
 </style>
 </head>
 <body>
@@ -1089,63 +1093,177 @@ textarea:focus {
 <div class="loading-overlay" id="loading"><div class="spinner"></div></div>
 
 <!-- ══════════ HOME ══════════ -->
-<div class="screen active" id="screen-home" style="background:var(--bg-dark)">
-  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(204,204,204,0.1);height:64px;display:flex;align-items:center;padding:0 24px;gap:16px">
-    <div class="logo-icon">K</div><div class="navbar-logo">KI<span>P</span></div>
+<div class="screen active" id="screen-home" style="background:#0A0A0A">
+
+  <!-- NAVBAR -->
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;display:flex;align-items:center;padding:0 32px;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo-icon">K</div>
+      <span style="font-family:var(--font-display);font-size:20px;font-weight:800;color:white;letter-spacing:-0.5px">servi<span style="color:#FF6B2B">KIP</span></span>
+    </div>
     <div style="flex:1"></div>
-    <button class="nav-link" onclick="showScreen('login')">Iniciar sesión</button>
-    <button class="btn-nav-primary" onclick="showScreen('register')">Registrarme</button>
+    <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Cómo funciona</button>
+    <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Testimonios</button>
+    <button class="nav-link" style="font-size:14px" onclick="showScreen('login')">Ayuda</button>
+    <button class="nav-link" onclick="showScreen('login')" style="font-size:14px">Ingresar</button>
+    <button class="btn-nav-primary" onclick="showScreen('register')" style="font-size:14px">Registrate gratis</button>
   </nav>
-  <section class="hero">
-    <div style="position:absolute;inset:0;pointer-events:none"><div class="hero-dots"></div><div class="hero-glow"></div></div>
-    <div class="hero-content">
-      <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:32px">
-        <div class="logo-icon" style="width:52px;height:52px;font-size:22px;border-radius:14px">K</div>
-        <span style="font-family:var(--font-display);font-size:36px;font-weight:800;color:white;letter-spacing:-1px">KIP</span>
+
+  <!-- HERO -->
+  <section style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 60px;position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,43,0.12) 0%, transparent 70%), #0A0A0A">
+    
+    <!-- Dot grid background -->
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);background-size:32px 32px;pointer-events:none"></div>
+
+    <div style="position:relative;z-index:1;text-align:center;max-width:820px;width:100%">
+      
+      <!-- Badge -->
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.25);border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;color:#FF8C4B;margin-bottom:28px">
+        <span style="width:7px;height:7px;border-radius:50%;background:#FF6B2B;display:inline-block;animation:pulse 2s infinite"></span>
+        Plataforma de servicios profesionales en Argentina
       </div>
-      <div class="hero-eyebrow">Plataforma de servicios profesionales</div>
-      <h1 class="hero-title">Encontrá profesionales<br><span class="accent">de confianza</span></h1>
-      <p class="hero-sub">Conectamos personas con técnicos y profesionales verificados para cualquier trabajo en Argentina.</p>
-      <div class="hero-search-wrap">
-        <span style="font-size:18px">🔍</span>
-        <input class="hero-search-input" placeholder="¿Qué servicio necesitás?" type="text" autocomplete="off" name="search_kip">
-        <button class="hero-search-btn" onclick="showScreen('register')">Buscar</button>
+
+      <!-- Título -->
+      <h1 style="font-family:var(--font-display);font-size:clamp(36px,6vw,72px);font-weight:800;color:white;line-height:1.05;margin-bottom:20px;letter-spacing:-1.5px">
+        Encontrá profesionales<br>
+        <span style="color:#FF6B2B">cerca tuyo</span> en minutos.
+      </h1>
+      <p style="font-size:18px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:44px;max-width:560px;margin-left:auto;margin-right:auto">
+        Electricistas, plomeros, técnicos y más.<br>Verificados y con calificaciones reales.
+      </p>
+
+      <!-- Buscador -->
+      <div style="display:flex;gap:0;background:#161616;border:1.5px solid rgba(255,255,255,0.1);border-radius:18px;padding:8px;align-items:center;max-width:680px;margin:0 auto 20px;box-shadow:0 0 0 1px rgba(255,107,43,0) , 0 24px 48px rgba(0,0,0,0.4);transition:border-color 200ms ease" onfocusin="this.style.borderColor='rgba(255,107,43,0.4)'" onfocusout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <span style="font-size:18px;padding:0 14px;opacity:0.5">🔍</span>
+        <input 
+          id="hero-search-input-new"
+          type="text" 
+          autocomplete="off"
+          placeholder="¿Qué necesitás? (ej: plomero, electricista...)"
+          style="flex:1;background:transparent;border:none;outline:none;font-size:16px;color:white;font-family:var(--font-body)"
+          onkeydown="if(event.key==='Enter')heroSearch()"
+        >
+        <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);margin:0 8px"></div>
+        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(255,255,255,0.7);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
+          <option value="">📍 Toda Argentina</option>
+          <option value="CABA">📍 CABA</option>
+          <option value="GBA Norte">📍 GBA Norte</option>
+          <option value="GBA Sur">📍 GBA Sur</option>
+          <option value="GBA Oeste">📍 GBA Oeste</option>
+          <option value="Interior">📍 Interior</option>
+        </select>
+        <button onclick="heroSearch()" style="padding:14px 28px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:15px;font-family:var(--font-body);border:none;cursor:pointer;white-space:nowrap;transition:background 150ms ease" onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
+          Buscar
+        </button>
       </div>
-      <div class="hero-cta-group">
-        <button class="btn btn-primary btn-lg" onclick="showScreen('register')">Encontrar un profesional</button>
-        <button class="btn-hero-outline" onclick="showScreen('register')">Ofrecer mis servicios</button>
+
+      <!-- Trust pills -->
+      <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:56px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+          <span>🛡️</span> Pagás solo si aceptás el trabajo
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+          <span>✅</span> Profesionales verificados
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.45)">
+          <span>💬</span> Soporte siempre disponible
+        </div>
+      </div>
+
+      <!-- Stats reales -->
+      <div style="display:flex;justify-content:center;gap:0;background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;overflow:hidden;max-width:620px;margin:0 auto">
+        <div style="flex:1;padding:22px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.07)">
+          <div id="stat-pros" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:#FF6B2B">—</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px">Profesionales</div>
+        </div>
+        <div style="flex:1;padding:22px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.07)">
+          <div id="stat-trabajos" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:#FF6B2B">—</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px">Trabajos</div>
+        </div>
+        <div style="flex:1;padding:22px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.07)">
+          <div id="stat-calif" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:#FF6B2B">—</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px">Calificación ★</div>
+        </div>
+        <div style="flex:1;padding:22px 16px;text-align:center">
+          <div id="stat-users" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:#FF6B2B">—</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px">Usuarios</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FILTROS RÁPIDOS -->
+  <section style="padding:48px 24px 0;max-width:1100px;margin:0 auto">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px">
+      <button onclick="heroSearchCategoria('')" class="filtro-rapido filtro-active" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.5);background:rgba(255,107,43,0.1);color:#FF8C4B;font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease">Todos</button>
+      <button onclick="heroSearchCategoria('Electricista')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">⚡ Electricista</button>
+      <button onclick="heroSearchCategoria('Plomero/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🔧 Plomero</button>
+      <button onclick="heroSearchCategoria('Pintor/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🎨 Pintor</button>
+      <button onclick="heroSearchCategoria('Limpieza de hogar y oficinas')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧹 Limpieza</button>
+      <button onclick="heroSearchCategoria('Albañil')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧱 Albañil</button>
+      <button onclick="heroSearchCategoria('Peluquero/a')" class="filtro-rapido" style="padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:14px;cursor:pointer;transition:all 150ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">✂️ Peluquero</button>
+    </div>
+
+    <!-- Título sección profesionales -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 id="home-pros-titulo" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:white">Profesionales recomendados</h2>
+      <button onclick="showScreen('register')" style="font-size:13px;color:#FF6B2B;background:transparent;border:none;cursor:pointer;font-weight:600">Ver todos →</button>
+    </div>
+
+    <!-- Lista de profesionales -->
+    <div id="home-pros-lista" style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">
+      <div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:14px">Cargando profesionales...</div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:64px">
+      <button onclick="showScreen('register')" class="btn btn-primary" style="padding:16px 40px;font-size:16px;border-radius:14px">
+        Ver todos los profesionales →
+      </button>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section style="padding:64px 24px;background:#0D0D0D;border-top:1px solid rgba(255,255,255,0.05)">
+    <div style="max-width:900px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:48px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:#FF6B2B;margin-bottom:10px">Simple y rápido</div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(26px,4vw,40px);font-weight:800;color:white">¿Cómo funciona ServiKIP?</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px">
+        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
+          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">1</div>
+          <div style="font-size:32px;margin-bottom:14px">🔍</div>
+          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Describí qué necesitás</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Buscá por rubro, zona y calificación.</div>
+        </div>
+        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
+          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">2</div>
+          <div style="font-size:32px;margin-bottom:14px">👤</div>
+          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Elegí el profesional</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Revisá calificaciones reales y verificaciones.</div>
+        </div>
+        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
+          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">3</div>
+          <div style="font-size:32px;margin-bottom:14px">💬</div>
+          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Contactá y acordá</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Chateá, pedí presupuesto y coordiná.</div>
+        </div>
+        <div style="background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:28px;position:relative;overflow:hidden">
+          <div style="font-family:var(--font-display);font-size:56px;font-weight:800;color:rgba(255,107,43,0.1);position:absolute;top:12px;right:18px;line-height:1">4</div>
+          <div style="font-size:32px;margin-bottom:14px">⭐</div>
+          <div style="font-size:16px;font-weight:700;color:white;margin-bottom:8px">Calificá el trabajo</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Tu opinión ayuda a toda la comunidad.</div>
+        </div>
       </div>
     </div>
   </section>
-  <div class="stats-bar">
-    <div style="text-align:center"><div class="stat-num">12<span>K</span></div><div class="stat-label">Profesionales activos</div></div>
-    <div style="text-align:center"><div class="stat-num">48<span>K</span></div><div class="stat-label">Trabajos completados</div></div>
-    <div style="text-align:center"><div class="stat-num">4.8<span>★</span></div><div class="stat-label">Calificación promedio</div></div>
-    <div style="text-align:center"><div class="stat-num">98<span>%</span></div><div class="stat-label">Satisfacción</div></div>
+
+  <!-- FOOTER -->
+  <div style="text-align:center;padding:28px;font-size:13px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05)">
+    © 2026 ServiKIP — Conectando Argentina
   </div>
-  <section class="home-section">
-    <div class="section-header"><div class="section-eyebrow">Categorías</div><h2 class="section-title">¿Qué necesitás hoy?</h2></div>
-    <div class="categories-grid">
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">⚡</span><div class="cat-name">Electricista</div><div class="cat-count">340 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🔧</span><div class="cat-name">Plomero</div><div class="cat-count">218 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🪵</span><div class="cat-name">Carpintero</div><div class="cat-count">165 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🧱</span><div class="cat-name">Albañil</div><div class="cat-count">290 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🏗️</span><div class="cat-name">Arquitecto</div><div class="cat-count">87 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">💰</span><div class="cat-name">Contador</div><div class="cat-count">124 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">💻</span><div class="cat-name">Programador</div><div class="cat-count">203 pros</div></div>
-      <div class="cat-card" onclick="showScreen('register')"><span class="cat-icon">🎨</span><div class="cat-name">Diseñador</div><div class="cat-count">156 pros</div></div>
-    </div>
-  </section>
-  <section class="home-section" style="background:rgba(255,255,255,0.02)">
-    <div class="section-header"><div class="section-eyebrow">Proceso</div><h2 class="section-title">¿Cómo funciona KIP?</h2></div>
-    <div class="how-grid">
-      <div class="how-card"><div class="how-num">1</div><div class="how-icon">🔍</div><h3 class="how-title">Buscá</h3><p class="how-desc">Encontrá el profesional ideal por rubro, zona y calificación.</p></div>
-      <div class="how-card"><div class="how-num">2</div><div class="how-icon">💬</div><h3 class="how-title">Chatéa</h3><p class="how-desc">Hablá con el profesional y pedí tu presupuesto.</p></div>
-      <div class="how-card"><div class="how-num">3</div><div class="how-icon">🤝</div><h3 class="how-title">Contratá</h3><p class="how-desc">Aceptá el presupuesto y pagá de forma segura.</p></div>
-      <div class="how-card"><div class="how-num">4</div><div class="how-icon">⭐</div><h3 class="how-title">Calificá</h3><p class="how-desc">Al finalizar, puntuá el trabajo.</p></div>
-    </div>
-  </section>
-  <div class="footer-bottom">© 2025 KIP – Knowledge Is Power</div>
+
 </div>
 
 <!-- ══════════ LOGIN ══════════ -->
@@ -2614,6 +2732,85 @@ async function buscarProfesionalesEnHome(q, esp, categoria) {
     results.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:40px">Error al buscar. Intentá de nuevo.</div>';
   }
 }
+
+async function cargarStatsHome() {
+  try {
+    const r = await fetch(`${API}/stats`);
+    const d = await r.json();
+    if (!d.ok) return;
+    const fmt = (n) => n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : String(n);
+    const el = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+    el('stat-pros', fmt(d.profesionales));
+    el('stat-trabajos', fmt(d.trabajos || 0));
+    el('stat-calif', d.calificacion_promedio > 0 ? d.calificacion_promedio + '★' : '—');
+    el('stat-users', fmt(d.profesionales + d.clientes));
+  } catch(e) { console.log('Stats error:', e); }
+}
+
+async function cargarProsHome(especialidad = '', zona = '') {
+  const lista = document.getElementById('home-pros-lista');
+  if (!lista) return;
+  lista.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:14px">Cargando...</div>';
+  let url = `${API}/profesionales?`;
+  if (especialidad) url += `especialidad=${encodeURIComponent(especialidad)}&`;
+  if (zona) url += `zona=${encodeURIComponent(zona)}`;
+  try {
+    const r = await fetch(url);
+    const pros = await r.json();
+    if (pros.length === 0) {
+      lista.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:14px">No hay profesionales en esta categoría todavía.</div>';
+      return;
+    }
+    lista.innerHTML = pros.slice(0, 6).map((p, i) => {
+      const ini = ((p.nombre||'')[0] + ((p.apellido||'')[0]||'')).toUpperCase();
+      const grad = grads[(p.id||i) % grads.length];
+      const stars = p.calificacion_promedio > 0 ? '★'.repeat(Math.round(p.calificacion_promedio)) : '';
+      const badgeHtml = renderVerificationBadge(p.verification_level, p.verification_status, true);
+      const avatarHtml = p.foto
+        ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">`
+        : `<span style="font-size:22px;font-weight:700;color:white">${ini}</span>`;
+      return `
+        <div onclick="showScreen('register')" style="display:flex;align-items:center;gap:18px;background:#111111;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px 22px;cursor:pointer;transition:all 180ms ease" onmouseover="this.style.borderColor='rgba(255,107,43,0.3)';this.style.background='#151515'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.background='#111111'">
+          <div class="avatar ${grad}" style="width:58px;height:58px;border-radius:16px;flex-shrink:0;overflow:hidden">${avatarHtml}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+              <span style="font-size:16px;font-weight:700;color:white">${p.nombre} ${p.apellido||''}</span>
+              ${badgeHtml}
+            </div>
+            <div style="font-size:13px;color:#FF8C4B;font-weight:600;margin-bottom:6px">${p.especialidad||'Profesional'}</div>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              ${p.calificacion_promedio > 0 ? `<span style="font-size:13px;color:#FFB68B;font-weight:600">${stars} ${p.calificacion_promedio}</span>` : ''}
+              ${p.total_calificaciones > 0 ? `<span style="font-size:12px;color:rgba(255,255,255,0.35)">${p.total_calificaciones} reseñas</span>` : ''}
+              <span style="font-size:12px;color:rgba(255,255,255,0.35)">📍 ${p.zona||'Argentina'}</span>
+            </div>
+          </div>
+          <button onclick="event.stopPropagation();showScreen('register')" style="padding:12px 22px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background 150ms ease" onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
+            Contactar
+          </button>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    lista.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3)">Error al cargar.</div>';
+  }
+}
+
+function heroSearch() {
+  const q = document.getElementById('hero-search-input-new')?.value.trim() || '';
+  const zona = document.getElementById('hero-zona-select')?.value || '';
+  if (!q && !zona) return;
+  cargarProsHome(q, zona);
+  document.getElementById('home-pros-titulo').textContent = `Resultados para "${q || zona}"`;
+  document.getElementById('home-pros-lista')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function heroSearchCategoria(esp) {
+  cargarProsHome(esp, '');
+  document.getElementById('home-pros-titulo').textContent = esp ? `Profesionales · ${esp}` : 'Profesionales recomendados';
+}
+
+// Cargar stats y pros al iniciar
+cargarStatsHome();
+cargarProsHome();
 </script>
 </body>
 </html>

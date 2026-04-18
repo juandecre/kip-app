@@ -604,6 +604,25 @@ app.get('/api/admin/usuarios', adminMiddleware, (req, res) => {
   res.json({ ok: true, usuarios });
 });
 
+app.get('/api/stats', (req, res) => {
+  try {
+    const pros = db.prepare("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'profesional'").get();
+    const clientes = db.prepare("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'cliente'").get();
+    const trabajos = db.prepare("SELECT COUNT(*) as cnt FROM trabajos").get();
+    const califs = db.prepare("SELECT AVG(estrellas) as avg, COUNT(*) as cnt FROM calificaciones").get();
+    res.json({
+      ok: true,
+      profesionales: pros.cnt || 0,
+      clientes: clientes.cnt || 0,
+      trabajos: trabajos.cnt || 0,
+      calificacion_promedio: califs.avg ? Math.round(califs.avg * 10) / 10 : 0,
+      total_calificaciones: califs.cnt || 0
+    });
+  } catch(e) {
+    res.json({ ok: true, profesionales: 0, clientes: 0, trabajos: 0, calificacion_promedio: 0 });
+  }
+});
+
 // ── INICIO ────────────────────────────────────
 server.listen(PORT, () => {
   console.log(`✅ Servidor KIP corriendo en http://localhost:${PORT}`);
