@@ -1099,6 +1099,10 @@ textarea:focus {
     display: none;
   }
 }
+select option {
+  background: #FFFFFF;
+  color: #444444;
+}
 </style>
 </head>
 <body>
@@ -1158,7 +1162,7 @@ textarea:focus {
           onkeydown="if(event.key==='Enter')heroSearch()"
         >
         <div style="width:1px;height:28px;background:rgba(0,0,0,0.1);margin:0 8px"></div>
-        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(255,255,255,0.7);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
+        <select id="hero-zona-select" style="background:transparent;border:none;outline:none;color:rgba(0,0,0,0.7);font-size:14px;font-family:var(--font-body);padding:0 8px;cursor:pointer">
   <option value="">📍 Toda Argentina</option>
   <option value="Buenos Aires">Buenos Aires</option>
   <option value="CABA">CABA</option>
