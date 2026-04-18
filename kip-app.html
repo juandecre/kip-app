@@ -2454,12 +2454,25 @@ if (urlParams.get('verified') === 'true') {
 // ── NAVEGACIÓN ─────────────────────────────────
 function showScreen(name) {
   previousScreen = currentScreen; currentScreen = name;
-  document.querySelectorAll('.screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  document.querySelectorAll('.screen').forEach(s => { 
+    s.style.display='none'; 
+    s.classList.remove('active'); 
+  });
   const warning = document.getElementById('login-warning');
   if (warning && name === 'login') { warning.style.display = 'none'; }
   const t = document.getElementById('screen-'+name);
-  if (t) { t.style.display='block'; t.classList.add('active'); window.scrollTo(0,0); }
+  if (t) { 
+    t.style.display='block'; 
+    t.style.background = '#F5F5F7';
+    t.classList.add('active'); 
+    window.scrollTo(0,0); 
+  } else {
+    console.error('Pantalla no encontrada: screen-' + name);
+  }
   if (name === 'profile-user') cargarCompletitud();
+  if (name === 'dashboard-client') {
+    buscarProfesionalesEnHome('', '', '');
+  }
 }
 function goBack() {
   if (previousScreen && previousScreen !== currentScreen) {
