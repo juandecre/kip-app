@@ -272,6 +272,8 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
 }
 
 app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
   res.sendFile(path.join(__dirname, 'kip-app.html'));
 });
 
