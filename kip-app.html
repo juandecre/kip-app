@@ -2471,7 +2471,11 @@ function showScreen(name) {
   const t = document.getElementById('screen-'+name);
   if (t) { 
     t.style.display='block'; 
-    t.style.background = '#F5F5F7';
+    if (name === 'home') {
+      t.style.background = '#0A0A0A';
+    } else {
+      t.style.background = '#F5F5F7';
+    }
     t.classList.add('active'); 
     window.scrollTo(0,0); 
   } else {
