@@ -277,6 +277,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'kip-app.html'));
 });
 
+app.get('/como-funciona', (req, res) => {
+  res.sendFile(path.join(__dirname, 'como-funciona.html'));
+});
+
+app.get('/preguntas-frecuentes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'faq.html'));
+});
+
+app.get('/nuestras-politicas', (req, res) => {
+  res.sendFile(path.join(__dirname, 'politicas.html'));
+});
+
 // ── REGISTRO ──────────────────────────────────
 app.post('/api/registro', async (req, res) => {
   const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, categoria } = req.body;
