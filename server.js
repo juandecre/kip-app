@@ -438,26 +438,31 @@ app.get('/api/perfil/completitud', authMiddleware, (req, res) => {
 
 // ── PROFESIONALES ─────────────────────────────
 app.get('/api/profesionales', (req, res) => {
-  const { categoria, especialidad, zona, q } = req.query;
-  let query = `
-    SELECT 
-      u.id, u.nombre, u.apellido, u.especialidad, u.categoria, 
-      u.zona, u.descripcion, u.experiencia, u.foto,
-      us.verification_level, us.verification_status,
-      COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
-      COUNT(c.id) as total_calificaciones
-    FROM usuarios u 
-    LEFT JOIN users us ON us.email = u.email 
-    LEFT JOIN calificaciones c ON c.para_usuario = u.id
-    WHERE u.tipo = 'profesional'
-  `;
-  const params = [];
-  if (categoria) { query += ' AND u.categoria = ?'; params.push(categoria); }
-  if (especialidad) { query += ' AND u.especialidad LIKE ?'; params.push(`%${especialidad}%`); }
-  if (zona) { query += ' AND u.zona LIKE ?'; params.push(`%${zona}%`); }
-  if (q) { query += ' AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.especialidad LIKE ? OR u.descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
-  query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
-  res.json(db.prepare(query).all(...params));
+  try {
+    const { categoria, especialidad, zona, q } = req.query;
+    let query = `
+      SELECT 
+        u.id, u.nombre, u.apellido, u.especialidad, u.categoria, 
+        u.zona, u.descripcion, u.experiencia, u.foto,
+        us.verification_level, us.verification_status,
+        COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
+        COUNT(c.id) as total_calificaciones
+      FROM usuarios u 
+      LEFT JOIN users us ON us.email = u.email 
+      LEFT JOIN calificaciones c ON c.para_usuario = u.id
+      WHERE u.tipo = 'profesional'
+    `;
+    const params = [];
+    if (categoria) { query += ' AND u.categoria = ?'; params.push(categoria); }
+    if (especialidad) { query += ' AND u.especialidad LIKE ?'; params.push(`%${especialidad}%`); }
+    if (zona) { query += ' AND u.zona LIKE ?'; params.push(`%${zona}%`); }
+    if (q) { query += ' AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.especialidad LIKE ? OR u.descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+    query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
+    res.json(db.prepare(query).all(...params));
+  } catch(err) {
+    console.error('Error en /api/profesionales:', err);
+    return res.json([]);
+  }
 });
 
 // ── FOTO DE PERFIL ────────────────────────────
