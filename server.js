@@ -439,6 +439,15 @@ app.get('/api/perfil/completitud', authMiddleware, (req, res) => {
 // ── PROFESIONALES ─────────────────────────────
 app.get('/api/profesionales', (req, res) => {
   try {
+    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      de_usuario INTEGER,
+      para_usuario INTEGER,
+      estrellas INTEGER,
+      comentario TEXT,
+      trabajo_desc TEXT,
+      creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`).run();
     const { categoria, especialidad, zona, q } = req.query;
     let query = `
       SELECT 
