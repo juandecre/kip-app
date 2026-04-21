@@ -1357,6 +1357,11 @@ select option {
         </label>
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="doLogin()">Iniciar sesión</button>
+      <p class="auth-footer-text">
+        <span class="auth-link" onclick="showScreen('forgot-password')">
+          ¿Olvidaste tu contraseña?
+        </span>
+      </p>
       <p class="auth-footer-text">¿No tenés cuenta? <span class="auth-link" onclick="showScreen('register')">Registrate gratis</span></p>
       <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('home')">← Volver al inicio</span></p>
     </div>
@@ -2363,6 +2368,24 @@ select option {
   </div>
 </div>
 
+<div class="screen" id="screen-forgot-password" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-icon">K</div><span class="auth-logo-text">serviKIP</span></div>
+      <h2 class="auth-title">Restablecer contraseña</h2>
+      <p class="auth-sub">Ingresá tu email y te enviamos un link para restablecer tu contraseña</p>
+      <div class="input-group">
+        <label class="input-label">Email</label>
+        <input class="input-field" type="email" id="forgot-email" placeholder="tu@email.com">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="enviarResetPassword()">
+        Enviar link de recuperación
+      </button>
+      <p class="auth-footer-text"><span class="auth-link" onclick="showScreen('login')">← Volver al login</span></p>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = 'https://servikip.com.ar/api';
 const CATEGORIAS_PRO = {
@@ -2814,6 +2837,30 @@ async function autoLogin(email,password) {
       showToast(d.error || 'Email o contraseña incorrectos','error');
     }
   } catch(e) { showLoading(false); showToast('No se pudo conectar al servidor','error'); }
+}
+
+async function enviarResetPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email) return showToast('Ingresá tu email', 'error');
+  showLoading(true);
+  try {
+    const r = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    showLoading(false);
+    if (d.ok) {
+      showToast('¡Email enviado! Revisá tu bandeja');
+      showScreen('login');
+    } else {
+      showToast(d.error || 'Error al enviar', 'error');
+    }
+  } catch(e) {
+    showLoading(false);
+    showToast('Error al conectar', 'error');
+  }
 }
 
 function updateUIAfterLogin() {

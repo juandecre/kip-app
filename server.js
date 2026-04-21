@@ -371,6 +371,85 @@ app.get('/api/auth/verify-email', (req, res) => {
   res.redirect('https://servikip.com.ar/kip-app.html?verified=true');
 });
 
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ ok: false, error: 'Email requerido' });
+  const user = findAuthUserByEmail(email);
+  if (!user) return res.json({ ok: true }); // No revelar si existe
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(user.id, token, expiresAt);
+  const resetUrl = `https://servikip.com.ar/api/auth/reset-password?token=${token}`;
+  try {
+    await resend.emails.send({
+      from: 'ServiKIP <noreply@servikip.com.ar>',
+      to: email,
+      subject: 'Restablecer contraseña - ServiKIP',
+      html: `<div style="font-family:sans-serif;padding:40px;max-width:500px;margin:0 auto">
+        <h2>Restablecer contraseña</h2>
+        <p>Hacé click en el botón para restablecer tu contraseña. El link expira en 1 hora.</p>
+        <a href="${resetUrl}" style="background:#FF6B2B;color:white;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;margin:20px 0">
+          Restablecer contraseña
+        </a>
+        <p style="color:#888;font-size:13px">Si no pediste esto, ignorá este email.</p>
+      </div>`
+    });
+    res.json({ ok: true });
+  } catch(e) {
+    res.status(500).json({ ok: false, error: 'Error al enviar email' });
+  }
+});
+
+app.get('/api/auth/reset-password', (req, res) => {
+  const { token } = req.query;
+  res.send(`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Nueva contraseña - ServiKIP</title>
+<style>body{font-family:sans-serif;background:#F5F5F7;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:white;padding:40px;border-radius:22px;max-width:400px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+input{width:100%;padding:14px;border:1px solid rgba(0,0,0,0.12);border-radius:12px;font-size:15px;margin-bottom:16px;box-sizing:border-box}
+button{width:100%;padding:14px;background:#FF6B2B;color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer}
+p{text-align:center;margin-top:16px;color:#888}
+</style></head>
+<body><div class="card">
+<h2 style="margin-bottom:8px">Nueva contraseña</h2>
+<p style="color:#888;margin-bottom:24px">Ingresá tu nueva contraseña para ServiKIP</p>
+<input type="password" id="np" placeholder="Nueva contraseña">
+<input type="password" id="np2" placeholder="Repetir contraseña">
+<button onclick="reset()">Guardar nueva contraseña</button>
+<p id="msg"></p>
+</div>
+<script>
+async function reset() {
+  const p1 = document.getElementById('np').value;
+  const p2 = document.getElementById('np2').value;
+  const msg = document.getElementById('msg');
+  if (!p1 || p1.length < 8) { msg.textContent = 'Mínimo 8 caracteres'; return; }
+  if (p1 !== p2) { msg.textContent = 'Las contraseñas no coinciden'; return; }
+  const r = await fetch('/api/auth/reset-password', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ token: '${token}', password: p1 })
+  });
+  const d = await r.json();
+  if (d.ok) { msg.style.color='green'; msg.textContent = '¡Contraseña actualizada! Ya podés iniciar sesión.'; }
+  else { msg.textContent = d.error || 'Error al actualizar'; }
+}
+</script></body></html>`);
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ ok: false, error: 'Datos incompletos' });
+  const tokenRow = db.prepare('SELECT * FROM email_tokens WHERE token = ? AND used = 0 AND expires_at > ?').get(token, new Date().toISOString());
+  if (!tokenRow) return res.status(400).json({ ok: false, error: 'Token inválido o expirado' });
+  const hash = bcrypt.hashSync(password, 12);
+  db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hash, tokenRow.user_id);
+  db.prepare('UPDATE email_tokens SET used = 1 WHERE id = ?').run(tokenRow.id);
+  const user = db.prepare('SELECT email FROM users WHERE id = ?').get(tokenRow.user_id);
+  if (user) db.prepare('UPDATE usuarios SET password = ? WHERE email = ?').run(hash, user.email);
+  res.json({ ok: true });
+});
+
 app.put('/api/auth/onboarding', authMiddleware, (req, res) => {
   const { phone, city, role } = req.body;
   db.prepare('UPDATE users SET phone = ?, city = ?, role = ?, onboarding_complete = 1 WHERE id = ?')
