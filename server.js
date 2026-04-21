@@ -272,9 +272,10 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
 }
 
 app.get('/', (req, res) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.sendFile(path.join(__dirname, 'kip-app.html'));
+  const html = fs.readFileSync(path.join(__dirname, 'kip-app.html'), 'utf8');
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
+  res.send(html);
 });
 
 app.get('/como-funciona', (req, res) => {
