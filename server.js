@@ -290,6 +290,79 @@ app.get('/nuestras-politicas', (req, res) => {
   res.sendFile(path.join(__dirname, 'politicas.html'));
 });
 
+app.get('/recuperar-contrasena', (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuperar contraseña - ServiKIP</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F5F5F7; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+.card { background: white; padding: 42px; border-radius: 22px; max-width: 480px; width: 100%; border: 1px solid rgba(0,0,0,0.08); }
+.logo { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 32px; }
+.logo-icon { width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(135deg, #FF6B2B, #FF8C4B); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 800; }
+.logo-text { font-size: 22px; font-weight: 800; color: #1A1A2E; }
+h2 { font-size: 26px; font-weight: 800; text-align: center; color: #1A1A2E; margin-bottom: 10px; }
+p { font-size: 14px; color: #888; text-align: center; margin-bottom: 28px; line-height: 1.6; }
+label { display: block; font-size: 13px; font-weight: 600; color: #1A1A2E; margin-bottom: 8px; }
+input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(0,0,0,0.12); background: #F5F5F7; font-size: 15px; font-family: inherit; outline: none; margin-bottom: 18px; }
+input:focus { border-color: rgba(255,107,43,0.4); background: white; }
+button { width: 100%; padding: 14px; background: #FF6B2B; color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+button:hover { background: #FF8C4B; }
+.back { text-align: center; margin-top: 20px; font-size: 14px; color: #888; }
+.back a { color: #FF6B2B; font-weight: 700; text-decoration: none; }
+.msg { text-align: center; margin-top: 16px; font-size: 14px; padding: 12px; border-radius: 12px; display: none; }
+.msg.success { background: rgba(34,197,94,0.1); color: #22c55e; display: block; }
+.msg.error { background: rgba(255,68,68,0.1); color: #ef4444; display: block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">K</div>
+    <span class="logo-text">servi<span style="color:#FF6B2B">KIP</span></span>
+  </div>
+  <h2>Recuperar contraseña</h2>
+  <p>Ingresá tu email y te enviamos un link para restablecer tu contraseña</p>
+  <label>Email</label>
+  <input type="email" id="email" placeholder="tu@email.com">
+  <button onclick="enviar()">Enviar link de recuperación</button>
+  <div id="msg" class="msg"></div>
+  <div class="back"><a href="/">← Volver al inicio</a></div>
+</div>
+<script>
+async function enviar() {
+  const email = document.getElementById('email').value.trim();
+  const msg = document.getElementById('msg');
+  msg.className = 'msg';
+  if (!email) { msg.className = 'msg error'; msg.textContent = 'Ingresá tu email'; return; }
+  try {
+    const r = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      msg.className = 'msg success';
+      msg.textContent = '¡Email enviado! Revisá tu bandeja de entrada y spam.';
+    } else {
+      msg.className = 'msg error';
+      msg.textContent = d.error || 'Error al enviar';
+    }
+  } catch(e) {
+    msg.className = 'msg error';
+    msg.textContent = 'Error al conectar';
+  }
+}
+</script>
+</body>
+</html>`);
+});
+
 // ── REGISTRO ──────────────────────────────────
 app.post('/api/registro', async (req, res) => {
   const { nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, categoria } = req.body;
