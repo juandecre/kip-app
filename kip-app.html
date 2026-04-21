@@ -2862,7 +2862,7 @@ function updateUIAfterLogin() {
   const cardV = document.getElementById('card-verificacion');
   if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
   if (currentUser.tipo==='profesional') { showScreen('dashboard-pro'); }
-  else { showScreen('dashboard-client'); loadProfesionales('pros-list'); }
+  else { showScreen('dashboard-client'); }
   setTimeout(cargarCompletitud, 500);
 }
 
@@ -3348,7 +3348,11 @@ function switchTab(btn) {
 // Auto-login desde localStorage
 const _t=localStorage.getItem('kip_token');
 const _u=localStorage.getItem('kip_user');
-if(_t&&_u){currentToken=_t;currentUser=JSON.parse(_u);updateUIAfterLogin();}
+if(_t&&_u){
+  currentToken=_t;
+  currentUser=JSON.parse(_u);
+  setTimeout(() => updateUIAfterLogin(), 300);
+}
 
 async function enviarCalificacion() {
   const estrellas = document.querySelectorAll('#stars-general span.active').length;
