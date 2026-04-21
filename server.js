@@ -449,12 +449,13 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   if (!email) return res.status(400).json({ ok: false, error: 'Email requerido' });
   const user = findAuthUserByEmail(email);
   if (!user) return res.json({ ok: true }); // No revelar si existe
+  console.log('Enviando email de recuperación a:', email);
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(user.id, token, expiresAt);
   const resetUrl = `https://servikip.com.ar/api/auth/reset-password?token=${token}`;
   try {
-    await resend.emails.send({
+    const response = await resend.emails.send({
       from: 'ServiKIP <noreply@servikip.com.ar>',
       to: email,
       subject: 'Restablecer contraseña - ServiKIP',
@@ -467,6 +468,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         <p style="color:#888;font-size:13px">Si no pediste esto, ignorá este email.</p>
       </div>`
     });
+    console.log('Email enviado:', response);
     res.json({ ok: true });
   } catch(e) {
     res.status(500).json({ ok: false, error: 'Error al enviar email' });
