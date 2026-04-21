@@ -1667,10 +1667,10 @@ select option {
   <div class="navbar-logo">servi<span>KIP</span></div>
   <div style="flex:1"></div>
   <div style="display:flex;gap:8px;align-items:center">
-    <button onclick="openChat(null)" class="nav-link" style="font-size:14px">💬 Mensajes</button>
-    <button onclick="showScreen('jobs')" class="nav-link" style="font-size:14px">📋 Mis trabajos</button>
-    <button onclick="showScreen('profile-user')" class="nav-link" style="font-size:14px">👤 Mi perfil</button>
-    <div class="navbar-avatar" id="nav-avatar-client" onclick="showScreen('profile-user')"></div>
+    <button onclick="window.location.href='/?screen=chat'" class="nav-link" style="font-size:14px">💬 Mensajes</button>
+    <button onclick="window.location.href='/?screen=jobs'" class="nav-link" style="font-size:14px">📋 Mis trabajos</button>
+    <button onclick="window.location.href='/?screen=profile-user'" class="nav-link" style="font-size:14px">👤 Mi perfil</button>
+    <div class="navbar-avatar" id="nav-avatar-client" onclick="window.location.href='/?screen=profile-user'"></div>
   </div>
 </nav>
 
@@ -1734,7 +1734,7 @@ select option {
         <div style="font-size:13px;color:#888888;margin-bottom:16px;line-height:1.6">
           Ofrecé tus servicios en ServiKIP y conseguí clientes cerca tuyo.
         </div>
-        <button onclick="showScreen('activar-pro')" style="width:100%;padding:13px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer">
+        <button onclick="window.location.href='/?screen=activar-pro'" style="width:100%;padding:13px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:14px;border:none;cursor:pointer">
           Activar modo profesional →
         </button>
       </div>
@@ -1774,9 +1774,9 @@ select option {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button onclick="openChat(null)" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">💬 Mis mensajes</button>
-        <button onclick="showScreen('jobs')" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">📋 Mis trabajos</button>
-        <button onclick="showScreen('profile-user')" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">👤 Mi perfil</button>
+        <button onclick="window.location.href='/?screen=chat'" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">💬 Mis mensajes</button>
+        <button onclick="window.location.href='/?screen=jobs'" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">📋 Mis trabajos</button>
+        <button onclick="window.location.href='/?screen=profile-user'" style="width:100%;padding:12px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-size:14px;font-weight:600;cursor:pointer;text-align:left;transition:background 150ms ease" onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1A1A1A'">👤 Mi perfil</button>
         <button onclick="doLogout()" style="width:100%;padding:12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-size:13px;font-weight:600;cursor:pointer;text-align:left">🚪 Cerrar sesión</button>
       </div>
     </div>
