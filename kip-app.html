@@ -3393,13 +3393,21 @@ function switchTab(btn) {
   btn.classList.add('active');
 }
 // Auto-login desde localStorage
-const _t=localStorage.getItem('kip_token');
-const _u=localStorage.getItem('kip_user');
-if(_t&&_u){
-  currentToken=_t;
-  currentUser=JSON.parse(_u);
-  setTimeout(() => updateUIAfterLogin(), 300);
-}
+window.addEventListener('DOMContentLoaded', () => {
+  const _t=localStorage.getItem('kip_token');
+  const _u=localStorage.getItem('kip_user');
+  if(_t&&_u){
+    currentToken=_t;
+    currentUser=JSON.parse(_u);
+    setTimeout(() => updateUIAfterLogin(), 100);
+  }
+  // Leer parametro screen de la URL al cargar
+  const urlScreen = new URLSearchParams(window.location.search).get('screen');
+  if (urlScreen) {
+    history.replaceState({}, '', '/');
+    setTimeout(() => showScreen(urlScreen), 200);
+  }
+});
 
 async function enviarCalificacion() {
   const estrellas = document.querySelectorAll('#stars-general span.active').length;
