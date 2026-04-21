@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#FF6B2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>KIP – Knowledge Is Power</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="/socket.io/socket.io.js"></script>
@@ -1111,6 +1114,84 @@ select option {
   background: #F5F5F7;
   min-height: 100vh;
 }
+
+/* ── MOBILE RESPONSIVE ────────────────────────────────────── */
+.navbar-mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 16px;
+  gap: 8px;
+  z-index: 99;
+}
+.navbar-mobile-menu.open { display: flex; }
+.hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 8px; }
+.hamburger span { width: 22px; height: 2px; background: #1A1A2E; border-radius: 2px; display: block; }
+
+#mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 env(safe-area-inset-bottom);
+  z-index: 100;
+}
+#mobile-bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: #888;
+  cursor: pointer;
+  padding: 4px 12px;
+}
+#mobile-bottom-nav button span:first-child { font-size: 22px; }
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; flex-direction: column; gap: 5px; }
+  .navbar-desktop-links { display: none; }
+  
+  #screen-dashboard-client .two-col { 
+    grid-template-columns: 1fr !important; 
+  }
+  #screen-dashboard-client .side-panel { 
+    display: none; 
+  }
+  .filter-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 8px;
+  }
+  
+  .hero h1 { font-size: 32px !important; letter-spacing: -0.5px !important; }
+  .hero-search-wrap { border-radius: 14px !important; flex-wrap: wrap; }
+  .hero-search-wrap select { width: 100%; }
+  .hero-search-wrap button { width: 100%; border-radius: 12px !important; }
+  .stats-bar { gap: 16px; flex-wrap: wrap; }
+  
+  .pro-card-mobile {
+    padding: 16px !important;
+  }
+  .pro-card-mobile .contactar-btn {
+    width: 100% !important;
+    margin-top: 12px;
+  }
+  
+  .auth-card { padding: 24px !important; margin: 16px; }
+  .input-row { grid-template-columns: 1fr !important; }
+}
 </style>
 </head>
 <body>
@@ -1133,12 +1214,26 @@ select option {
       <span style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#1A1A2E;letter-spacing:-0.5px">servi<span style="color:#FF6B2B">KIP</span></span>
     </div>
     <div style="flex:1"></div>
-    <button class="nav-link" style="font-size:14px" onclick="window.location.href='/como-funciona'">Cómo funciona</button>
-    <button class="nav-link" style="font-size:14px" onclick="window.location.href='/preguntas-frecuentes'">Preguntas frecuentes</button>
-    <button class="nav-link" style="font-size:14px" onclick="window.location.href='/nuestras-politicas'">Nuestras políticas</button>
-    <button class="nav-link" onclick="showScreen('login')" style="font-size:14px">Ingresar</button>
-    <button class="btn-nav-primary" onclick="showScreen('register')" style="font-size:14px">Registrate gratis</button>
+    <div class="navbar-desktop-links">
+      <button class="nav-link" style="font-size:14px" onclick="window.location.href='/como-funciona'">Cómo funciona</button>
+      <button class="nav-link" style="font-size:14px" onclick="window.location.href='/preguntas-frecuentes'">Preguntas frecuentes</button>
+      <button class="nav-link" style="font-size:14px" onclick="window.location.href='/nuestras-politicas'">Nuestras políticas</button>
+      <button class="nav-link" onclick="showScreen('login')" style="font-size:14px">Ingresar</button>
+      <button class="btn-nav-primary" onclick="showScreen('register')" style="font-size:14px">Registrate gratis</button>
+    </div>
+    <button class="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="navbar-mobile-menu">
+    <button class="nav-link" onclick="window.location.href='/como-funciona'; toggleMobileMenu()">Cómo funciona</button>
+    <button class="nav-link" onclick="window.location.href='/preguntas-frecuentes'; toggleMobileMenu()">Preguntas frecuentes</button>
+    <button class="nav-link" onclick="window.location.href='/nuestras-politicas'; toggleMobileMenu()">Nuestras políticas</button>
+    <button class="nav-link" onclick="showScreen('login'); toggleMobileMenu()">Ingresar</button>
+    <button class="btn-nav-primary" onclick="showScreen('register'); toggleMobileMenu()">Registrate gratis</button>
+  </div>
 
   <!-- HERO -->
   <section style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 60px;position:relative;overflow:hidden;background:linear-gradient(180deg, #EEF0FF 0%, #F5F5F7 60%)">
@@ -1666,13 +1761,24 @@ select option {
   </div>
   <div class="navbar-logo">servi<span>KIP</span></div>
   <div style="flex:1"></div>
-  <div style="display:flex;gap:8px;align-items:center">
+  <div class="navbar-desktop-links" style="display:flex;gap:8px;align-items:center">
     <button onclick="window.location.href='/?screen=chat'" class="nav-link" style="font-size:14px">💬 Mensajes</button>
     <button onclick="window.location.href='/?screen=jobs'" class="nav-link" style="font-size:14px">📋 Mis trabajos</button>
     <button onclick="window.location.href='/?screen=profile-user'" class="nav-link" style="font-size:14px">👤 Mi perfil</button>
     <div class="navbar-avatar" id="nav-avatar-client" onclick="window.location.href='/?screen=profile-user'"></div>
   </div>
+  <button class="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="navbar-mobile-menu">
+  <button class="nav-link" onclick="window.location.href='/?screen=chat'; toggleMobileMenu()">💬 Mensajes</button>
+  <button class="nav-link" onclick="window.location.href='/?screen=jobs'; toggleMobileMenu()">📋 Mis trabajos</button>
+  <button class="nav-link" onclick="window.location.href='/?screen=profile-user'; toggleMobileMenu()">👤 Mi perfil</button>
+  <button class="nav-link" onclick="doLogout(); toggleMobileMenu()">🚪 Cerrar sesión</button>
+</div>
 
 <div style="max-width:900px;margin:0 auto;padding:100px 24px 48px">
 
@@ -3027,6 +3133,9 @@ function updateUIAfterLogin() {
   const pD=document.getElementById('profile-desc'); if(pD) pD.value=currentUser.descripcion||'';
   const proExtra=document.getElementById('pro-extra-fields');
   if (proExtra) proExtra.style.display=currentUser.tipo==='profesional'?'block':'none';
+  // Show mobile bottom nav
+  const mobileNav = document.getElementById('mobile-bottom-nav');
+  if (mobileNav) mobileNav.style.display = 'flex';
   // Socket
   initSocket();
   showToast(`¡Bienvenido, ${currentUser.nombre}!`);
@@ -3046,6 +3155,9 @@ function doLogout() {
   if (socket) { socket.disconnect(); socket=null; }
   currentUser=null; currentToken=null; activeChatUser=null;
   localStorage.removeItem('kip_token'); localStorage.removeItem('kip_user');
+  // Hide mobile bottom nav
+  const mobileNav = document.getElementById('mobile-bottom-nav');
+  if (mobileNav) mobileNav.style.display = 'none';
   showToast('Sesión cerrada'); showScreen('home');
 }
 
@@ -3252,7 +3364,7 @@ function renderPros(pros, containerId) {
     const grad = grads[(p.id||i) % grads.length];
     const fotoHtml = p.foto ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">` : `<div class="avatar ${grad}" style="width:52px;height:52px;border-radius:14px;font-size:20px">${ini}</div>`;
     const badgeHtml = renderVerificationBadge(p.verification_level, p.verification_status);
-    return `<div class="pro-card" onclick="showProProfile(${p.id})">
+    return `<div class="pro-card pro-card-mobile" onclick="showProProfile(${p.id})">
       <div class="pro-card-header">
         <div class="pro-avatar-wrap">${fotoHtml}</div>
         <div class="pro-info">
@@ -3823,6 +3935,32 @@ function toggleFaq(card) {
   content.style.display = isOpen ? 'none' : 'block';
   if (icon) icon.textContent = isOpen ? '+' : '−';
 }
+
+function toggleMobileMenu() {
+  const menu = document.querySelector('.navbar-mobile-menu');
+  menu.classList.toggle('open');
+}
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mobile-bottom-nav" style="display:none">
+  <button onclick="showScreen('dashboard-client')">
+    <span>🏠</span>
+    <span>Inicio</span>
+  </button>
+  <button onclick="showScreen('buscar')">
+    <span>🔍</span>
+    <span>Buscar</span>
+  </button>
+  <button onclick="showScreen('chat')">
+    <span>💬</span>
+    <span>Chat</span>
+  </button>
+  <button onclick="showScreen('perfil')">
+    <span>👤</span>
+    <span>Perfil</span>
+  </button>
+</div>
+
 </body>
 </html>
