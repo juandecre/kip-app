@@ -226,11 +226,11 @@ async function sendVerificationEmail(email, token) {
 }
 
 function findAuthUserByEmail(email) {
-  return db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  return db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email);
 }
 
 function findLegacyUserByEmail(email) {
-  return db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
+  return db.prepare('SELECT * FROM usuarios WHERE LOWER(email) = LOWER(?)').get(email);
 }
 
 async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
