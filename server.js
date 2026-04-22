@@ -52,21 +52,6 @@ const db = new Pool({
 
 async function initDB() {
   await db.query(`
-    CREATE TABLE IF NOT EXISTS usuarios (
-      id SERIAL PRIMARY KEY,
-      nombre TEXT NOT NULL,
-      apellido TEXT,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      telefono TEXT,
-      tipo TEXT NOT NULL,
-      zona TEXT,
-      especialidad TEXT,
-      descripcion TEXT,
-      experiencia INTEGER,
-      foto TEXT,
-      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
     CREATE TABLE IF NOT EXISTS trabajos (
       id SERIAL PRIMARY KEY,
       cliente_id INTEGER,
@@ -111,7 +96,6 @@ async function initDB() {
     );
   `);
   try { await db.query('ALTER TABLE users ADD COLUMN categoria TEXT'); } catch (e) {}
-  try { await db.query('ALTER TABLE usuarios ADD COLUMN categoria TEXT'); } catch (e) {}
   try { await db.query(`ALTER TABLE users ADD COLUMN verification_level TEXT DEFAULT 'none'`); } catch (e) {}
   try { await db.query(`ALTER TABLE users ADD COLUMN verification_status TEXT DEFAULT 'pending'`); } catch (e) {}
   try { await db.query(`ALTER TABLE users ADD COLUMN matricula TEXT`); } catch (e) {}
@@ -125,6 +109,11 @@ async function initDB() {
   try { await db.query(`ALTER TABLE users ADD COLUMN codigo_postal TEXT`); } catch (e) {}
   try { await db.query(`ALTER TABLE users ADD COLUMN es_profesional INTEGER DEFAULT 0`); } catch (e) {}
   try { await db.query(`ALTER TABLE users ADD COLUMN pro_onboarding_step INTEGER DEFAULT 0`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN apellido TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN especialidad TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN telefono TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN zona TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN foto TEXT`); } catch (e) {}
   await db.query(`
     CREATE TABLE IF NOT EXISTS profesional_profiles (
       id SERIAL PRIMARY KEY,
@@ -169,12 +158,17 @@ function getUserPayload(user) {
   return {
     id: user.id,
     name: user.name,
+    apellido: user.apellido || null,
     email: user.email,
     role: user.role,
     city: user.city,
+    zona: user.zona || null,
     profile_image: user.profile_image,
+    foto: user.foto || null,
     descripcion: user.descripcion || null,
     experiencia: user.experiencia || null,
+    especialidad: user.especialidad || null,
+    telefono: user.telefono || null,
     onboarding_complete: user.onboarding_complete,
     email_verified: user.email_verified,
     phone_verified: user.phone_verified,
@@ -229,47 +223,39 @@ async function findAuthUserByEmail(email) {
   return result.rows[0];
 }
 
-async function findLegacyUserByEmail(email) {
-  const result = await db.query('SELECT * FROM usuarios WHERE LOWER(email) = LOWER($1)', [email]);
-  return result.rows[0];
-}
-
 async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
   if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
-  const existingAuth = await findAuthUserByEmail(email);
-  const existingLegacy = await findLegacyUserByEmail(email);
-  if (existingAuth || existingLegacy) return { ok: false, error: 'El email ya existe' };
+  const existingAuthResult = await findAuthUserByEmail(email);
+  const existingAuth = existingAuthResult.rows.length > 0;
+  if (existingAuth) return { ok: false, error: 'El email ya existe' };
 
   const hash = bcrypt.hashSync(password, 12);
   const legacy = legacyData || {};
 
-  const createUser = await db.query('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia) VALUES ($1, $2, $3, $4, 0, 0, 0, $5, $6, $7) RETURNING id', [name, email, hash, role, categoria || null, legacy.descripcion || null, legacy.experiencia || null]);
+  const [firstName, ...rest] = name.trim().split(' ');
+  const lastName = rest.join(' ');
+
+  const createUser = await db.query('INSERT INTO users (name, apellido, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia, telefono, zona, especialidad, foto) VALUES ($1, $2, $3, $4, $5, 0, 0, 0, $6, $7, $8, $9, $10, $11, $12) RETURNING id', [
+    firstName || name,
+    lastName,
+    email,
+    hash,
+    role,
+    categoria || null,
+    legacy.descripcion || null,
+    legacy.experiencia || null,
+    legacy.telefono || null,
+    legacy.zona || null,
+    legacy.especialidad || null,
+    null
+  ]);
   const userId = createUser.rows[0].id;
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   await db.query('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES ($1, $2, $3, 0)', [userId, token, expiresAt]);
 
-  const [firstName, ...rest] = name.trim().split(' ');
-  const lastName = rest.join(' ');
-
-  const createLegacy = await db.query('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto, categoria) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id', [
-    firstName || name,
-    lastName,
-    email,
-    hash,
-    legacy.telefono || null,
-    role === 'professional' ? 'profesional' : role === 'client' ? 'cliente' : role,
-    legacy.zona || null,
-    legacy.especialidad || null,
-    legacy.descripcion || null,
-    legacy.experiencia || null,
-    null,
-    legacy.categoria || null
-  ]);
-  const legacyId = createLegacy.rows[0].id;
-
   await sendVerificationEmail(email, token);
-  return { ok: true, userId, legacyId, token };
+  return { ok: true, userId, token };
 }
 
 app.get('/', (req, res) => {
@@ -379,7 +365,7 @@ app.post('/api/registro', async (req, res) => {
       legacyData: { telefono, zona, especialidad, descripcion, experiencia, categoria }
     });
     if (!result.ok) return res.status(400).json({ error: result.error });
-    res.json({ ok: true, id: result.legacyId });
+    res.json({ ok: true, id: result.userId });
   } catch (err) {
     console.error('Error en /api/registro:', err);
     res.status(500).json({ ok: false, error: 'Error al enviar email de verificación' });
@@ -389,25 +375,13 @@ app.post('/api/registro', async (req, res) => {
 // ── LOGIN ─────────────────────────────────────
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  const authUser = await findAuthUserByEmail(email);
-  if (authUser) {
-    const ok = authUser.password && bcrypt.compareSync(password, authUser.password);
-    if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-    if (authUser.email_verified === 0) return res.json({ ok: false, error: 'Debés verificar tu email primero', needsVerification: true });
-    const token = jwt.sign({ id: authUser.id, email: authUser.email, role: authUser.role, name: authUser.name }, JWT_SECRET, { expiresIn: '7d' });
-    return res.json({ ok: true, token, user: getUserPayload(authUser) });
-  }
-
-  const result = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
-  const usuario = result.rows[0];
-  if (!usuario) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-  const ok = bcrypt.compareSync(password, usuario.password);
+  const user = await findAuthUserByEmail(email);
+  if (!user) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+  const ok = user.password && bcrypt.compareSync(password, user.password);
   if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-  const token = jwt.sign({ id: usuario.id, email: usuario.email, role: usuario.tipo, name: `${usuario.nombre} ${usuario.apellido || ''}`.trim() }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({
-    ok: true, token,
-    usuario: { id: usuario.id, nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email, tipo: usuario.tipo, especialidad: usuario.especialidad, zona: usuario.zona, foto: usuario.foto }
-  });
+  if (user.email_verified === 0) return res.json({ ok: false, error: 'Debés verificar tu email primero', needsVerification: true });
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ ok: true, token, user: getUserPayload(user) });
 });
 
 // ── AUTH ─────────────────────────────────────
@@ -524,9 +498,6 @@ app.post('/api/auth/reset-password', async (req, res) => {
   const hash = bcrypt.hashSync(password, 12);
   await db.query('UPDATE users SET password = $1 WHERE id = $2', [hash, tokenRow.user_id]);
   await db.query('UPDATE email_tokens SET used = 1 WHERE id = $1', [tokenRow.id]);
-  const userResult = await db.query('SELECT email FROM users WHERE id = $1', [tokenRow.user_id]);
-  const user = userResult.rows[0];
-  if (user) await db.query('UPDATE usuarios SET password = $1 WHERE email = $2', [hash, user.email]);
   res.json({ ok: true });
 });
 
@@ -627,21 +598,20 @@ app.get('/api/profesionales', async (req, res) => {
     const { categoria, especialidad, zona, q } = req.query;
     let query = `
       SELECT
-        u.id, u.nombre, u.apellido, u.especialidad, u.categoria,
+        u.id, u.name as nombre, u.apellido, u.especialidad, u.categoria,
         u.zona, u.descripcion, u.experiencia, u.foto,
-        us.verification_level, us.verification_status,
+        u.verification_level, u.verification_status,
         COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
         COUNT(c.id) as total_calificaciones
-      FROM usuarios u
-      LEFT JOIN users us ON us.email = u.email
+      FROM users u
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
-      WHERE u.tipo = 'profesional'
+      WHERE u.role = 'professional'
     `;
     const params = [];
     if (categoria) { query += ' AND u.categoria = $' + (params.length + 1); params.push(categoria); }
     if (especialidad) { query += ' AND u.especialidad LIKE $' + (params.length + 1); params.push(`%${especialidad}%`); }
     if (zona) { query += ' AND u.zona LIKE $' + (params.length + 1); params.push(`%${zona}%`); }
-    if (q) { query += ' AND (u.nombre LIKE $' + (params.length + 1) + ' OR u.apellido LIKE $' + (params.length + 2) + ' OR u.especialidad LIKE $' + (params.length + 3) + ' OR u.descripcion LIKE $' + (params.length + 4) + ')'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+    if (q) { query += ' AND (u.name LIKE $' + (params.length + 1) + ' OR u.apellido LIKE $' + (params.length + 2) + ' OR u.especialidad LIKE $' + (params.length + 3) + ' OR u.descripcion LIKE $' + (params.length + 4) + ')'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
     query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
     const result = await db.query(query, params);
     res.json(result.rows);
@@ -658,8 +628,7 @@ app.post('/api/foto', upload.single('foto'), async (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const fotoUrl = `/uploads/${req.file.filename}`;
-    await db.query('UPDATE usuarios SET foto = $1 WHERE id = $2', [fotoUrl, decoded.id]);
-    await db.query('UPDATE users SET profile_image = $1 WHERE email=(SELECT email FROM usuarios WHERE id=$2)', [fotoUrl, decoded.id]);
+    await db.query('UPDATE users SET foto = $1, profile_image = $2 WHERE id = $3', [fotoUrl, fotoUrl, decoded.id]);
     res.json({ ok: true, foto: fotoUrl });
   } catch (e) {
     res.status(401).json({ error: 'Token inválido' });
@@ -673,9 +642,8 @@ app.put('/api/perfil', async (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const { nombre, apellido, telefono, zona, especialidad, descripcion, experiencia } = req.body;
-    await db.query('UPDATE usuarios SET nombre=$1, apellido=$2, telefono=$3, zona=$4, especialidad=$5, descripcion=$6, experiencia=$7 WHERE id=$8', [nombre, apellido, telefono, zona, especialidad, descripcion, experiencia, decoded.id]);
-    await db.query('UPDATE users SET phone=$1, city=$2, descripcion=$3, experiencia=$4 WHERE email=(SELECT email FROM usuarios WHERE id=$5)', [telefono, zona, descripcion || null, experiencia || null, decoded.id]);
-    const result = await db.query('SELECT id, nombre, apellido, email, tipo, especialidad, zona, foto FROM usuarios WHERE id=$1', [decoded.id]);
+    await db.query('UPDATE users SET name=$1, apellido=$2, telefono=$3, zona=$4, especialidad=$5, descripcion=$6, experiencia=$7 WHERE id=$8', [nombre, apellido, telefono, zona, especialidad, descripcion, experiencia, decoded.id]);
+    const result = await db.query('SELECT id, name as nombre, apellido, email, role as tipo, especialidad, zona, foto FROM users WHERE id=$1', [decoded.id]);
     const usuario = result.rows[0];
     res.json({ ok: true, usuario });
   } catch (e) {
@@ -699,7 +667,7 @@ app.get('/api/mensajes/:usuario1/:usuario2', async (req, res) => {
   const { usuario1, usuario2 } = req.params;
   const result = await db.query(`
     SELECT m.*, u.nombre, u.apellido, u.foto FROM mensajes m
-    JOIN usuarios u ON m.de_usuario = u.id
+    JOIN users u ON m.de_usuario = u.id
     WHERE (m.de_usuario = $1 AND m.para_usuario = $2) OR (m.de_usuario = $2 AND m.para_usuario = $1)
     ORDER BY m.creado_en ASC
   `, [usuario1, usuario2, usuario2, usuario1]);
@@ -711,11 +679,11 @@ app.get('/api/conversaciones/:usuario_id', async (req, res) => {
   const result = await db.query(`
     SELECT DISTINCT
       CASE WHEN m.de_usuario = $1 THEN m.para_usuario ELSE m.de_usuario END as otro_id,
-      u.nombre, u.apellido, u.foto, u.especialidad,
+      u.name as nombre, u.apellido, u.foto, u.especialidad,
       (SELECT texto FROM mensajes WHERE (de_usuario=m.de_usuario AND para_usuario=m.para_usuario) OR (de_usuario=m.para_usuario AND para_usuario=m.de_usuario) ORDER BY creado_en DESC LIMIT 1) as ultimo_mensaje,
       (SELECT creado_en FROM mensajes WHERE (de_usuario=m.de_usuario AND para_usuario=m.para_usuario) OR (de_usuario=m.para_usuario AND para_usuario=m.de_usuario) ORDER BY creado_en DESC LIMIT 1) as ultimo_tiempo
     FROM mensajes m
-    JOIN usuarios u ON u.id = CASE WHEN m.de_usuario = $1 THEN m.para_usuario ELSE m.de_usuario END
+    JOIN users u ON u.id = CASE WHEN m.de_usuario = $1 THEN m.para_usuario ELSE m.de_usuario END
     WHERE m.de_usuario = $1 OR m.para_usuario = $1
     GROUP BY otro_id
     ORDER BY ultimo_tiempo DESC
@@ -770,7 +738,7 @@ app.post('/api/calificaciones', async (req, res) => {
     await db.query('INSERT INTO calificaciones (de_usuario,para_usuario,estrellas,comentario,trabajo_desc) VALUES ($1,$2,$3,$4,$5)', [decoded.id, para_usuario, estrellas, comentario, trabajo_desc]);
     const avgResult = await db.query('SELECT AVG(estrellas) as avg FROM calificaciones WHERE para_usuario=$1', [para_usuario]);
     const avg = avgResult.rows[0].avg;
-    await db.query('UPDATE usuarios SET calificacion=$1 WHERE id=$2', [Math.round(avg*10)/10, para_usuario]);
+    await db.query('UPDATE users SET calificacion=$1 WHERE id=$2', [Math.round(avg*10)/10, para_usuario]);
     res.json({ok:true});
   } catch(e) { res.status(401).json({error:e.message}); }
 });
@@ -778,7 +746,7 @@ app.post('/api/calificaciones', async (req, res) => {
 app.get('/api/calificaciones/:id', async (req, res) => {
   try {
     await db.query(`CREATE TABLE IF NOT EXISTS calificaciones (id SERIAL PRIMARY KEY, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
-    const result = await db.query(`SELECT c.*, u.nombre, u.apellido FROM calificaciones c JOIN usuarios u ON c.de_usuario=u.id WHERE c.para_usuario=$1 ORDER BY c.creado_en DESC`, [req.params.id]);
+    const result = await db.query(`SELECT c.*, u.name as nombre, u.apellido FROM calificaciones c JOIN users u ON c.de_usuario=u.id WHERE c.para_usuario=$1 ORDER BY c.creado_en DESC`, [req.params.id]);
     res.json(result.rows);
   } catch(e) { res.json([]); }
 });
@@ -848,8 +816,8 @@ app.get('/api/admin/usuarios', adminMiddleware, async (req, res) => {
 
 app.get('/api/stats', async (req, res) => {
   try {
-    const prosResult = await db.query("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'profesional'");
-    const clientesResult = await db.query("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'cliente'");
+    const prosResult = await db.query("SELECT COUNT(*) as cnt FROM users WHERE role = 'professional'");
+    const clientesResult = await db.query("SELECT COUNT(*) as cnt FROM users WHERE role = 'client'");
     const trabajosResult = await db.query("SELECT COUNT(*) as cnt FROM trabajos");
     const califsResult = await db.query("SELECT AVG(estrellas) as avg, COUNT(*) as cnt FROM calificaciones");
     const califs = califsResult.rows[0];
@@ -882,9 +850,6 @@ app.post('/api/pro/activar', authMiddleware, async (req, res) => {
     }
     await db.query('UPDATE users SET es_profesional=1, pro_onboarding_step=1, role=$1 WHERE id=$2',
       ['professional', req.user.id]);
-    // Sincronizar con tabla usuarios legacy
-    await db.query('UPDATE usuarios SET tipo=$1, especialidad=$2, descripcion=$3, categoria=$4 WHERE email=(SELECT email FROM users WHERE id=$5)',
-      ['profesional', especialidad, descripcion||null, categoria||null, req.user.id]);
     const updatedResult = await db.query('SELECT * FROM users WHERE id=$1', [req.user.id]);
     const updated = updatedResult.rows[0];
     res.json({ ok: true, user: getUserPayload(updated) });
@@ -900,8 +865,6 @@ app.put('/api/perfil/localidad', authMiddleware, async (req, res) => {
   try {
     await db.query('UPDATE users SET localidad=$1, codigo_postal=$2 WHERE id=$3',
       [localidad||null, codigo_postal||null, req.user.id]);
-    await db.query('UPDATE usuarios SET zona=$1 WHERE email=(SELECT email FROM users WHERE id=$2)',
-      [localidad||null, req.user.id]);
     const updatedResult = await db.query('SELECT * FROM users WHERE id=$1', [req.user.id]);
     const updated = updatedResult.rows[0];
     res.json({ ok: true, user: getUserPayload(updated) });
@@ -927,15 +890,14 @@ app.get('/api/profesionales/:id', async (req, res) => {
   try {
     const proResult = await db.query(`
       SELECT
-        u.id, u.nombre, u.apellido, u.especialidad, u.categoria,
+        u.id, u.name as nombre, u.apellido, u.especialidad, u.categoria,
         u.zona, u.descripcion, u.experiencia, u.foto,
-        us.verification_level, us.verification_status,
+        u.verification_level, u.verification_status,
         COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
         COUNT(c.id) as total_calificaciones
-      FROM usuarios u
-      LEFT JOIN users us ON us.email = u.email
+      FROM users u
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
-      WHERE u.id = $1 AND u.tipo = 'profesional'
+      WHERE u.id = $1 AND u.role = 'professional'
       GROUP BY u.id
     `, [id]);
     const pro = proResult.rows[0];
