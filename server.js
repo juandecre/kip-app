@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Resend } = require('resend');
@@ -45,108 +45,107 @@ const upload = multer({
 });
 
 // Base de datos
-const db = new Database('kip.db');
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    apellido TEXT,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    telefono TEXT,
-    tipo TEXT NOT NULL,
-    zona TEXT,
-    especialidad TEXT,
-    descripcion TEXT,
-    experiencia INTEGER,
-    foto TEXT,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS trabajos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    cliente_id INTEGER,
-    profesional_id INTEGER,
-    titulo TEXT,
-    descripcion TEXT,
-    estado TEXT DEFAULT 'pendiente',
-    precio REAL,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS mensajes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    de_usuario INTEGER,
-    para_usuario INTEGER,
-    texto TEXT,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT,
-    email_verified INTEGER DEFAULT 0,
-    phone TEXT,
-    phone_verified INTEGER DEFAULT 0,
-    role TEXT DEFAULT 'cliente',
-    city TEXT,
-    profile_image TEXT,
-    descripcion TEXT,
-    experiencia INTEGER,
-    google_id TEXT,
-    onboarding_complete INTEGER DEFAULT 0,
-    categoria TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS email_tokens (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    token TEXT NOT NULL,
-    expires_at DATETIME NOT NULL,
-    used INTEGER DEFAULT 0
-  );
-`);
-
-try { db.prepare('ALTER TABLE users ADD COLUMN categoria TEXT').run(); } catch (e) {}
-try { db.prepare('ALTER TABLE usuarios ADD COLUMN categoria TEXT').run(); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN verification_level TEXT DEFAULT 'none'`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN verification_status TEXT DEFAULT 'pending'`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN matricula TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN titulo_url TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN dni_url TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN precio_estimado TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN profile_completion INTEGER DEFAULT 0`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN descripcion TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN experiencia INTEGER`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN localidad TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN codigo_postal TEXT`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN es_profesional INTEGER DEFAULT 0`); } catch (e) {}
-try { db.exec(`ALTER TABLE users ADD COLUMN pro_onboarding_step INTEGER DEFAULT 0`); } catch (e) {}
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS profesional_profiles (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER UNIQUE NOT NULL,
-    especialidad TEXT,
-    categoria TEXT,
-    descripcion TEXT,
-    experiencia_anios INTEGER DEFAULT 0,
-    zona TEXT,
-    fotos_portfolio TEXT DEFAULT '[]',
-    telefono TEXT,
-    verification_level TEXT DEFAULT 'none',
-    verification_status TEXT DEFAULT 'pending',
-    matricula TEXT,
-    titulo_url TEXT,
-    dni_url TEXT,
-    activo INTEGER DEFAULT 1,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+async function initDB() {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS usuarios (
+      id SERIAL PRIMARY KEY,
+      nombre TEXT NOT NULL,
+      apellido TEXT,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      telefono TEXT,
+      tipo TEXT NOT NULL,
+      zona TEXT,
+      especialidad TEXT,
+      descripcion TEXT,
+      experiencia INTEGER,
+      foto TEXT,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS trabajos (
+      id SERIAL PRIMARY KEY,
+      cliente_id INTEGER,
+      profesional_id INTEGER,
+      titulo TEXT,
+      descripcion TEXT,
+      estado TEXT DEFAULT 'pendiente',
+      precio REAL,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mensajes (
+      id SERIAL PRIMARY KEY,
+      de_usuario INTEGER,
+      para_usuario INTEGER,
+      texto TEXT,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT,
+      email_verified INTEGER DEFAULT 0,
+      phone TEXT,
+      phone_verified INTEGER DEFAULT 0,
+      role TEXT DEFAULT 'cliente',
+      city TEXT,
+      profile_image TEXT,
+      descripcion TEXT,
+      experiencia INTEGER,
+      google_id TEXT,
+      onboarding_complete INTEGER DEFAULT 0,
+      categoria TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS email_tokens (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      token TEXT NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
+      used INTEGER DEFAULT 0
+    );
+  `);
+  try { await db.query('ALTER TABLE users ADD COLUMN categoria TEXT'); } catch (e) {}
+  try { await db.query('ALTER TABLE usuarios ADD COLUMN categoria TEXT'); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN verification_level TEXT DEFAULT 'none'`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN verification_status TEXT DEFAULT 'pending'`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN matricula TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN titulo_url TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN dni_url TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN precio_estimado TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN profile_completion INTEGER DEFAULT 0`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN descripcion TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN experiencia INTEGER`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN localidad TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN codigo_postal TEXT`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN es_profesional INTEGER DEFAULT 0`); } catch (e) {}
+  try { await db.query(`ALTER TABLE users ADD COLUMN pro_onboarding_step INTEGER DEFAULT 0`); } catch (e) {}
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS profesional_profiles (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER UNIQUE NOT NULL,
+      especialidad TEXT,
+      categoria TEXT,
+      descripcion TEXT,
+      experiencia_anios INTEGER DEFAULT 0,
+      zona TEXT,
+      fotos_portfolio TEXT DEFAULT '[]',
+      telefono TEXT,
+      verification_level TEXT DEFAULT 'none',
+      verification_status TEXT DEFAULT 'pending',
+      matricula TEXT,
+      titulo_url TEXT,
+      dni_url TEXT,
+      activo INTEGER DEFAULT 1,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
 
 app.use(cors());
 app.use(express.json());
@@ -225,34 +224,35 @@ async function sendVerificationEmail(email, token) {
   }
 }
 
-function findAuthUserByEmail(email) {
-  return db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email);
+async function findAuthUserByEmail(email) {
+  const result = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
+  return result.rows[0];
 }
 
-function findLegacyUserByEmail(email) {
-  return db.prepare('SELECT * FROM usuarios WHERE LOWER(email) = LOWER(?)').get(email);
+async function findLegacyUserByEmail(email) {
+  const result = await db.query('SELECT * FROM usuarios WHERE LOWER(email) = LOWER($1)', [email]);
+  return result.rows[0];
 }
 
 async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
   if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
-  const existingAuth = findAuthUserByEmail(email);
-  const existingLegacy = findLegacyUserByEmail(email);
+  const existingAuth = await findAuthUserByEmail(email);
+  const existingLegacy = await findLegacyUserByEmail(email);
   if (existingAuth || existingLegacy) return { ok: false, error: 'El email ya existe' };
 
   const hash = bcrypt.hashSync(password, 12);
   const legacy = legacyData || {};
 
-  const createUser = db.prepare('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia) VALUES (?, ?, ?, ?, 0, 0, 0, ?, ?, ?)');
-  const userResult = createUser.run(name, email, hash, role, categoria || null, legacy.descripcion || null, legacy.experiencia || null);
+  const createUser = await db.query('INSERT INTO users (name, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia) VALUES ($1, $2, $3, $4, 0, 0, 0, $5, $6, $7) RETURNING id', [name, email, hash, role, categoria || null, legacy.descripcion || null, legacy.experiencia || null]);
+  const userId = createUser.rows[0].id;
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(userResult.lastInsertRowid, token, expiresAt);
+  await db.query('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES ($1, $2, $3, 0)', [userId, token, expiresAt]);
 
   const [firstName, ...rest] = name.trim().split(' ');
   const lastName = rest.join(' ');
 
-  const createLegacy = db.prepare('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-  const legacyResult = createLegacy.run(
+  const createLegacy = await db.query('INSERT INTO usuarios (nombre, apellido, email, password, telefono, tipo, zona, especialidad, descripcion, experiencia, foto, categoria) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id', [
     firstName || name,
     lastName,
     email,
@@ -265,10 +265,11 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
     legacy.experiencia || null,
     null,
     legacy.categoria || null
-  );
+  ]);
+  const legacyId = createLegacy.rows[0].id;
 
   await sendVerificationEmail(email, token);
-  return { ok: true, userId: userResult.lastInsertRowid, legacyId: legacyResult.lastInsertRowid, token };
+  return { ok: true, userId, legacyId, token };
 }
 
 app.get('/', (req, res) => {
@@ -386,9 +387,9 @@ app.post('/api/registro', async (req, res) => {
 });
 
 // ── LOGIN ─────────────────────────────────────
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  const authUser = findAuthUserByEmail(email);
+  const authUser = await findAuthUserByEmail(email);
   if (authUser) {
     const ok = authUser.password && bcrypt.compareSync(password, authUser.password);
     if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
@@ -397,7 +398,8 @@ app.post('/api/login', (req, res) => {
     return res.json({ ok: true, token, user: getUserPayload(authUser) });
   }
 
-  const usuario = db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
+  const result = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+  const usuario = result.rows[0];
   if (!usuario) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
   const ok = bcrypt.compareSync(password, usuario.password);
   if (!ok) return res.status(401).json({ error: 'Email o contraseña incorrectos' });
@@ -421,9 +423,9 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = findAuthUserByEmail(email);
+  const user = await findAuthUserByEmail(email);
   if (!user) return res.status(401).json({ ok: false, error: 'Email o contraseña incorrectos' });
   const ok = user.password && bcrypt.compareSync(password, user.password);
   if (!ok) return res.status(401).json({ ok: false, error: 'Email o contraseña incorrectos' });
@@ -432,27 +434,28 @@ app.post('/api/auth/login', (req, res) => {
   res.json({ ok: true, token, user: getUserPayload(user) });
 });
 
-app.get('/api/auth/verify-email', (req, res) => {
+app.get('/api/auth/verify-email', async (req, res) => {
   const { token } = req.query;
   if (!token) return res.status(400).send('<h1>Token inválido</h1>');
-  const tokenRow = db.prepare('SELECT * FROM email_tokens WHERE token = ? AND used = 0 AND expires_at > ?').get(token, new Date().toISOString());
+  const result = await db.query('SELECT * FROM email_tokens WHERE token = $1 AND used = 0 AND expires_at > $2', [token, new Date().toISOString()]);
+  const tokenRow = result.rows[0];
   if (!tokenRow) {
     return res.status(400).send('<h1>Token inválido o expirado</h1>');
   }
-  db.prepare('UPDATE email_tokens SET used = 1 WHERE id = ?').run(tokenRow.id);
-  db.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').run(tokenRow.user_id);
+  await db.query('UPDATE email_tokens SET used = 1 WHERE id = $1', [tokenRow.id]);
+  await db.query('UPDATE users SET email_verified = 1 WHERE id = $1', [tokenRow.user_id]);
   res.redirect('https://servikip.com.ar/kip-app.html?verified=true');
 });
 
 app.post('/api/auth/forgot-password', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ ok: false, error: 'Email requerido' });
-  const user = findAuthUserByEmail(email);
+  const user = await findAuthUserByEmail(email);
   if (!user) return res.json({ ok: true }); // No revelar si existe
   console.log('Enviando email de recuperación a:', email);
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-  db.prepare('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)').run(user.id, token, expiresAt);
+  await db.query('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES ($1, $2, $3, 0)', [user.id, token, expiresAt]);
   const resetUrl = `https://servikip.com.ar/api/auth/reset-password?token=${token}`;
   try {
     const response = await resend.emails.send({
@@ -515,68 +518,72 @@ async function reset() {
 app.post('/api/auth/reset-password', async (req, res) => {
   const { token, password } = req.body;
   if (!token || !password) return res.status(400).json({ ok: false, error: 'Datos incompletos' });
-  const tokenRow = db.prepare('SELECT * FROM email_tokens WHERE token = ? AND used = 0 AND expires_at > ?').get(token, new Date().toISOString());
+  const result = await db.query('SELECT * FROM email_tokens WHERE token = $1 AND used = 0 AND expires_at > $2', [token, new Date().toISOString()]);
+  const tokenRow = result.rows[0];
   if (!tokenRow) return res.status(400).json({ ok: false, error: 'Token inválido o expirado' });
   const hash = bcrypt.hashSync(password, 12);
-  db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hash, tokenRow.user_id);
-  db.prepare('UPDATE email_tokens SET used = 1 WHERE id = ?').run(tokenRow.id);
-  const user = db.prepare('SELECT email FROM users WHERE id = ?').get(tokenRow.user_id);
-  if (user) db.prepare('UPDATE usuarios SET password = ? WHERE email = ?').run(hash, user.email);
+  await db.query('UPDATE users SET password = $1 WHERE id = $2', [hash, tokenRow.user_id]);
+  await db.query('UPDATE email_tokens SET used = 1 WHERE id = $1', [tokenRow.id]);
+  const userResult = await db.query('SELECT email FROM users WHERE id = $1', [tokenRow.user_id]);
+  const user = userResult.rows[0];
+  if (user) await db.query('UPDATE usuarios SET password = $1 WHERE email = $2', [hash, user.email]);
   res.json({ ok: true });
 });
 
-app.put('/api/auth/onboarding', authMiddleware, (req, res) => {
+app.put('/api/auth/onboarding', authMiddleware, async (req, res) => {
   const { phone, city, role } = req.body;
-  db.prepare('UPDATE users SET phone = ?, city = ?, role = ?, onboarding_complete = 1 WHERE id = ?')
-    .run(phone, city, role, req.user.id);
-  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  await db.query('UPDATE users SET phone = $1, city = $2, role = $3, onboarding_complete = 1 WHERE id = $4', [phone, city, role, req.user.id]);
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const updated = result.rows[0];
   res.json({ ok: true, user: getUserPayload(updated) });
 });
 
-app.get('/api/auth/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const user = result.rows[0];
   if (!user) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
   res.json({ ok: true, user: getUserPayload(user) });
 });
 
-app.put('/api/perfil/verificacion', authMiddleware, (req, res) => {
+app.put('/api/perfil/verificacion', authMiddleware, async (req, res) => {
   const { verification_level, matricula } = req.body;
   const validLevels = ['universitario', 'matriculado', 'independiente'];
   if (!validLevels.includes(verification_level)) return res.status(400).json({ ok: false, error: 'Nivel de verificación inválido' });
-  db.prepare('UPDATE users SET verification_level = ?, matricula = ?, verification_status = ? WHERE id = ?')
-    .run(verification_level, matricula || null, 'pending_review', req.user.id);
-  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  await db.query('UPDATE users SET verification_level = $1, matricula = $2, verification_status = $3 WHERE id = $4', [verification_level, matricula || null, 'pending_review', req.user.id]);
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const updated = result.rows[0];
   res.json({ ok: true, user: getUserPayload(updated) });
 });
 
-app.post('/api/perfil/documento', authMiddleware, upload.single('documento'), (req, res) => {
+app.post('/api/perfil/documento', authMiddleware, upload.single('documento'), async (req, res) => {
   if (!req.file) return res.status(400).json({ ok: false, error: 'Documento no recibido' });
   const { tipo } = req.body;
   const url = `/uploads/${req.file.filename}`;
   if (tipo === 'titulo') {
-    db.prepare('UPDATE users SET titulo_url = ?, verification_status = ? WHERE id = ?')
-      .run(url, 'pending_review', req.user.id);
+    await db.query('UPDATE users SET titulo_url = $1, verification_status = $2 WHERE id = $3', [url, 'pending_review', req.user.id]);
   } else if (tipo === 'dni') {
-    db.prepare('UPDATE users SET dni_url = ?, verification_status = ? WHERE id = ?')
-      .run(url, 'pending_review', req.user.id);
+    await db.query('UPDATE users SET dni_url = $1, verification_status = $2 WHERE id = $3', [url, 'pending_review', req.user.id]);
   } else {
     return res.status(400).json({ ok: false, error: 'Tipo de documento inválido' });
   }
   res.json({ ok: true, url });
 });
 
-app.put('/api/perfil/precio', authMiddleware, (req, res) => {
+app.put('/api/perfil/precio', authMiddleware, async (req, res) => {
   const { precio_estimado } = req.body;
   if (!precio_estimado) return res.status(400).json({ ok: false, error: 'Precio estimado requerido' });
-  db.prepare('UPDATE users SET precio_estimado = ? WHERE id = ?').run(precio_estimado, req.user.id);
-  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  await db.query('UPDATE users SET precio_estimado = $1 WHERE id = $2', [precio_estimado, req.user.id]);
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const updated = result.rows[0];
   res.json({ ok: true, user: getUserPayload(updated) });
 });
 
-app.get('/api/perfil/completitud', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+app.get('/api/perfil/completitud', authMiddleware, async (req, res) => {
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const user = result.rows[0];
   if (!user) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
-  const calificacionesCount = db.prepare('SELECT COUNT(*) AS cnt FROM calificaciones WHERE para_usuario = ?').get(req.user.id)?.cnt || 0;
+  const calResult = await db.query('SELECT COUNT(*) AS cnt FROM calificaciones WHERE para_usuario = $1', [req.user.id]);
+  const calificacionesCount = calResult.rows[0].cnt || 0;
   const detalle = {
     foto: !!user.profile_image,
     descripcion: !!(user.descripcion && user.descripcion.length > 10),
@@ -601,42 +608,43 @@ app.get('/api/perfil/completitud', authMiddleware, (req, res) => {
     (detalle.precio ? 5 : 0) +
     (detalle.email_verificado ? 10 : 0)
   );
-  db.prepare('UPDATE users SET profile_completion = ? WHERE id = ?').run(porcentaje, req.user.id);
+  await db.query('UPDATE users SET profile_completion = $1 WHERE id = $2', [porcentaje, req.user.id]);
   res.json({ ok: true, porcentaje, detalle });
 });
 
 // ── PROFESIONALES ─────────────────────────────
-app.get('/api/profesionales', (req, res) => {
+app.get('/api/profesionales', async (req, res) => {
   try {
-    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+    await db.query(`CREATE TABLE IF NOT EXISTS calificaciones (
+      id SERIAL PRIMARY KEY,
       de_usuario INTEGER,
       para_usuario INTEGER,
       estrellas INTEGER,
       comentario TEXT,
       trabajo_desc TEXT,
-      creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`).run();
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`);
     const { categoria, especialidad, zona, q } = req.query;
     let query = `
-      SELECT 
-        u.id, u.nombre, u.apellido, u.especialidad, u.categoria, 
+      SELECT
+        u.id, u.nombre, u.apellido, u.especialidad, u.categoria,
         u.zona, u.descripcion, u.experiencia, u.foto,
         us.verification_level, us.verification_status,
         COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
         COUNT(c.id) as total_calificaciones
-      FROM usuarios u 
-      LEFT JOIN users us ON us.email = u.email 
+      FROM usuarios u
+      LEFT JOIN users us ON us.email = u.email
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
       WHERE u.tipo = 'profesional'
     `;
     const params = [];
-    if (categoria) { query += ' AND u.categoria = ?'; params.push(categoria); }
-    if (especialidad) { query += ' AND u.especialidad LIKE ?'; params.push(`%${especialidad}%`); }
-    if (zona) { query += ' AND u.zona LIKE ?'; params.push(`%${zona}%`); }
-    if (q) { query += ' AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.especialidad LIKE ? OR u.descripcion LIKE ?)'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+    if (categoria) { query += ' AND u.categoria = $' + (params.length + 1); params.push(categoria); }
+    if (especialidad) { query += ' AND u.especialidad LIKE $' + (params.length + 1); params.push(`%${especialidad}%`); }
+    if (zona) { query += ' AND u.zona LIKE $' + (params.length + 1); params.push(`%${zona}%`); }
+    if (q) { query += ' AND (u.nombre LIKE $' + (params.length + 1) + ' OR u.apellido LIKE $' + (params.length + 2) + ' OR u.especialidad LIKE $' + (params.length + 3) + ' OR u.descripcion LIKE $' + (params.length + 4) + ')'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
     query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
-    res.json(db.prepare(query).all(...params));
+    const result = await db.query(query, params);
+    res.json(result.rows);
   } catch(err) {
     console.error('Error en /api/profesionales:', err);
     return res.json([]);
@@ -644,14 +652,14 @@ app.get('/api/profesionales', (req, res) => {
 });
 
 // ── FOTO DE PERFIL ────────────────────────────
-app.post('/api/foto', upload.single('foto'), (req, res) => {
+app.post('/api/foto', upload.single('foto'), async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Sin autorización' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const fotoUrl = `/uploads/${req.file.filename}`;
-    db.prepare('UPDATE usuarios SET foto = ? WHERE id = ?').run(fotoUrl, decoded.id);
-    db.prepare('UPDATE users SET profile_image = ? WHERE email=(SELECT email FROM usuarios WHERE id=?)').run(fotoUrl, decoded.id);
+    await db.query('UPDATE usuarios SET foto = $1 WHERE id = $2', [fotoUrl, decoded.id]);
+    await db.query('UPDATE users SET profile_image = $1 WHERE email=(SELECT email FROM usuarios WHERE id=$2)', [fotoUrl, decoded.id]);
     res.json({ ok: true, foto: fotoUrl });
   } catch (e) {
     res.status(401).json({ error: 'Token inválido' });
@@ -659,17 +667,16 @@ app.post('/api/foto', upload.single('foto'), (req, res) => {
 });
 
 // ── ACTUALIZAR PERFIL ─────────────────────────
-app.put('/api/perfil', (req, res) => {
+app.put('/api/perfil', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Sin autorización' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const { nombre, apellido, telefono, zona, especialidad, descripcion, experiencia } = req.body;
-    db.prepare('UPDATE usuarios SET nombre=?, apellido=?, telefono=?, zona=?, especialidad=?, descripcion=?, experiencia=? WHERE id=?')
-      .run(nombre, apellido, telefono, zona, especialidad, descripcion, experiencia, decoded.id);
-    db.prepare('UPDATE users SET phone=?, city=?, descripcion=?, experiencia=? WHERE email=(SELECT email FROM usuarios WHERE id=?)')
-      .run(telefono, zona, descripcion || null, experiencia || null, decoded.id);
-    const usuario = db.prepare('SELECT id, nombre, apellido, email, tipo, especialidad, zona, foto FROM usuarios WHERE id=?').get(decoded.id);
+    await db.query('UPDATE usuarios SET nombre=$1, apellido=$2, telefono=$3, zona=$4, especialidad=$5, descripcion=$6, experiencia=$7 WHERE id=$8', [nombre, apellido, telefono, zona, especialidad, descripcion, experiencia, decoded.id]);
+    await db.query('UPDATE users SET phone=$1, city=$2, descripcion=$3, experiencia=$4 WHERE email=(SELECT email FROM usuarios WHERE id=$5)', [telefono, zona, descripcion || null, experiencia || null, decoded.id]);
+    const result = await db.query('SELECT id, nombre, apellido, email, tipo, especialidad, zona, foto FROM usuarios WHERE id=$1', [decoded.id]);
+    const usuario = result.rows[0];
     res.json({ ok: true, usuario });
   } catch (e) {
     res.status(401).json({ error: 'Token inválido' });
@@ -677,51 +684,56 @@ app.put('/api/perfil', (req, res) => {
 });
 
 // ── MENSAJES ──────────────────────────────────
-app.post('/api/mensajes', (req, res) => {
+app.post('/api/mensajes', async (req, res) => {
   const { de_usuario, para_usuario, texto } = req.body;
-  const result = db.prepare('INSERT INTO mensajes (de_usuario, para_usuario, texto) VALUES (?, ?, ?)').run(de_usuario, para_usuario, texto);
-  res.json({ ok: true, id: result.lastInsertRowid });
+  try {
+    const result = await db.query('INSERT INTO mensajes (de_usuario, para_usuario, texto) VALUES ($1, $2, $3) RETURNING id', [de_usuario, para_usuario, texto]);
+    res.json({ ok: true, id: result.rows[0].id });
+  } catch (err) {
+    console.error('Error en /api/mensajes:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
 });
 
-app.get('/api/mensajes/:usuario1/:usuario2', (req, res) => {
+app.get('/api/mensajes/:usuario1/:usuario2', async (req, res) => {
   const { usuario1, usuario2 } = req.params;
-  const mensajes = db.prepare(`
+  const result = await db.query(`
     SELECT m.*, u.nombre, u.apellido, u.foto FROM mensajes m
     JOIN usuarios u ON m.de_usuario = u.id
-    WHERE (m.de_usuario = ? AND m.para_usuario = ?) OR (m.de_usuario = ? AND m.para_usuario = ?)
+    WHERE (m.de_usuario = $1 AND m.para_usuario = $2) OR (m.de_usuario = $2 AND m.para_usuario = $1)
     ORDER BY m.creado_en ASC
-  `).all(usuario1, usuario2, usuario2, usuario1);
-  res.json(mensajes);
+  `, [usuario1, usuario2, usuario2, usuario1]);
+  res.json(result.rows);
 });
 
-app.get('/api/conversaciones/:usuario_id', (req, res) => {
+app.get('/api/conversaciones/:usuario_id', async (req, res) => {
   const { usuario_id } = req.params;
-  const convos = db.prepare(`
-    SELECT DISTINCT 
-      CASE WHEN m.de_usuario = ? THEN m.para_usuario ELSE m.de_usuario END as otro_id,
+  const result = await db.query(`
+    SELECT DISTINCT
+      CASE WHEN m.de_usuario = $1 THEN m.para_usuario ELSE m.de_usuario END as otro_id,
       u.nombre, u.apellido, u.foto, u.especialidad,
       (SELECT texto FROM mensajes WHERE (de_usuario=m.de_usuario AND para_usuario=m.para_usuario) OR (de_usuario=m.para_usuario AND para_usuario=m.de_usuario) ORDER BY creado_en DESC LIMIT 1) as ultimo_mensaje,
       (SELECT creado_en FROM mensajes WHERE (de_usuario=m.de_usuario AND para_usuario=m.para_usuario) OR (de_usuario=m.para_usuario AND para_usuario=m.de_usuario) ORDER BY creado_en DESC LIMIT 1) as ultimo_tiempo
     FROM mensajes m
-    JOIN usuarios u ON u.id = CASE WHEN m.de_usuario = ? THEN m.para_usuario ELSE m.de_usuario END
-    WHERE m.de_usuario = ? OR m.para_usuario = ?
+    JOIN usuarios u ON u.id = CASE WHEN m.de_usuario = $1 THEN m.para_usuario ELSE m.de_usuario END
+    WHERE m.de_usuario = $1 OR m.para_usuario = $1
     GROUP BY otro_id
     ORDER BY ultimo_tiempo DESC
-  `).all(usuario_id, usuario_id, usuario_id, usuario_id);
-  res.json(convos);
+  `, [usuario_id, usuario_id, usuario_id, usuario_id]);
+  res.json(result.rows);
 });
 
 // ── TRABAJOS ──────────────────────────────────
-app.post('/api/trabajos', (req, res) => {
+app.post('/api/trabajos', async (req, res) => {
   const { cliente_id, profesional_id, titulo, descripcion, precio } = req.body;
-  const result = db.prepare('INSERT INTO trabajos (cliente_id, profesional_id, titulo, descripcion, precio) VALUES (?, ?, ?, ?, ?)').run(cliente_id, profesional_id, titulo, descripcion, precio);
-  res.json({ ok: true, id: result.lastInsertRowid });
+  const result = await db.query('INSERT INTO trabajos (cliente_id, profesional_id, titulo, descripcion, precio) VALUES ($1, $2, $3, $4, $5) RETURNING id', [cliente_id, profesional_id, titulo, descripcion, precio]);
+  res.json({ ok: true, id: result.rows[0].id });
 });
 
-app.get('/api/trabajos/:usuario_id', (req, res) => {
+app.get('/api/trabajos/:usuario_id', async (req, res) => {
   const { usuario_id } = req.params;
-  const trabajos = db.prepare('SELECT * FROM trabajos WHERE cliente_id = ? OR profesional_id = ?').all(usuario_id, usuario_id);
-  res.json(trabajos);
+  const result = await db.query('SELECT * FROM trabajos WHERE cliente_id = $1 OR profesional_id = $1', [usuario_id, usuario_id]);
+  res.json(result.rows);
 });
 
 // ── SOCKET.IO — CHAT EN TIEMPO REAL ───────────
@@ -733,10 +745,10 @@ io.on('connection', (socket) => {
     socket.userId = userId;
   });
 
-  socket.on('mensaje', (data) => {
+  socket.on('mensaje', async (data) => {
     const { de_usuario, para_usuario, texto } = data;
-    const result = db.prepare('INSERT INTO mensajes (de_usuario, para_usuario, texto) VALUES (?, ?, ?)').run(de_usuario, para_usuario, texto);
-    const mensajeCompleto = { id: result.lastInsertRowid, de_usuario, para_usuario, texto, creado_en: new Date().toISOString() };
+    const result = await db.query('INSERT INTO mensajes (de_usuario, para_usuario, texto) VALUES ($1, $2, $3) RETURNING id', [de_usuario, para_usuario, texto]);
+    const mensajeCompleto = { id: result.rows[0].id, de_usuario, para_usuario, texto, creado_en: new Date().toISOString() };
     const socketDest = usuariosConectados[para_usuario];
     if (socketDest) io.to(socketDest).emit('mensaje', mensajeCompleto);
     socket.emit('mensaje_enviado', mensajeCompleto);
@@ -748,25 +760,26 @@ io.on('connection', (socket) => {
 });
 
 // ── CALIFICACIONES ──────────────────────────────
-app.post('/api/calificaciones', (req, res) => {
+app.post('/api/calificaciones', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Sin autorización' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const { para_usuario, trabajo_desc, estrellas, comentario } = req.body;
-    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (id INTEGER PRIMARY KEY AUTOINCREMENT, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
-    db.prepare('INSERT INTO calificaciones (de_usuario,para_usuario,estrellas,comentario,trabajo_desc) VALUES (?,?,?,?,?)').run(decoded.id, para_usuario, estrellas, comentario, trabajo_desc);
-    const avg = db.prepare('SELECT AVG(estrellas) as avg FROM calificaciones WHERE para_usuario=?').get(para_usuario);
-    db.prepare('UPDATE usuarios SET calificacion=? WHERE id=?').run(Math.round(avg.avg*10)/10, para_usuario);
+    await db.query(`CREATE TABLE IF NOT EXISTS calificaciones (id SERIAL PRIMARY KEY, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+    await db.query('INSERT INTO calificaciones (de_usuario,para_usuario,estrellas,comentario,trabajo_desc) VALUES ($1,$2,$3,$4,$5)', [decoded.id, para_usuario, estrellas, comentario, trabajo_desc]);
+    const avgResult = await db.query('SELECT AVG(estrellas) as avg FROM calificaciones WHERE para_usuario=$1', [para_usuario]);
+    const avg = avgResult.rows[0].avg;
+    await db.query('UPDATE usuarios SET calificacion=$1 WHERE id=$2', [Math.round(avg*10)/10, para_usuario]);
     res.json({ok:true});
   } catch(e) { res.status(401).json({error:e.message}); }
 });
 
-app.get('/api/calificaciones/:id', (req, res) => {
+app.get('/api/calificaciones/:id', async (req, res) => {
   try {
-    db.prepare(`CREATE TABLE IF NOT EXISTS calificaciones (id INTEGER PRIMARY KEY AUTOINCREMENT, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
-    const cals = db.prepare(`SELECT c.*, u.nombre, u.apellido FROM calificaciones c JOIN usuarios u ON c.de_usuario=u.id WHERE c.para_usuario=? ORDER BY c.creado_en DESC`).all(req.params.id);
-    res.json(cals);
+    await db.query(`CREATE TABLE IF NOT EXISTS calificaciones (id SERIAL PRIMARY KEY, de_usuario INTEGER, para_usuario INTEGER, estrellas INTEGER, comentario TEXT, trabajo_desc TEXT, creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+    const result = await db.query(`SELECT c.*, u.nombre, u.apellido FROM calificaciones c JOIN usuarios u ON c.de_usuario=u.id WHERE c.para_usuario=$1 ORDER BY c.creado_en DESC`, [req.params.id]);
+    res.json(result.rows);
   } catch(e) { res.json([]); }
 });
 
@@ -779,51 +792,72 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
-app.get('/api/admin/verificaciones', adminMiddleware, (req, res) => {
-  const pendientes = db.prepare(`
-    SELECT u.id, u.name, u.email, u.verification_level, u.verification_status,
-           u.titulo_url, u.dni_url, u.matricula, u.created_at
-    FROM users u
-    WHERE u.role IN ('professional', 'profesional')
-    AND u.verification_level != 'none'
-    AND u.verification_status = 'pending_review'
-    ORDER BY u.created_at DESC
-  `).all();
-  res.json({ ok: true, pendientes });
-});
-
-app.put('/api/admin/verificaciones/:id/aprobar', adminMiddleware, (req, res) => {
-  const { id } = req.params;
-  db.prepare("UPDATE users SET verification_status = 'approved' WHERE id = ?").run(id);
-  res.json({ ok: true, message: 'Verificación aprobada' });
-});
-
-app.put('/api/admin/verificaciones/:id/rechazar', adminMiddleware, (req, res) => {
-  const { id } = req.params;
-  db.prepare("UPDATE users SET verification_status = 'rejected', verification_level = 'none' WHERE id = ?").run(id);
-  res.json({ ok: true, message: 'Verificación rechazada' });
-});
-
-app.get('/api/admin/usuarios', adminMiddleware, (req, res) => {
-  const usuarios = db.prepare(`
-    SELECT id, name, email, role, verification_level, verification_status, 
-           email_verified, created_at, profile_completion
-    FROM users ORDER BY created_at DESC
-  `).all();
-  res.json({ ok: true, usuarios });
-});
-
-app.get('/api/stats', (req, res) => {
+app.get('/api/admin/verificaciones', adminMiddleware, async (req, res) => {
   try {
-    const pros = db.prepare("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'profesional'").get();
-    const clientes = db.prepare("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'cliente'").get();
-    const trabajos = db.prepare("SELECT COUNT(*) as cnt FROM trabajos").get();
-    const califs = db.prepare("SELECT AVG(estrellas) as avg, COUNT(*) as cnt FROM calificaciones").get();
+    const pendientesResult = await db.query(`
+      SELECT u.id, u.name, u.email, u.verification_level, u.verification_status,
+             u.titulo_url, u.dni_url, u.matricula, u.created_at
+      FROM users u
+      WHERE u.role IN ('professional', 'profesional')
+      AND u.verification_level != 'none'
+      AND u.verification_status = 'pending_review'
+      ORDER BY u.created_at DESC
+    `);
+    res.json({ ok: true, pendientes: pendientesResult.rows });
+  } catch (err) {
+    console.error('Error en /api/admin/verificaciones:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+app.put('/api/admin/verificaciones/:id/aprobar', adminMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query("UPDATE users SET verification_status = 'approved' WHERE id = $1", [id]);
+    res.json({ ok: true, message: 'Verificación aprobada' });
+  } catch (err) {
+    console.error('Error en /api/admin/verificaciones/:id/aprobar:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+app.put('/api/admin/verificaciones/:id/rechazar', adminMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query("UPDATE users SET verification_status = 'rejected', verification_level = 'none' WHERE id = $1", [id]);
+    res.json({ ok: true, message: 'Verificación rechazada' });
+  } catch (err) {
+    console.error('Error en /api/admin/verificaciones/:id/rechazar:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+app.get('/api/admin/usuarios', adminMiddleware, async (req, res) => {
+  try {
+    const usuariosResult = await db.query(`
+      SELECT id, name, email, role, verification_level, verification_status, 
+             email_verified, created_at, profile_completion
+      FROM users ORDER BY created_at DESC
+    `);
+    res.json({ ok: true, usuarios: usuariosResult.rows });
+  } catch (err) {
+    console.error('Error en /api/admin/usuarios:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+app.get('/api/stats', async (req, res) => {
+  try {
+    const prosResult = await db.query("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'profesional'");
+    const clientesResult = await db.query("SELECT COUNT(*) as cnt FROM usuarios WHERE tipo = 'cliente'");
+    const trabajosResult = await db.query("SELECT COUNT(*) as cnt FROM trabajos");
+    const califsResult = await db.query("SELECT AVG(estrellas) as avg, COUNT(*) as cnt FROM calificaciones");
+    const califs = califsResult.rows[0];
     res.json({
       ok: true,
-      profesionales: pros.cnt || 0,
-      clientes: clientes.cnt || 0,
-      trabajos: trabajos.cnt || 0,
+      profesionales: prosResult.rows[0].cnt || 0,
+      clientes: clientesResult.rows[0].cnt || 0,
+      trabajos: trabajosResult.rows[0].cnt || 0,
       calificacion_promedio: califs.avg ? Math.round(califs.avg * 10) / 10 : 0,
       total_calificaciones: califs.cnt || 0
     });
@@ -833,48 +867,66 @@ app.get('/api/stats', (req, res) => {
 });
 
 // Activar modo profesional - paso 1: especialidad
-app.post('/api/pro/activar', authMiddleware, (req, res) => {
+app.post('/api/pro/activar', authMiddleware, async (req, res) => {
   const { especialidad, categoria, descripcion, experiencia_anios, zona } = req.body;
   if (!especialidad) return res.status(400).json({ ok: false, error: 'La especialidad es obligatoria' });
-  const existing = db.prepare('SELECT id FROM profesional_profiles WHERE user_id = ?').get(req.user.id);
-  if (existing) {
-    db.prepare('UPDATE profesional_profiles SET especialidad=?, categoria=?, descripcion=?, experiencia_anios=?, zona=? WHERE user_id=?')
-      .run(especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null, req.user.id);
-  } else {
-    db.prepare('INSERT INTO profesional_profiles (user_id, especialidad, categoria, descripcion, experiencia_anios, zona) VALUES (?,?,?,?,?,?)')
-      .run(req.user.id, especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null);
+  try {
+    const existingResult = await db.query('SELECT id FROM profesional_profiles WHERE user_id = $1', [req.user.id]);
+    const existing = existingResult.rows[0];
+    if (existing) {
+      await db.query('UPDATE profesional_profiles SET especialidad=$1, categoria=$2, descripcion=$3, experiencia_anios=$4, zona=$5 WHERE user_id=$6',
+        [especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null, req.user.id]);
+    } else {
+      await db.query('INSERT INTO profesional_profiles (user_id, especialidad, categoria, descripcion, experiencia_anios, zona) VALUES ($1,$2,$3,$4,$5,$6)',
+        [req.user.id, especialidad, categoria||null, descripcion||null, experiencia_anios||0, zona||null]);
+    }
+    await db.query('UPDATE users SET es_profesional=1, pro_onboarding_step=1, role=$1 WHERE id=$2',
+      ['professional', req.user.id]);
+    // Sincronizar con tabla usuarios legacy
+    await db.query('UPDATE usuarios SET tipo=$1, especialidad=$2, descripcion=$3, categoria=$4 WHERE email=(SELECT email FROM users WHERE id=$5)',
+      ['profesional', especialidad, descripcion||null, categoria||null, req.user.id]);
+    const updatedResult = await db.query('SELECT * FROM users WHERE id=$1', [req.user.id]);
+    const updated = updatedResult.rows[0];
+    res.json({ ok: true, user: getUserPayload(updated) });
+  } catch (err) {
+    console.error('Error en /api/pro/activar:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
   }
-  db.prepare('UPDATE users SET es_profesional=1, pro_onboarding_step=1, role=? WHERE id=?')
-    .run('professional', req.user.id);
-  // Sincronizar con tabla usuarios legacy
-  db.prepare('UPDATE usuarios SET tipo=?, especialidad=?, descripcion=?, categoria=? WHERE email=(SELECT email FROM users WHERE id=?)')
-    .run('profesional', especialidad, descripcion||null, categoria||null, req.user.id);
-  const updated = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
-  res.json({ ok: true, user: getUserPayload(updated) });
 });
 
 // Actualizar localidad del usuario
-app.put('/api/perfil/localidad', authMiddleware, (req, res) => {
+app.put('/api/perfil/localidad', authMiddleware, async (req, res) => {
   const { localidad, codigo_postal } = req.body;
-  db.prepare('UPDATE users SET localidad=?, codigo_postal=? WHERE id=?')
-    .run(localidad||null, codigo_postal||null, req.user.id);
-  db.prepare('UPDATE usuarios SET zona=? WHERE email=(SELECT email FROM users WHERE id=?)')
-    .run(localidad||null, req.user.id);
-  const updated = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
-  res.json({ ok: true, user: getUserPayload(updated) });
+  try {
+    await db.query('UPDATE users SET localidad=$1, codigo_postal=$2 WHERE id=$3',
+      [localidad||null, codigo_postal||null, req.user.id]);
+    await db.query('UPDATE usuarios SET zona=$1 WHERE email=(SELECT email FROM users WHERE id=$2)',
+      [localidad||null, req.user.id]);
+    const updatedResult = await db.query('SELECT * FROM users WHERE id=$1', [req.user.id]);
+    const updated = updatedResult.rows[0];
+    res.json({ ok: true, user: getUserPayload(updated) });
+  } catch (err) {
+    console.error('Error en /api/perfil/localidad:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
 });
 
 // Obtener perfil profesional
-app.get('/api/pro/perfil', authMiddleware, (req, res) => {
-  const profile = db.prepare('SELECT * FROM profesional_profiles WHERE user_id=?').get(req.user.id);
-  res.json({ ok: true, profile: profile || null });
+app.get('/api/pro/perfil', authMiddleware, async (req, res) => {
+  try {
+    const profileResult = await db.query('SELECT * FROM profesional_profiles WHERE user_id=$1', [req.user.id]);
+    res.json({ ok: true, profile: profileResult.rows[0] || null });
+  } catch (err) {
+    console.error('Error en /api/pro/perfil:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
 });
 
-app.get('/api/profesionales/:id', (req, res) => {
+app.get('/api/profesionales/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const pro = db.prepare(`
-      SELECT 
+    const proResult = await db.query(`
+      SELECT
         u.id, u.nombre, u.apellido, u.especialidad, u.categoria,
         u.zona, u.descripcion, u.experiencia, u.foto,
         us.verification_level, us.verification_status,
@@ -883,9 +935,10 @@ app.get('/api/profesionales/:id', (req, res) => {
       FROM usuarios u
       LEFT JOIN users us ON us.email = u.email
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
-      WHERE u.id = ? AND u.tipo = 'profesional'
+      WHERE u.id = $1 AND u.tipo = 'profesional'
       GROUP BY u.id
-    `).get(id);
+    `, [id]);
+    const pro = proResult.rows[0];
     if (!pro) return res.status(404).json({ ok: false, error: 'Profesional no encontrado' });
     res.json(pro);
   } catch(e) {
@@ -894,8 +947,13 @@ app.get('/api/profesionales/:id', (req, res) => {
 });
 
 // ── INICIO ────────────────────────────────────
-server.listen(PORT, () => {
-  console.log(`✅ Servidor KIP corriendo en http://localhost:${PORT}`);
-  console.log(`💬 Socket.io activo`);
-  console.log(`📷 Fotos en /uploads`);
+initDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`✅ Servidor KIP corriendo en http://localhost:${PORT}`);
+    console.log(`💬 Socket.io activo`);
+    console.log(`📷 Fotos en /uploads`);
+  });
+}).catch(err => {
+  console.error('❌ Error inicializando base de datos:', err);
+  process.exit(1);
 });
