@@ -26,6 +26,9 @@
   --radius-sm: 14px;
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
+  --gray-100: #F3F4F6;
+  --gray-400: #9CA3AF;
+  --gray-600: #4B5563;
 }
 * {
   box-sizing: border-box;
@@ -132,7 +135,7 @@ button {
   background: var(--accent-light);
 }
 .main-content {
-  margin-top: 72px;
+  margin-top: 0;
   padding: 32px 28px 48px;
 }
 .btn,
@@ -1814,12 +1817,12 @@ select option {
 
   <!-- Filtros rápidos -->
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px">
-    <button onclick="buscarCategoria('')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.5);background:rgba(255,107,43,0.1);color:#FF8C4B;font-weight:600;font-size:13px;cursor:pointer">Todos</button>
-    <button onclick="buscarCategoria('Electricista')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">⚡ Electricista</button>
-    <button onclick="buscarCategoria('Plomero/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🔧 Plomero</button>
-    <button onclick="buscarCategoria('Pintor/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🎨 Pintor</button>
-    <button onclick="buscarCategoria('Limpieza de hogar y oficinas')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">🧹 Limpieza</button>
-    <button onclick="buscarCategoria('Albañil')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.6);font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF8C4B'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">✂️ Peluquero</button>
+    <button onclick="buscarCategoria('')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(255,107,43,0.5);background:rgba(255,107,43,0.1);color:#FF6B2B;font-weight:600;font-size:13px;cursor:pointer">Todos</button>
+    <button onclick="buscarCategoria('Electricista')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:white;color:#444444;font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">⚡ Electricista</button>
+    <button onclick="buscarCategoria('Plomero/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:white;color:#444444;font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🔧 Plomero</button>
+    <button onclick="buscarCategoria('Pintor/a')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:white;color:#444444;font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🎨 Pintor</button>
+    <button onclick="buscarCategoria('Limpieza de hogar y oficinas')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:white;color:#444444;font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">🧹 Limpieza</button>
+    <button onclick="buscarCategoria('Albañil')" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(0,0,0,0.12);background:white;color:#444444;font-weight:600;font-size:13px;cursor:pointer" onmouseover="this.style.borderColor='rgba(255,107,43,0.4)';this.style.color='#FF6B2B'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='#444444'">✂️ Peluquero</button>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
@@ -2791,7 +2794,7 @@ function normalizeUserPayload(payload) {
     user.nombre = payload.nombre || '';
     user.apellido = payload.apellido || '';
     user.email = payload.email || '';
-    user.tipo = payload.tipo || (payload.role === 'professional' ? 'profesional' : 'cliente');
+    user.tipo = payload.tipo || (payload.role === 'professional' || payload.role === 'profesional' ? 'profesional' : 'cliente');
     user.foto = payload.foto || payload.profile_image || '';
     user.especialidad = payload.especialidad || payload.specialty || '';
     user.zona = payload.zona || payload.city || '';
@@ -2804,7 +2807,7 @@ function normalizeUserPayload(payload) {
     user.nombre = parts.shift() || '';
     user.apellido = parts.join(' ') || '';
     user.email = payload.email || '';
-    user.tipo = payload.role === 'professional' ? 'profesional' : 'cliente';
+    user.tipo = (payload.role === 'professional' || payload.role === 'profesional') ? 'profesional' : 'cliente';
     user.foto = payload.profile_image || payload.foto || '';
     user.especialidad = payload.specialty || payload.especialidad || '';
     user.zona = payload.city || payload.zona || '';
@@ -2907,10 +2910,10 @@ function filtrarEspecialidades(query) {
     return;
   }
   dropdown.innerHTML = matches.map(esp => `
-    <div 
+    <div
       onclick="seleccionarEspecialidad('${esp.replace(/'/g, "\\'")}')"
-      style="padding:14px 18px;cursor:pointer;font-size:14px;color:var(--text-strong);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
-      onmouseover="this.style.background='rgba(255,107,43,0.08)'"
+      style="padding:14px 18px;cursor:pointer;font-size:14px;color:rgba(255,255,255,0.9);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
+      onmouseover="this.style.background='rgba(255,107,43,0.15)'"
       onmouseout="this.style.background='transparent'"
     >${esp}</div>
   `).join('');
@@ -3817,8 +3820,8 @@ function filtrarEspecialidadesPro(query) {
   }
   dropdown.innerHTML = matches.map(esp => `
     <div onclick="seleccionarProEsp('${esp.replace(/'/g,"\\'")}')"
-      style="padding:14px 18px;cursor:pointer;font-size:14px;color:var(--text-strong);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
-      onmouseover="this.style.background='rgba(255,107,43,0.08)'"
+      style="padding:14px 18px;cursor:pointer;font-size:14px;color:rgba(255,255,255,0.9);border-bottom:1px solid rgba(255,255,255,0.05);transition:background 120ms ease"
+      onmouseover="this.style.background='rgba(255,107,43,0.15)'"
       onmouseout="this.style.background='transparent'">${esp}</div>
   `).join('');
   dropdown.style.display = 'block';
