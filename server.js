@@ -51,27 +51,12 @@ const db = new Pool({
 });
 
 async function initDB() {
+  // Crear tabla users con todos los campos necesarios
   await db.query(`
-    CREATE TABLE IF NOT EXISTS trabajos (
-      id SERIAL PRIMARY KEY,
-      cliente_id INTEGER,
-      profesional_id INTEGER,
-      titulo TEXT,
-      descripcion TEXT,
-      estado TEXT DEFAULT 'pendiente',
-      precio REAL,
-      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mensajes (
-      id SERIAL PRIMARY KEY,
-      de_usuario INTEGER,
-      para_usuario INTEGER,
-      texto TEXT,
-      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
+      apellido TEXT,
       email TEXT UNIQUE NOT NULL,
       password TEXT,
       email_verified INTEGER DEFAULT 0,
@@ -85,35 +70,76 @@ async function initDB() {
       google_id TEXT,
       onboarding_complete INTEGER DEFAULT 0,
       categoria TEXT,
+      verification_level TEXT DEFAULT 'none',
+      verification_status TEXT DEFAULT 'pending',
+      matricula TEXT,
+      titulo_url TEXT,
+      dni_url TEXT,
+      precio_estimado TEXT,
+      profile_completion INTEGER DEFAULT 0,
+      localidad TEXT,
+      codigo_postal TEXT,
+      es_profesional INTEGER DEFAULT 0,
+      pro_onboarding_step INTEGER DEFAULT 0,
+      especialidad TEXT,
+      telefono TEXT,
+      zona TEXT,
+      foto TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    )
+  `);
+
+  // Intentar agregar campos que podrían faltar (por compatibilidad)
+  try { await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS apellido TEXT'); } catch (e) {}
+  try { await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS especialidad TEXT'); } catch (e) {}
+  try { await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS telefono TEXT'); } catch (e) {}
+  try { await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS zona TEXT'); } catch (e) {}
+  try { await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS foto TEXT'); } catch (e) {}
+
+  // Crear otras tablas (cada una en su propia query para evitar problemas con pg Pool y multi-statements)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS trabajos (
+      id SERIAL PRIMARY KEY,
+      cliente_id INTEGER,
+      profesional_id INTEGER,
+      titulo TEXT,
+      descripcion TEXT,
+      estado TEXT DEFAULT 'pendiente',
+      precio REAL,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS mensajes (
+      id SERIAL PRIMARY KEY,
+      de_usuario INTEGER,
+      para_usuario INTEGER,
+      texto TEXT,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  await db.query(`
     CREATE TABLE IF NOT EXISTS email_tokens (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL,
       token TEXT NOT NULL,
       expires_at TIMESTAMP NOT NULL,
       used INTEGER DEFAULT 0
-    );
+    )
   `);
-  try { await db.query('ALTER TABLE users ADD COLUMN categoria TEXT'); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN verification_level TEXT DEFAULT 'none'`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN verification_status TEXT DEFAULT 'pending'`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN matricula TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN titulo_url TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN dni_url TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN precio_estimado TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN profile_completion INTEGER DEFAULT 0`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN descripcion TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN experiencia INTEGER`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN localidad TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN codigo_postal TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN es_profesional INTEGER DEFAULT 0`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN pro_onboarding_step INTEGER DEFAULT 0`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN apellido TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN especialidad TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN telefono TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN zona TEXT`); } catch (e) {}
-  try { await db.query(`ALTER TABLE users ADD COLUMN foto TEXT`); } catch (e) {}
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS calificaciones (
+      id SERIAL PRIMARY KEY,
+      de_usuario INTEGER,
+      para_usuario INTEGER,
+      estrellas INTEGER,
+      comentario TEXT,
+      trabajo_desc TEXT,
+      creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Crear tabla profesional_profiles
   await db.query(`
     CREATE TABLE IF NOT EXISTS profesional_profiles (
       id SERIAL PRIMARY KEY,
@@ -225,8 +251,8 @@ async function findAuthUserByEmail(email) {
 
 async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
   if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
-  const existingAuthResult = await findAuthUserByEmail(email);
-  const existingAuth = existingAuthResult.rows.length > 0;
+
+  const existingAuth = await findAuthUserByEmail(email);
   if (existingAuth) return { ok: false, error: 'El email ya existe' };
 
   const hash = bcrypt.hashSync(password, 12);
@@ -235,24 +261,36 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
   const [firstName, ...rest] = name.trim().split(' ');
   const lastName = rest.join(' ');
 
-  const createUser = await db.query('INSERT INTO users (name, apellido, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia, telefono, zona, especialidad, foto) VALUES ($1, $2, $3, $4, $5, 0, 0, 0, $6, $7, $8, $9, $10, $11, $12) RETURNING id', [
-    firstName || name,
-    lastName,
-    email,
-    hash,
-    role,
-    categoria || null,
-    legacy.descripcion || null,
-    legacy.experiencia || null,
-    legacy.telefono || null,
-    legacy.zona || null,
-    legacy.especialidad || null,
-    null
-  ]);
+  const createUser = await db.query(
+    'INSERT INTO users (name, apellido, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia, telefono, zona, especialidad, foto) VALUES ($1, $2, $3, $4, $5, 0, 0, 0, $6, $7, $8, $9, $10, $11, $12) RETURNING id',
+    [
+      firstName || name,
+      lastName,
+      email,
+      hash,
+      role,
+      categoria || null,
+      legacy.descripcion || null,
+      legacy.experiencia || null,
+      legacy.telefono || null,
+      legacy.zona || null,
+      legacy.especialidad || null,
+      null
+    ]
+  );
+
+  if (!createUser || !createUser.rows || createUser.rows.length === 0) {
+    throw new Error('No se pudo crear el usuario en la base de datos');
+  }
+
   const userId = createUser.rows[0].id;
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  await db.query('INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES ($1, $2, $3, 0)', [userId, token, expiresAt]);
+
+  await db.query(
+    'INSERT INTO email_tokens (user_id, token, expires_at, used) VALUES ($1, $2, $3, 0)',
+    [userId, token, expiresAt]
+  );
 
   await sendVerificationEmail(email, token);
   return { ok: true, userId, token };
@@ -550,11 +588,12 @@ app.put('/api/perfil/precio', authMiddleware, async (req, res) => {
 });
 
 app.get('/api/perfil/completitud', authMiddleware, async (req, res) => {
+  try {
   const result = await db.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
   const user = result.rows[0];
   if (!user) return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
   const calResult = await db.query('SELECT COUNT(*) AS cnt FROM calificaciones WHERE para_usuario = $1', [req.user.id]);
-  const calificacionesCount = calResult.rows[0].cnt || 0;
+  const calificacionesCount = calResult && calResult.rows && calResult.rows[0] ? (calResult.rows[0].cnt || 0) : 0;
   const detalle = {
     foto: !!user.profile_image,
     descripcion: !!(user.descripcion && user.descripcion.length > 10),
@@ -581,6 +620,10 @@ app.get('/api/perfil/completitud', authMiddleware, async (req, res) => {
   );
   await db.query('UPDATE users SET profile_completion = $1 WHERE id = $2', [porcentaje, req.user.id]);
   res.json({ ok: true, porcentaje, detalle });
+  } catch (err) {
+    console.error('Error en /api/perfil/completitud:', err);
+    res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
 });
 
 // ── PROFESIONALES ─────────────────────────────
