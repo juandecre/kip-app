@@ -64,6 +64,8 @@ button {
 }
 #screen-dashboard-pro {
   background: #F5F5F7;
+  min-height: 100vh;
+  height: auto;
 }
 #screen-dashboard-pro.active {
   display: flex !important;
@@ -144,6 +146,7 @@ button {
 .main-content {
   margin-top: 0;
   padding: 32px 28px 48px;
+  flex: 1;
 }
 .btn,
 .btn-primary,
@@ -2743,6 +2746,7 @@ function showScreen(name) {
       t.style.background = '#0A0A0A';
     } else if (name === 'dashboard-pro') {
       t.style.minHeight = '100vh';
+      t.style.height = 'auto';
       t.style.backgroundColor = '';
     } else {
       t.style.background = '#F5F5F7';
