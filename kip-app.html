@@ -2741,7 +2741,7 @@ function goBack() {
   if (previousScreen && previousScreen !== currentScreen) {
     showScreen(previousScreen);
   } else {
-    showScreen(currentUser ? (currentUser.tipo === 'profesional' ? 'dashboard-pro' : 'dashboard-client') : 'home');
+    showScreen(currentUser ? 'dashboard-client' : 'home');
   }
 }
 
@@ -3136,7 +3136,7 @@ function updateUIAfterLogin() {
   const cardV = document.getElementById('card-verificacion');
   if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
   if (currentUser.tipo === 'profesional') {
-    showScreen('dashboard-pro');
+    showScreen('dashboard-client');
   } else {
     if (!currentUser.onboarding_complete) {
       populateOnboardingForm();
