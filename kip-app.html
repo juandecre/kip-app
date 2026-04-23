@@ -62,6 +62,9 @@ button {
   display: block;
   animation: fadeIn 220ms ease;
 }
+#screen-dashboard-pro {
+  background: #F5F5F7;
+}
 #screen-dashboard-pro.active {
   display: flex !important;
   flex-direction: column;
@@ -2739,7 +2742,8 @@ function showScreen(name) {
     if (name === 'home') {
       t.style.background = '#0A0A0A';
     } else if (name === 'dashboard-pro') {
-      t.style.background = '';
+      t.style.minHeight = '100vh';
+      t.style.backgroundColor = '';
     } else {
       t.style.background = '#F5F5F7';
     }
@@ -3149,15 +3153,18 @@ function updateUIAfterLogin() {
   // Socket
   initSocket();
   showToast(`¡Bienvenido, ${currentUser.nombre}!`);
-  if (!currentUser.onboarding_complete) {
-    populateOnboardingForm();
-    showScreen('onboarding');
-    return;
-  }
   const cardV = document.getElementById('card-verificacion');
   if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
-  if (currentUser.tipo==='profesional') { showScreen('dashboard-pro'); }
-  else { showScreen('dashboard-client'); }
+  if (currentUser.tipo === 'profesional') {
+    showScreen('dashboard-pro');
+  } else {
+    if (!currentUser.onboarding_complete) {
+      populateOnboardingForm();
+      showScreen('onboarding');
+      return;
+    }
+    showScreen('dashboard-client');
+  }
   setTimeout(cargarCompletitud, 500);
 }
 
