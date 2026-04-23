@@ -3045,7 +3045,7 @@ async function doRegister() {
   if (password !== passwordConfirm) return showToast('Las contraseñas no coinciden','error');
   showLoading(true);
   try {
-    const r = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name: `${nombre} ${apellido}`.trim(), email, password, role: 'client' }) });
+    const r = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ nombre, apellido, email, password, role: 'client' }) });
     const d = await r.json(); showLoading(false);
     if (d.ok) {
       showToast('¡Cuenta creada! Revisá tu email');

@@ -249,7 +249,7 @@ async function findAuthUserByEmail(email) {
   return result.rows[0];
 }
 
-async function registerAuthAccount({ name, email, password, role, categoria, legacyData }) {
+async function registerAuthAccount({ name, apellido, email, password, role, categoria, legacyData }) {
   if (!name || !email || !password || !role) return { ok: false, error: 'Faltan datos obligatorios' };
 
   const existingAuth = await findAuthUserByEmail(email);
@@ -258,8 +258,16 @@ async function registerAuthAccount({ name, email, password, role, categoria, leg
   const hash = bcrypt.hashSync(password, 12);
   const legacy = legacyData || {};
 
-  const [firstName, ...rest] = name.trim().split(' ');
-  const lastName = rest.join(' ');
+  // Si apellido viene explícito, usarlo directamente; si no, extraer del nombre completo
+  let firstName, lastName;
+  if (apellido !== undefined) {
+    firstName = name.trim();
+    lastName = apellido;
+  } else {
+    const [first, ...rest] = name.trim().split(' ');
+    firstName = first;
+    lastName = rest.join(' ');
+  }
 
   const createUser = await db.query(
     'INSERT INTO users (name, apellido, email, password, role, email_verified, phone_verified, onboarding_complete, categoria, descripcion, experiencia, telefono, zona, especialidad, foto) VALUES ($1, $2, $3, $4, $5, 0, 0, 0, $6, $7, $8, $9, $10, $11, $12) RETURNING id',
@@ -424,9 +432,9 @@ app.post('/api/login', async (req, res) => {
 
 // ── AUTH ─────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password, role, categoria, especialidad } = req.body;
+  const { name, nombre, apellido, email, password, role, categoria, especialidad } = req.body;
   try {
-    const result = await registerAuthAccount({ name, email, password, role, categoria, legacyData: { especialidad, categoria } });
+    const result = await registerAuthAccount({ name: nombre || name, apellido, email, password, role, categoria, legacyData: { especialidad, categoria } });
     if (!result.ok) return res.status(400).json({ ok: false, error: result.error });
     res.json({ ok: true, message: 'Revisá tu email para verificar tu cuenta' });
   } catch (err) {
