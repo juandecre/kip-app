@@ -2730,15 +2730,17 @@ function showScreen(name) {
   const warning = document.getElementById('login-warning');
   if (warning && name === 'login') { warning.style.display = 'none'; }
   const t = document.getElementById('screen-'+name);
-  if (t) { 
-    t.style.display='block'; 
+  if (t) {
+    t.style.display='block';
     if (name === 'home') {
       t.style.background = '#0A0A0A';
+    } else if (name === 'dashboard-pro') {
+      t.style.background = '';
     } else {
       t.style.background = '#F5F5F7';
     }
-    t.classList.add('active'); 
-    window.scrollTo(0,0); 
+    t.classList.add('active');
+    window.scrollTo(0,0);
   } else {
     console.error('Pantalla no encontrada: screen-' + name);
   }
@@ -3102,6 +3104,7 @@ async function enviarResetPassword() {
 }
 
 function updateUIAfterLogin() {
+  console.log('[updateUIAfterLogin] tipo:', currentUser.tipo, '| onboarding_complete:', currentUser.onboarding_complete);
   const ini = ((currentUser.nombre||'')[0]+((currentUser.apellido||'')[0]||'')).toUpperCase();
   // Navbar avatars
   ['nav-avatar-client','nav-avatar-pro'].forEach(id => {
