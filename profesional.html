@@ -191,12 +191,10 @@ button { font-family:inherit; cursor:pointer; border:none; }
 @media(max-width:560px){ .docs-grid { grid-template-columns:1fr; } }
 .doc-card {
   border:2px dashed var(--border); border-radius:var(--radius-sm);
-  padding:18px 14px; text-align:center; position:relative; transition:border-color 140ms;
+  padding:18px 14px; text-align:center; transition:border-color 140ms;
 }
 .doc-card:hover { border-color:rgba(255,107,43,.4); }
-.doc-card input[type=file] {
-  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
-}
+.doc-card input[type=file] { display:none; }
 .doc-icon { font-size:26px; margin-bottom:8px; }
 .doc-label { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:4px; }
 .doc-sub { font-size:11px; color:var(--muted); margin-bottom:12px; }
@@ -310,13 +308,13 @@ button { font-family:inherit; cursor:pointer; border:none; }
 
   <!-- QUICK ACTIONS -->
   <div class="actions-row">
-    <button class="btn btn-accent" onclick="document.getElementById('sec-msgs').scrollIntoView({behavior:'smooth'})">💬 Ver mis mensajes</button>
+    <button class="btn btn-accent" onclick="document.getElementById('mensajes').scrollIntoView({behavior:'smooth'})">💬 Ver mis mensajes</button>
     <button class="btn btn-ghost" onclick="window.location.href='/?screen=profile-user'">👤 Editar perfil completo</button>
     <button class="btn btn-ghost" onclick="window.location.href='/'">← Volver como cliente</button>
   </div>
 
   <!-- MENSAJES -->
-  <div class="section" id="sec-msgs">
+  <div class="section" id="mensajes">
     <div class="section-head">
       <div class="section-title">💬 Mis mensajes</div>
       <span id="msgs-sub" class="section-sub"></span>
@@ -352,7 +350,7 @@ button { font-family:inherit; cursor:pointer; border:none; }
         <div class="doc-label">Foto de perfil</div>
         <div class="doc-sub">JPG, PNG · máx 5 MB</div>
         <div id="doc-foto-status"></div>
-        <button class="doc-btn" onclick="document.getElementById('input-foto').click();event.stopPropagation()">Subir foto</button>
+        <button class="doc-btn" onclick="document.getElementById('input-foto').click()">Subir foto</button>
       </div>
 
       <!-- Título -->
@@ -362,7 +360,7 @@ button { font-family:inherit; cursor:pointer; border:none; }
         <div class="doc-label">Título profesional</div>
         <div class="doc-sub">JPG, PNG, PDF · máx 5 MB</div>
         <div id="doc-titulo-status"></div>
-        <button class="doc-btn" onclick="document.getElementById('input-titulo').click();event.stopPropagation()">Subir título</button>
+        <button class="doc-btn" onclick="document.getElementById('input-titulo').click()">Subir título</button>
       </div>
 
       <!-- DNI -->
@@ -372,7 +370,7 @@ button { font-family:inherit; cursor:pointer; border:none; }
         <div class="doc-label">DNI</div>
         <div class="doc-sub">JPG, PNG, PDF · máx 5 MB</div>
         <div id="doc-dni-status"></div>
-        <button class="doc-btn" onclick="document.getElementById('input-dni').click();event.stopPropagation()">Subir DNI</button>
+        <button class="doc-btn" onclick="document.getElementById('input-dni').click()">Subir DNI</button>
       </div>
 
     </div>
@@ -645,9 +643,9 @@ async function subirDocumento(tipo, input) {
     });
     const d = await r.json();
     if (r.ok && d.ok) {
-      document.getElementById(statusId).innerHTML = '<span class="doc-status ok">✓ Subido</span>';
+      document.getElementById(statusId).innerHTML = '<span class="doc-status ok">✓ Subido · Pendiente de aprobación</span>';
       document.getElementById(iconId).innerHTML   = '<span style="font-size:26px">📄</span>';
-      showToast(`${tipo === 'titulo' ? 'Título' : 'DNI'} subido correctamente`);
+      showToast(`${tipo === 'titulo' ? 'Título' : 'DNI'} subido. Quedará pendiente de aprobación.`);
     } else {
       document.getElementById(statusId).innerHTML = '<span class="doc-status uploading">✗ Error</span>';
       showToast(d.error || 'Error al subir', true);

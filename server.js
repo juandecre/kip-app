@@ -315,6 +315,10 @@ app.get('/profesional', (req, res) => {
   res.sendFile(path.join(__dirname, 'profesional.html'));
 });
 
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 app.get('/como-funciona', (req, res) => {
   res.sendFile(path.join(__dirname, 'como-funciona.html'));
 });

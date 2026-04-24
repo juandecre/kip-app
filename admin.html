@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiKIP – Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent: #FF6B2B;
+  --accent-h: #e85a1f;
+  --navy: #1A1A2E;
+  --bg: #F5F5F7;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --text: #333;
+  --muted: #888;
+  --green: #059669;
+  --red: #dc2626;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.login-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 40px 36px; width: 100%; max-width: 380px;
+  box-shadow: var(--shadow); text-align: center;
+}
+.login-logo {
+  width: 52px; height: 52px; border-radius: 14px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+}
+.login-card h1 { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+.login-card p  { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.field { margin-bottom: 16px; text-align: left; }
+.field label { font-size: 12px; font-weight: 700; color: var(--navy); display: block; margin-bottom: 6px; }
+.field input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
+  background: var(--bg); color: var(--text); outline: none;
+  transition: border-color 140ms;
+}
+.field input:focus { border-color: var(--accent); }
+#login-error { font-size: 13px; color: var(--red); margin-bottom: 12px; display: none; }
+
+/* ── NAVBAR ── */
+nav {
+  position: sticky; top: 0; z-index: 100; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.nav-logo-icon {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-text { font-size: 16px; font-weight: 800; color: var(--navy); }
+.nav-logo-text span { color: var(--accent); }
+.nav-tag {
+  font-size: 11px; font-weight: 700; background: var(--navy); color: #fff;
+  border-radius: 99px; padding: 2px 9px; margin-left: 4px;
+}
+
+/* ── BUTTONS ── */
+button { font-family: inherit; cursor: pointer; border: none; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700;
+  transition: background 140ms, opacity 140ms;
+}
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover:not(:disabled) { background: var(--accent-h); }
+.btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+.btn-ghost:hover { border-color: #bbb; color: var(--text); }
+.btn-green { background: #d1fae5; color: #065f46; }
+.btn-green:hover:not(:disabled) { background: #a7f3d0; }
+.btn-red { background: #fee2e2; color: var(--red); }
+.btn-red:hover:not(:disabled) { background: #fecaca; }
+.btn-sm { padding: 6px 13px; font-size: 12px; }
+
+/* ── LAYOUT ── */
+#app-screen { display: none; }
+.page { max-width: 1000px; margin: 0 auto; padding: 28px 16px 60px; }
+
+/* ── STATS BAR ── */
+.stats-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.stat-pill {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 20px; flex: 1; min-width: 120px;
+  box-shadow: var(--shadow);
+}
+.stat-pill .val { font-size: 24px; font-weight: 800; color: var(--navy); }
+.stat-pill .lbl { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab {
+  padding: 10px 18px; font-size: 13px; font-weight: 700; color: var(--muted);
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; transition: color 140ms, border-color 140ms;
+  margin-bottom: -1px;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-badge {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 700; border-radius: 99px;
+  padding: 1px 6px; margin-left: 5px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── SECTION CARD ── */
+.sec-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 0; overflow: hidden;
+  box-shadow: var(--shadow); margin-bottom: 20px;
+}
+.sec-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+}
+.sec-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+.sec-sub   { font-size: 12px; color: var(--muted); }
+
+/* ── TABLE ── */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th {
+  text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted); padding: 11px 16px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.tbl td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: rgba(255,107,43,0.03); }
+.tbl-wrap { overflow-x: auto; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  border-radius: 99px; padding: 2px 9px;
+}
+.badge-green   { background: #d1fae5; color: #065f46; }
+.badge-yellow  { background: #fef3c7; color: #92400e; }
+.badge-red     { background: #fee2e2; color: #991b1b; }
+.badge-blue    { background: #dbeafe; color: #1e40af; }
+.badge-gray    { background: #f3f4f6; color: #6b7280; }
+
+/* ── VERIFICATION CARD ── */
+.veri-card {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 18px 20px; margin-bottom: 12px; background: var(--bg);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.veri-av {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), #ff8c4b);
+  color: #fff; font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.veri-av img { width: 100%; height: 100%; object-fit: cover; }
+.veri-body { flex: 1; min-width: 0; }
+.veri-name { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.veri-email { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.veri-docs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.doc-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 4px 10px; text-decoration: none; background: var(--surface);
+  transition: border-color 140ms;
+}
+.doc-link:hover { border-color: var(--accent); color: var(--accent); }
+.veri-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.veri-level { font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+
+/* ── SEARCH ── */
+.search-wrap { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.search-input {
+  width: 100%; padding: 9px 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 13px;
+  background: var(--bg); color: var(--text); outline: none;
+  transition: border-color 140ms;
+}
+.search-input:focus { border-color: var(--accent); }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; padding: 11px 20px;
+  border-radius: 12px; z-index: 9999;
+  transition: transform 280ms ease; pointer-events: none; white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <h1>Panel Admin</h1>
+    <p>Acceso restringido a administradores de ServiKIP</p>
+    <div class="field">
+      <label>Contraseña de administrador</label>
+      <input type="password" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <div id="login-error">Contraseña incorrecta</div>
+    <button class="btn btn-accent" style="width:100%;justify-content:center" onclick="login()">Ingresar</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <nav>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a class="nav-logo" href="/">
+        <div class="nav-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="nav-logo-text">Servi<span>KIP</span></span>
+      </a>
+      <span class="nav-tag">Admin</span>
+    </div>
+    <button class="btn btn-ghost" style="padding:7px 13px" onclick="cerrarSesion()">Cerrar sesión</button>
+  </nav>
+
+  <div class="page">
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-pill"><div class="val" id="s-total">–</div><div class="lbl">Usuarios totales</div></div>
+      <div class="stat-pill"><div class="val" id="s-pros">–</div><div class="lbl">Profesionales</div></div>
+      <div class="stat-pill"><div class="val" id="s-clientes">–</div><div class="lbl">Clientes</div></div>
+      <div class="stat-pill"><div class="val" id="s-pendientes" style="color:var(--accent)">–</div><div class="lbl">Verificaciones pendientes</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('usuarios')">👥 Usuarios</button>
+      <button class="tab" onclick="showTab('profesionales')">🔧 Profesionales</button>
+      <button class="tab" onclick="showTab('verificaciones')">
+        🛡️ Verificaciones <span id="tab-badge-v" class="tab-badge" style="display:none">0</span>
+      </button>
+    </div>
+
+    <!-- TAB: USUARIOS -->
+    <div id="tab-usuarios" class="tab-panel active">
+      <div class="sec-card">
+        <div class="sec-head">
+          <div class="sec-title">Todos los usuarios</div>
+          <button class="btn btn-ghost btn-sm" onclick="cargarUsuarios()">↻ Actualizar</button>
+        </div>
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="Buscar por nombre o email…" oninput="filtrarTabla('tbl-usuarios', this.value)">
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl" id="tbl-usuarios">
+            <thead>
+              <tr>
+                <th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th>
+                <th>Email verif.</th><th>Completitud</th><th>Registro</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-usuarios">
+              <tr><td colspan="7" class="empty">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: PROFESIONALES -->
+    <div id="tab-profesionales" class="tab-panel">
+      <div class="sec-card">
+        <div class="sec-head">
+          <div class="sec-title">Profesionales registrados</div>
+          <button class="btn btn-ghost btn-sm" onclick="cargarProfesionales()">↻ Actualizar</button>
+        </div>
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="Buscar profesional…" oninput="filtrarTabla('tbl-pros', this.value)">
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl" id="tbl-pros">
+            <thead>
+              <tr>
+                <th>ID</th><th>Nombre</th><th>Email</th>
+                <th>Verificación</th><th>Estado</th><th>Completitud</th><th>Registro</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-pros">
+              <tr><td colspan="7" class="empty">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: VERIFICACIONES -->
+    <div id="tab-verificaciones" class="tab-panel">
+      <div id="veri-container">
+        <div class="empty"><div class="empty-icon">⏳</div><p>Cargando verificaciones…</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = '/api';
+let adminSecret = null;
+let allUsuarios = [];
+let allPros = [];
+
+/* ── UTILS ── */
+function showToast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = err ? '#dc2626' : '#1A1A2E';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+function fmtFecha(iso) {
+  if (!iso) return '–';
+  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/* ── LOGIN ── */
+async function login() {
+  const pass = document.getElementById('admin-pass').value.trim();
+  if (!pass) return;
+  const btn = document.querySelector('#login-screen .btn-accent');
+  btn.disabled = true; btn.textContent = 'Verificando…';
+
+  try {
+    const r = await fetch(`${API}/admin/usuarios`, { headers: { 'x-admin-secret': pass } });
+    if (r.ok) {
+      adminSecret = pass;
+      sessionStorage.setItem('admin_secret', pass);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      document.getElementById('login-error').style.display = 'none';
+      cargarTodo();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('login-error').textContent = 'Error de conexión';
+    document.getElementById('login-error').style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Ingresar';
+}
+
+function cerrarSesion() {
+  sessionStorage.removeItem('admin_secret');
+  adminSecret = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-pass').value = '';
+}
+
+/* ── TABS ── */
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const map = { usuarios: 0, profesionales: 1, verificaciones: 2 };
+  tabs[map[name]].classList.add('active');
+}
+
+/* ── CARGAR TODO ── */
+async function cargarTodo() {
+  await Promise.all([ cargarStats(), cargarUsuarios(), cargarVerificaciones() ]);
+  cargarProfesionales();
+}
+
+/* ── STATS ── */
+async function cargarStats() {
+  try {
+    const r = await fetch(`${API}/stats`);
+    const d = await r.json();
+    if (d.ok) {
+      document.getElementById('s-pros').textContent = d.profesionales;
+      document.getElementById('s-clientes').textContent = d.clientes;
+    }
+  } catch(e) {}
+}
+
+/* ── USUARIOS ── */
+async function cargarUsuarios() {
+  try {
+    const r = await fetch(`${API}/admin/usuarios`, { headers: { 'x-admin-secret': adminSecret } });
+    const d = await r.json();
+    if (!d.ok) return;
+    allUsuarios = d.usuarios;
+    document.getElementById('s-total').textContent = allUsuarios.length;
+    renderUsuarios(allUsuarios);
+  } catch(e) { showToast('Error al cargar usuarios', true); }
+}
+
+function renderUsuarios(lista) {
+  const tbody = document.getElementById('tbody-usuarios');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><p>Sin usuarios</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(u => {
+    const rol = u.role === 'professional' || u.role === 'profesional'
+      ? '<span class="badge badge-blue">Profesional</span>'
+      : '<span class="badge badge-gray">Cliente</span>';
+    const verif = u.email_verified
+      ? '<span class="badge badge-green">✓</span>'
+      : '<span class="badge badge-yellow">Pendiente</span>';
+    const comp = u.profile_completion
+      ? `<div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:#eee;border-radius:3px"><div style="width:${u.profile_completion}%;height:100%;background:var(--accent);border-radius:3px"></div></div><span>${u.profile_completion}%</span></div>`
+      : '–';
+    return `<tr>
+      <td style="color:var(--muted)">${u.id}</td>
+      <td><strong>${esc(u.name || '–')}</strong></td>
+      <td style="color:var(--muted)">${esc(u.email)}</td>
+      <td>${rol}</td>
+      <td>${verif}</td>
+      <td>${comp}</td>
+      <td style="color:var(--muted)">${fmtFecha(u.created_at)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── PROFESIONALES ── */
+function cargarProfesionales() {
+  allPros = allUsuarios.filter(u => u.role === 'professional' || u.role === 'profesional');
+  renderProfesionales(allPros);
+}
+
+function renderProfesionales(lista) {
+  const tbody = document.getElementById('tbody-pros');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🔧</div><p>Sin profesionales</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(u => {
+    const nivel = u.verification_level && u.verification_level !== 'none'
+      ? `<span class="badge ${u.verification_level === 'gold' ? 'badge-yellow' : 'badge-blue'}">${u.verification_level === 'gold' ? '⭐ Gold' : '✓ Basic'}</span>`
+      : '<span class="badge badge-gray">Ninguno</span>';
+    const estado = {
+      approved: '<span class="badge badge-green">Aprobado</span>',
+      pending_review: '<span class="badge badge-yellow">Pendiente</span>',
+      rejected: '<span class="badge badge-red">Rechazado</span>',
+    }[u.verification_status] || '<span class="badge badge-gray">–</span>';
+    const comp = u.profile_completion
+      ? `<div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:#eee;border-radius:3px"><div style="width:${u.profile_completion}%;height:100%;background:var(--accent);border-radius:3px"></div></div><span>${u.profile_completion}%</span></div>`
+      : '–';
+    return `<tr>
+      <td style="color:var(--muted)">${u.id}</td>
+      <td><strong>${esc(u.name || '–')}</strong></td>
+      <td style="color:var(--muted)">${esc(u.email)}</td>
+      <td>${nivel}</td>
+      <td>${estado}</td>
+      <td>${comp}</td>
+      <td style="color:var(--muted)">${fmtFecha(u.created_at)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── VERIFICACIONES ── */
+async function cargarVerificaciones() {
+  try {
+    const r = await fetch(`${API}/admin/verificaciones`, { headers: { 'x-admin-secret': adminSecret } });
+    const d = await r.json();
+    if (!d.ok) return;
+    const lista = d.pendientes || [];
+
+    document.getElementById('s-pendientes').textContent = lista.length;
+    const badge = document.getElementById('tab-badge-v');
+    if (lista.length > 0) { badge.textContent = lista.length; badge.style.display = 'inline-block'; }
+    else badge.style.display = 'none';
+
+    const c = document.getElementById('veri-container');
+    if (!lista.length) {
+      c.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><p>No hay verificaciones pendientes.</p></div>';
+      return;
+    }
+    c.innerHTML = lista.map(u => {
+      const ini = ((u.name||'?')[0]).toUpperCase();
+      const nivel = u.verification_level === 'gold' ? '⭐ Gold' : '✓ Basic';
+      const docs = [];
+      if (u.titulo_url) docs.push(`<a class="doc-link" href="${u.titulo_url}" target="_blank">📄 Título</a>`);
+      if (u.dni_url)    docs.push(`<a class="doc-link" href="${u.dni_url}"    target="_blank">🪪 DNI</a>`);
+      if (u.matricula)  docs.push(`<span class="doc-link">🔖 Mat: ${esc(u.matricula)}</span>`);
+      return `<div class="sec-card" style="margin-bottom:12px">
+        <div style="padding:18px 20px">
+          <div class="veri-card" style="border:none;padding:0;background:transparent">
+            <div class="veri-av">${ini}</div>
+            <div class="veri-body">
+              <div class="veri-name">${esc(u.name || '–')}</div>
+              <div class="veri-email">${esc(u.email)}</div>
+              <div class="veri-level">Solicita verificación: <strong>${nivel}</strong></div>
+              <div class="veri-docs">${docs.join('') || '<span style="font-size:12px;color:var(--muted)">Sin documentos adjuntos</span>'}</div>
+              <div class="veri-actions">
+                <button class="btn btn-green btn-sm" id="btn-aprobar-${u.id}" onclick="aprobar(${u.id})">✓ Aprobar</button>
+                <button class="btn btn-red btn-sm" id="btn-rechazar-${u.id}" onclick="rechazar(${u.id})">✗ Rechazar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { showToast('Error al cargar verificaciones', true); }
+}
+
+async function aprobar(id) {
+  const btn = document.getElementById(`btn-aprobar-${id}`);
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${API}/admin/verificaciones/${id}/aprobar`, {
+      method: 'PUT',
+      headers: { 'x-admin-secret': adminSecret }
+    });
+    const d = await r.json();
+    if (d.ok) {
+      showToast('Verificación aprobada');
+      cargarVerificaciones();
+      cargarUsuarios();
+    } else {
+      showToast(d.error || 'Error al aprobar', true);
+      btn.disabled = false; btn.textContent = '✓ Aprobar';
+    }
+  } catch(e) {
+    showToast('Error de conexión', true);
+    btn.disabled = false; btn.textContent = '✓ Aprobar';
+  }
+}
+
+async function rechazar(id) {
+  if (!confirm('¿Rechazar esta solicitud de verificación?')) return;
+  const btn = document.getElementById(`btn-rechazar-${id}`);
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${API}/admin/verificaciones/${id}/rechazar`, {
+      method: 'PUT',
+      headers: { 'x-admin-secret': adminSecret }
+    });
+    const d = await r.json();
+    if (d.ok) {
+      showToast('Verificación rechazada');
+      cargarVerificaciones();
+      cargarUsuarios();
+    } else {
+      showToast(d.error || 'Error al rechazar', true);
+      btn.disabled = false; btn.textContent = '✗ Rechazar';
+    }
+  } catch(e) {
+    showToast('Error de conexión', true);
+    btn.disabled = false; btn.textContent = '✗ Rechazar';
+  }
+}
+
+/* ── FILTRO ── */
+function filtrarTabla(tableId, q) {
+  const term = q.toLowerCase();
+  document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
+    const text = tr.textContent.toLowerCase();
+    tr.style.display = text.includes(term) ? '' : 'none';
+  });
+}
+
+/* ── INIT ── */
+(function init() {
+  const saved = sessionStorage.getItem('admin_secret');
+  if (saved) {
+    adminSecret = saved;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    cargarTodo();
+  }
+})();
+</script>
+</body>
+</html>
