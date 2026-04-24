@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#FF6B2B">
-<title>ServiKIP – Mi panel</title>
+<title>ServiKIP – Mi panel profesional</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --accent: #FF6B2B;
   --accent-h: #e85a1f;
+  --accent-soft: rgba(255,107,43,0.1);
   --navy: #1A1A2E;
   --bg: #F5F5F7;
   --surface: #FFFFFF;
@@ -19,6 +20,7 @@
   --muted: #888888;
   --radius: 16px;
   --radius-sm: 10px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -27,270 +29,223 @@ body {
   min-height: 100vh;
 }
 
-/* ── NAV ── */
+/* ── NAVBAR ── */
 nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  position: sticky; top: 0; z-index: 100;
   height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 0 20px;
-  background: rgba(255,255,255,0.97);
+  background: rgba(255,255,255,0.98);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
 }
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  text-decoration: none;
-}
+.nav-logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
 .nav-logo-icon {
-  width: 32px; height: 32px;
-  border-radius: 9px;
+  width:34px; height:34px; border-radius:9px;
   background: var(--accent);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.nav-logo-text {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -0.3px;
+.nav-logo-text { font-size:17px; font-weight:800; color:var(--navy); letter-spacing:-0.3px; }
+.nav-logo-text span { color:var(--accent); }
+.nav-right { display:flex; align-items:center; gap:10px; }
+.nav-user { display:flex; align-items:center; gap:8px; }
+.nav-av {
+  width:32px; height:32px; border-radius:9px;
+  background: linear-gradient(135deg, var(--accent), #ff8c4b);
+  color:#fff; font-size:12px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;
 }
-.nav-logo-text span { color: var(--accent); }
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.nav-av img { width:100%; height:100%; object-fit:cover; }
+.nav-uname { font-size:13px; font-weight:700; color:var(--navy); }
 .nav-badge {
-  display: none;
-  background: var(--accent);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 2px 7px;
-  min-width: 20px;
-  text-align: center;
+  display:none; background:var(--accent); color:#fff;
+  font-size:11px; font-weight:700; border-radius:999px;
+  padding:2px 7px; min-width:20px; text-align:center;
 }
-.nav-badge.on { display: inline-block; }
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-}
+.nav-badge.on { display:inline-block; }
+@media(max-width:480px){ .nav-uname { display:none; } }
+
+/* ── BUTTONS ── */
+button { font-family:inherit; cursor:pointer; border:none; }
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 700;
-  transition: background 140ms, color 140ms, border-color 140ms;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:9px 17px; border-radius:var(--radius-sm);
+  font-size:13px; font-weight:700;
+  transition: background 140ms, color 140ms, border-color 140ms, opacity 140ms;
 }
-.btn-outline {
-  background: transparent;
-  border: 1.5px solid var(--border);
-  color: var(--muted);
-}
-.btn-outline:hover { border-color: #bbb; color: var(--text); }
-.btn-dark {
-  background: var(--navy);
-  color: #fff;
-  border: none;
-}
-.btn-dark:hover { background: #2a2a44; }
-.btn-accent {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-}
-.btn-accent:hover { background: var(--accent-h); }
+.btn:disabled { opacity:0.55; cursor:not-allowed; }
+.btn-ghost { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
+.btn-ghost:hover { border-color:#bbb; color:var(--text); }
+.btn-dark { background:var(--navy); color:#fff; }
+.btn-dark:hover { background:#2a2a44; }
+.btn-accent { background:var(--accent); color:#fff; }
+.btn-accent:hover { background:var(--accent-h); }
+.btn-outline-accent { background:transparent; border:1.5px solid var(--accent); color:var(--accent); }
+.btn-outline-accent:hover { background:var(--accent-soft); }
 
 /* ── LAYOUT ── */
-.page {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 28px 16px 80px;
-}
+.page { max-width:760px; margin:0 auto; padding:26px 16px 80px; }
 
 /* ── HERO ── */
-.hero {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 22px;
-  margin-bottom: 20px;
+.hero-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+  margin-bottom:18px; box-shadow:var(--shadow);
 }
+.hero-top { display:flex; align-items:flex-start; gap:18px; }
 .hero-avatar {
-  width: 56px; height: 56px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), #FF8C4B);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
+  width:72px; height:72px; border-radius:18px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--accent), #ff8c4b);
+  color:#fff; font-size:26px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
-.hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.hero-body { flex: 1; min-width: 0; }
-.hero-name {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--navy);
-  margin-bottom: 3px;
+.hero-avatar img { width:100%; height:100%; object-fit:cover; }
+.hero-info { flex:1; min-width:0; }
+.hero-name { font-size:20px; font-weight:800; color:var(--navy); margin-bottom:4px; line-height:1.2; }
+.hero-meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+.hero-chip {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:12px; font-weight:600; color:var(--muted);
+  background:var(--bg); border-radius:99px; padding:3px 10px;
 }
-.hero-esp {
-  font-size: 13px;
-  color: var(--accent);
-  font-weight: 600;
+.hero-chip.accent { color:var(--accent); background:var(--accent-soft); }
+.badge-verified {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11px; font-weight:700; border-radius:99px; padding:3px 9px;
 }
-.hero-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+.badge-verified.gold { background:#fef3c7; color:#92400e; }
+.badge-verified.basic { background:#dbeafe; color:#1e40af; }
+.badge-verified.none { background:#f3f4f6; color:#6b7280; }
+.stars { color:#f59e0b; font-size:13px; letter-spacing:1px; }
+.hero-actions { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+@media(max-width:480px){ .hero-top { flex-direction:column; } .hero-avatar { width:56px; height:56px; font-size:20px; } }
+
+/* ── STATS ── */
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
+@media(max-width:500px){ .stats-grid { grid-template-columns:1fr 1fr; } }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px 18px;
+  box-shadow:var(--shadow);
 }
-@media (max-width: 480px) {
-  .hero { flex-wrap: wrap; }
-  .hero-actions { width: 100%; justify-content: flex-end; }
-}
+.stat-icon { font-size:22px; margin-bottom:8px; }
+.stat-val { font-size:26px; font-weight:800; color:var(--navy); line-height:1; margin-bottom:4px; }
+.stat-lbl { font-size:12px; color:var(--muted); font-weight:500; }
 
 /* ── SECTION ── */
 .section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 22px;
-  margin-bottom: 20px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px 22px;
+  margin-bottom:18px; box-shadow:var(--shadow);
 }
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
+.section-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px;
 }
-.section-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--navy);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.section-sub {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 500;
-}
+.section-title { font-size:14px; font-weight:700; color:var(--navy); display:flex; align-items:center; gap:7px; }
+.section-sub { font-size:12px; color:var(--muted); }
 
-/* ── MENSAJES ── */
-.conv-list { display: flex; flex-direction: column; gap: 10px; }
+/* ── CONVERSATIONS ── */
+.conv-list { display:flex; flex-direction:column; gap:10px; }
 .conv-item {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 13px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: border-color 140ms, background 140ms;
-  text-decoration: none;
-  color: inherit;
-  background: var(--bg);
+  display:flex; align-items:center; gap:13px;
+  padding:13px 14px; border:1px solid var(--border);
+  border-radius:var(--radius-sm); cursor:pointer;
+  transition:border-color 140ms, background 140ms;
+  background:var(--bg);
 }
-.conv-item:hover {
-  border-color: rgba(255,107,43,0.35);
-  background: rgba(255,107,43,0.04);
-}
+.conv-item:hover { border-color:rgba(255,107,43,.35); background:rgba(255,107,43,.04); }
 .conv-av {
-  width: 42px; height: 42px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
+  width:42px; height:42px; border-radius:11px; flex-shrink:0; overflow:hidden;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:#fff; font-size:14px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
 }
-.conv-av img { width: 100%; height: 100%; object-fit: cover; }
-.conv-body { flex: 1; min-width: 0; }
-.conv-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 2px;
+.conv-av img { width:100%; height:100%; object-fit:cover; }
+.conv-body { flex:1; min-width:0; }
+.conv-name { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:2px; }
+.conv-last { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.conv-meta { display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0; }
+.conv-time { font-size:11px; color:var(--muted); }
+.conv-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+
+/* ── TRABAJOS ── */
+.trabajo-item {
+  display:flex; align-items:center; gap:12px;
+  padding:13px 14px; border:1px solid var(--border);
+  border-radius:var(--radius-sm); background:var(--bg);
+  margin-bottom:10px;
 }
-.conv-last {
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.trabajo-body { flex:1; min-width:0; }
+.trabajo-titulo { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+.trabajo-desc { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.estado-badge {
+  font-size:11px; font-weight:700; border-radius:99px; padding:3px 10px; white-space:nowrap; flex-shrink:0;
 }
-.conv-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
-  flex-shrink: 0;
+.estado-pendiente { background:#fef3c7; color:#92400e; }
+.estado-en_curso  { background:#dbeafe; color:#1e40af; }
+.estado-finalizado{ background:#d1fae5; color:#065f46; }
+
+/* ── DOCS / UPLOAD ── */
+.docs-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+@media(max-width:560px){ .docs-grid { grid-template-columns:1fr; } }
+.doc-card {
+  border:2px dashed var(--border); border-radius:var(--radius-sm);
+  padding:18px 14px; text-align:center; position:relative; transition:border-color 140ms;
 }
-.conv-time { font-size: 11px; color: var(--muted); }
-.conv-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
+.doc-card:hover { border-color:rgba(255,107,43,.4); }
+.doc-card input[type=file] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
 }
-.empty {
-  text-align: center;
-  padding: 36px 16px;
-  color: var(--muted);
+.doc-icon { font-size:26px; margin-bottom:8px; }
+.doc-label { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+.doc-sub { font-size:11px; color:var(--muted); margin-bottom:12px; }
+.doc-status { font-size:11px; font-weight:700; border-radius:99px; padding:3px 9px; display:inline-block; }
+.doc-status.ok { background:#d1fae5; color:#065f46; }
+.doc-status.uploading { background:#fef3c7; color:#92400e; }
+.doc-btn {
+  display:block; width:100%; padding:8px;
+  border-radius:var(--radius-sm); background:var(--navy); color:#fff;
+  font-size:12px; font-weight:700; margin-top:10px;
+  transition:background 140ms; position:relative; z-index:1;
+  border:none; cursor:pointer;
 }
-.empty-icon { font-size: 36px; margin-bottom: 10px; }
-.empty p { font-size: 14px; }
+.doc-btn:hover { background:var(--accent); }
+
+/* ── QUICK ACTIONS ── */
+.actions-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.actions-row .btn { flex:1; min-width:160px; justify-content:center; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:32px 16px; color:var(--muted); }
+.empty-icon { font-size:34px; margin-bottom:10px; }
+.empty p { font-size:14px; }
 
 /* ── TOAST ── */
 #toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--navy);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 11px 20px;
-  border-radius: 12px;
-  z-index: 9999;
-  transition: transform 280ms ease;
-  pointer-events: none;
-  white-space: nowrap;
+  position:fixed; bottom:20px; left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--navy); color:#fff;
+  font-size:13px; font-weight:600; padding:11px 20px;
+  border-radius:12px; z-index:9999;
+  transition:transform 280ms ease;
+  pointer-events:none; white-space:nowrap;
 }
-#toast.show { transform: translateX(-50%) translateY(0); }
+#toast.show { transform:translateX(-50%) translateY(0); }
 
-/* ── LOADING ── */
-.spinner {
-  display: inline-block;
-  width: 18px; height: 18px;
-  border: 3px solid rgba(255,107,43,0.2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+/* ── SPINNER ── */
+.spin {
+  display:inline-block; width:16px; height:16px;
+  border:2.5px solid rgba(255,107,43,.2);
+  border-top-color:var(--accent); border-radius:50%;
+  animation:spin .6s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav>
   <a class="nav-logo" href="/">
     <div class="nav-logo-icon">
@@ -304,36 +259,122 @@ button {
   </a>
   <div class="nav-right">
     <span id="nav-badge" class="nav-badge">0</span>
-    <button class="btn btn-outline" onclick="logout()">Cerrar sesión</button>
+    <div class="nav-user">
+      <div class="nav-av" id="nav-av">?</div>
+      <span class="nav-uname" id="nav-uname"></span>
+    </div>
+    <button class="btn btn-ghost" style="padding:7px 13px" onclick="logout()">Salir</button>
   </div>
 </nav>
 
 <div class="page">
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-avatar" id="hero-av">?</div>
-    <div class="hero-body">
-      <div class="hero-name" id="hero-name">Cargando...</div>
-      <div class="hero-esp" id="hero-esp"></div>
+  <div class="hero-card">
+    <div class="hero-top">
+      <div class="hero-avatar" id="hero-av">?</div>
+      <div class="hero-info">
+        <div class="hero-name" id="hero-name">Cargando…</div>
+        <div id="hero-badge"></div>
+        <div class="hero-meta">
+          <span class="hero-chip accent" id="hero-esp"></span>
+          <span class="hero-chip" id="hero-zona"></span>
+          <span id="hero-stars"></span>
+        </div>
+      </div>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-outline" onclick="window.location.href='/?screen=profile-user'">✏️ Perfil</button>
-      <button class="btn btn-dark" onclick="window.location.href='/'">← Cliente</button>
+      <button class="btn btn-outline-accent" onclick="window.location.href='/?screen=profile-user'">👤 Editar perfil</button>
+      <button class="btn btn-dark" onclick="window.location.href='/'">← Volver como cliente</button>
     </div>
   </div>
 
-  <!-- CONVERSACIONES -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">💬 Mensajes</div>
-      <span id="conv-sub" class="section-sub"></span>
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">💬</div>
+      <div class="stat-val" id="stat-msgs">–</div>
+      <div class="stat-lbl">Mensajes recibidos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-val" id="stat-trabajos">–</div>
+      <div class="stat-lbl">Trabajos realizados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-val" id="stat-cal">–</div>
+      <div class="stat-lbl">Calificación promedio</div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="actions-row">
+    <button class="btn btn-accent" onclick="document.getElementById('sec-msgs').scrollIntoView({behavior:'smooth'})">💬 Ver mis mensajes</button>
+    <button class="btn btn-ghost" onclick="window.location.href='/?screen=profile-user'">👤 Editar perfil completo</button>
+    <button class="btn btn-ghost" onclick="window.location.href='/'">← Volver como cliente</button>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="section" id="sec-msgs">
+    <div class="section-head">
+      <div class="section-title">💬 Mis mensajes</div>
+      <span id="msgs-sub" class="section-sub"></span>
     </div>
     <div id="conv-list" class="conv-list">
-      <div class="empty">
-        <div class="empty-icon">⏳</div>
-        <p>Cargando mensajes...</p>
+      <div class="empty"><div class="empty-icon">⏳</div><p>Cargando…</p></div>
+    </div>
+  </div>
+
+  <!-- TRABAJOS -->
+  <div class="section" id="sec-trabajos">
+    <div class="section-head">
+      <div class="section-title">🗂️ Mis trabajos</div>
+      <span id="trabajos-sub" class="section-sub"></span>
+    </div>
+    <div id="trabajos-list">
+      <div class="empty"><div class="empty-icon">⏳</div><p>Cargando…</p></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTACIÓN -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">📁 Documentación</div>
+      <span class="section-sub">Ayuda a verificar tu perfil</span>
+    </div>
+    <div class="docs-grid">
+
+      <!-- Foto de perfil -->
+      <div class="doc-card">
+        <input type="file" id="input-foto" accept="image/*" onchange="subirFoto(this)">
+        <div class="doc-icon" id="doc-foto-icon">🤳</div>
+        <div class="doc-label">Foto de perfil</div>
+        <div class="doc-sub">JPG, PNG · máx 5 MB</div>
+        <div id="doc-foto-status"></div>
+        <button class="doc-btn" onclick="document.getElementById('input-foto').click();event.stopPropagation()">Subir foto</button>
       </div>
+
+      <!-- Título -->
+      <div class="doc-card">
+        <input type="file" id="input-titulo" accept="image/*,application/pdf" onchange="subirDocumento('titulo', this)">
+        <div class="doc-icon" id="doc-titulo-icon">🎓</div>
+        <div class="doc-label">Título profesional</div>
+        <div class="doc-sub">JPG, PNG, PDF · máx 5 MB</div>
+        <div id="doc-titulo-status"></div>
+        <button class="doc-btn" onclick="document.getElementById('input-titulo').click();event.stopPropagation()">Subir título</button>
+      </div>
+
+      <!-- DNI -->
+      <div class="doc-card">
+        <input type="file" id="input-dni" accept="image/*,application/pdf" onchange="subirDocumento('dni', this)">
+        <div class="doc-icon" id="doc-dni-icon">🪪</div>
+        <div class="doc-label">DNI</div>
+        <div class="doc-sub">JPG, PNG, PDF · máx 5 MB</div>
+        <div id="doc-dni-status"></div>
+        <button class="doc-btn" onclick="document.getElementById('input-dni').click();event.stopPropagation()">Subir DNI</button>
+      </div>
+
     </div>
   </div>
 
@@ -344,30 +385,37 @@ button {
 <script>
 const API = '/api';
 let token = null;
-let user = null;
+let user  = null;
 let lastNuevos = 0;
 
 /* ── UTILS ── */
-function toast(msg, err) {
+function showToast(msg, err) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.style.background = err ? '#dc2626' : '#1A1A2E';
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+  setTimeout(() => el.classList.remove('show'), 3200);
 }
 
-function iniciales(nombre, apellido) {
-  return ((nombre || '?')[0] + ((apellido || '')[0] || '')).toUpperCase();
+function ini(nombre, apellido) {
+  return ((nombre||'?')[0] + ((apellido||'')[0]||'')).toUpperCase();
 }
 
 function fmtHora(iso) {
   if (!iso) return '';
-  const d = new Date(iso);
-  const hoy = new Date();
-  if (d.toDateString() === hoy.toDateString()) {
-    return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-  }
-  return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+  const d = new Date(iso), hoy = new Date();
+  return d.toDateString() === hoy.toDateString()
+    ? d.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'})
+    : d.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit'});
+}
+
+function estrellas(n) {
+  const v = Math.round(n);
+  return v > 0 ? '★'.repeat(v) + '☆'.repeat(Math.max(0, 5-v)) : '';
+}
+
+function escaparHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function logout() {
@@ -376,19 +424,76 @@ function logout() {
   window.location.href = '/';
 }
 
-/* ── RENDER HERO ── */
-function renderHero() {
-  const av = document.getElementById('hero-av');
-  const ini = iniciales(user.nombre, user.apellido);
-  if (user.foto) {
-    av.innerHTML = `<img src="${user.foto}" alt="foto">`;
-  } else {
-    av.textContent = ini;
-  }
-  document.getElementById('hero-name').textContent =
-    `${user.nombre} ${user.apellido || ''}`.trim();
-  document.getElementById('hero-esp').textContent =
-    user.especialidad || 'Profesional ServiKIP';
+/* ── RENDER NAVBAR + HERO (datos del localStorage) ── */
+function renderLocal() {
+  // Soporte para objetos con `nombre` o con `name` (legacy)
+  const nombre   = user.nombre   || (user.name ? user.name.trim().split(' ')[0] : '') || 'Profesional';
+  const apellido = user.apellido || (user.name ? user.name.trim().split(' ').slice(1).join(' ') : '') || '';
+  const nombreCompleto = [nombre, apellido].filter(Boolean).join(' ');
+  const iniciales = ini(nombre, apellido);
+
+  // Navbar
+  const navAv = document.getElementById('nav-av');
+  if (user.foto) navAv.innerHTML = `<img src="${user.foto}" alt="">`;
+  else navAv.textContent = iniciales;
+  document.getElementById('nav-uname').textContent = nombre;
+
+  // Hero
+  const heroAv = document.getElementById('hero-av');
+  if (user.foto) heroAv.innerHTML = `<img src="${user.foto}" alt="">`;
+  else heroAv.textContent = iniciales;
+
+  document.getElementById('hero-name').textContent = nombreCompleto;
+
+  const esp = user.especialidad || '';
+  document.getElementById('hero-esp').textContent  = esp || 'Profesional ServiKIP';
+  document.getElementById('hero-zona').textContent = user.zona ? `📍 ${user.zona}` : '';
+  if (!user.zona) document.getElementById('hero-zona').style.display = 'none';
+}
+
+/* ── CARGAR PERFIL COMPLETO (stats) ── */
+async function cargarPerfil() {
+  if (!user.id) return;
+  try {
+    const r = await fetch(`${API}/profesionales/${user.id}`);
+    if (!r.ok) return;
+    const p = await r.json();
+
+    // Actualizar hero con datos del servidor
+    const nombre = p.nombre || user.nombre || 'Profesional';
+    const apellido = p.apellido || user.apellido || '';
+    const nombreCompleto = [nombre, apellido].filter(Boolean).join(' ');
+    document.getElementById('hero-name').textContent = nombreCompleto;
+    document.getElementById('nav-uname').textContent = nombre;
+    if (p.foto) {
+      document.getElementById('hero-av').innerHTML = `<img src="${p.foto}" alt="">`;
+      document.getElementById('nav-av').innerHTML  = `<img src="${p.foto}" alt="">`;
+    }
+    document.getElementById('hero-esp').textContent  = p.especialidad || 'Profesional ServiKIP';
+    document.getElementById('hero-zona').textContent = p.zona ? `📍 ${p.zona}` : '';
+    if (!p.zona) document.getElementById('hero-zona').style.display = 'none';
+
+    // Badge de verificación
+    const vl = p.verification_level, vs = p.verification_status;
+    let badgeHtml = '';
+    if (vl && vl !== 'none' && vs === 'approved') {
+      const cls = vl === 'gold' ? 'gold' : 'basic';
+      const lbl = vl === 'gold' ? '⭐ Verificado Gold' : '✓ Verificado';
+      badgeHtml = `<span class="badge-verified ${cls}">${lbl}</span>`;
+    }
+    document.getElementById('hero-badge').innerHTML = badgeHtml;
+
+    // Estrellas
+    const cal = parseFloat(p.calificacion_promedio) || 0;
+    if (cal > 0) {
+      document.getElementById('hero-stars').innerHTML =
+        `<span class="stars" title="${cal.toFixed(1)}">${estrellas(cal)}</span>
+         <span style="font-size:12px;color:var(--muted);margin-left:4px">${cal.toFixed(1)} (${p.total_calificaciones})</span>`;
+    }
+
+    // Stats
+    document.getElementById('stat-cal').textContent = cal > 0 ? cal.toFixed(1) : '–';
+  } catch(e) { console.warn('cargarPerfil:', e); }
 }
 
 /* ── CARGAR CONVERSACIONES ── */
@@ -397,50 +502,49 @@ async function cargarConversaciones() {
     const r = await fetch(`${API}/conversaciones/${user.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    if (!r.ok) {
-      if (r.status === 401) { logout(); return; }
-      throw new Error('Error ' + r.status);
-    }
+    if (r.status === 401) { logout(); return; }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     const lista = Array.isArray(data) ? data : (data.conversaciones || []);
 
+    // Badge nav
     const nuevos = lista.filter(c => c.no_leidos > 0).length;
     const badge = document.getElementById('nav-badge');
     if (nuevos > 0) {
-      badge.textContent = nuevos;
-      badge.classList.add('on');
-      if (nuevos > lastNuevos) toast(`${nuevos} mensaje${nuevos > 1 ? 's' : ''} nuevo${nuevos > 1 ? 's' : ''}`);
+      badge.textContent = nuevos; badge.classList.add('on');
+      if (nuevos > lastNuevos) showToast(`${nuevos} mensaje${nuevos>1?'s':''} nuevo${nuevos>1?'s':''}`);
     } else {
       badge.classList.remove('on');
     }
     lastNuevos = nuevos;
 
-    const sub = document.getElementById('conv-sub');
-    sub.textContent = lista.length ? `${lista.length} conversación${lista.length !== 1 ? 'es' : ''}` : '';
+    // Stats
+    document.getElementById('stat-msgs').textContent = lista.length;
+    document.getElementById('msgs-sub').textContent  = lista.length
+      ? `${lista.length} conversación${lista.length!==1?'es':''}` : '';
 
-    const container = document.getElementById('conv-list');
+    const c = document.getElementById('conv-list');
     if (!lista.length) {
-      container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>Todavía no tenés mensajes.</p></div>`;
+      c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>Todavía no tenés mensajes.</p></div>`;
       return;
     }
-
-    container.innerHTML = lista.map(c => {
-      const otro = c.otro_usuario || {};
-      const nombre = otro.nombre || 'Usuario';
-      const apellido = otro.apellido || '';
-      const ini = iniciales(nombre, apellido);
-      const avatarInner = otro.foto
-        ? `<img src="${otro.foto}" alt="">`
-        : ini;
-      return `<div class="conv-item" onclick="abrirChat(${otro.id || c.otro_id},'${esc(nombre)}','${esc(apellido)}','${esc(otro.foto||'')}')">
-        <div class="conv-av">${avatarInner}</div>
+    c.innerHTML = lista.map(conv => {
+      const otro    = conv.otro_usuario || {};
+      const nombre  = escaparHtml(otro.nombre  || 'Usuario');
+      const apellido= escaparHtml(otro.apellido|| '');
+      const iniciales = ini(otro.nombre||'U', otro.apellido||'');
+      const avHtml  = otro.foto ? `<img src="${otro.foto}" alt="">` : iniciales;
+      const otroId  = otro.id || conv.otro_id;
+      const oFoto   = otro.foto || '';
+      return `<div class="conv-item" onclick="abrirChat(${otroId},'${escaparHtml(otro.nombre||'')}','${escaparHtml(otro.apellido||'')}','${oFoto}')">
+        <div class="conv-av">${avHtml}</div>
         <div class="conv-body">
           <div class="conv-name">${nombre} ${apellido}</div>
-          <div class="conv-last">${esc(c.ultimo_mensaje || 'Sin mensajes')}</div>
+          <div class="conv-last">${escaparHtml(conv.ultimo_mensaje||'Sin mensajes')}</div>
         </div>
         <div class="conv-meta">
-          <span class="conv-time">${fmtHora(c.ultimo_mensaje_fecha)}</span>
-          ${c.no_leidos > 0 ? '<div class="conv-dot"></div>' : ''}
+          <span class="conv-time">${fmtHora(conv.ultimo_mensaje_fecha)}</span>
+          ${conv.no_leidos>0?'<div class="conv-dot"></div>':''}
         </div>
       </div>`;
     }).join('');
@@ -451,13 +555,107 @@ async function cargarConversaciones() {
   }
 }
 
-function esc(str) {
-  return String(str).replace(/'/g, "\\'").replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/* ── CARGAR TRABAJOS ── */
+async function cargarTrabajos() {
+  try {
+    const r = await fetch(`${API}/trabajos/${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const lista = await r.json();
+
+    document.getElementById('stat-trabajos').textContent = lista.filter(t => t.estado === 'finalizado').length || lista.length || 0;
+    document.getElementById('trabajos-sub').textContent  = lista.length ? `${lista.length} trabajo${lista.length!==1?'s':''}` : '';
+
+    const c = document.getElementById('trabajos-list');
+    if (!lista.length) {
+      c.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>Todavía no tenés trabajos registrados.</p></div>`;
+      return;
+    }
+    c.innerHTML = lista.map(t => {
+      const estado = t.estado || 'pendiente';
+      const cls = `estado-${estado.replace(' ','_')}`;
+      const lbl = estado === 'en_curso' ? 'En curso' : estado.charAt(0).toUpperCase() + estado.slice(1);
+      return `<div class="trabajo-item">
+        <div class="trabajo-body">
+          <div class="trabajo-titulo">${escaparHtml(t.titulo||'Trabajo sin título')}</div>
+          ${t.descripcion ? `<div class="trabajo-desc">${escaparHtml(t.descripcion)}</div>` : ''}
+        </div>
+        <span class="estado-badge ${cls}">${lbl}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('cargarTrabajos:', e);
+    document.getElementById('trabajos-list').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudieron cargar los trabajos.</p></div>`;
+  }
 }
 
+/* ── ABRIR CHAT ── */
 function abrirChat(id, nombre, apellido, foto) {
   localStorage.setItem('kip_open_chat', JSON.stringify({ id, nombre, apellido, foto }));
   window.location.href = '/';
+}
+
+/* ── SUBIR FOTO ── */
+async function subirFoto(input) {
+  if (!input.files[0]) return;
+  document.getElementById('doc-foto-status').innerHTML = '<span class="doc-status uploading">Subiendo…</span>';
+  const fd = new FormData();
+  fd.append('foto', input.files[0]);
+  try {
+    const r = await fetch(`${API}/foto`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd
+    });
+    const d = await r.json();
+    if (r.ok && d.ok) {
+      document.getElementById('doc-foto-status').innerHTML = '<span class="doc-status ok">✓ Subida</span>';
+      const url = d.foto;
+      document.getElementById('doc-foto-icon').innerHTML = `<img src="${url}" style="width:48px;height:48px;border-radius:10px;object-fit:cover">`;
+      document.getElementById('hero-av').innerHTML = `<img src="${url}" alt="">`;
+      document.getElementById('nav-av').innerHTML  = `<img src="${url}" alt="">`;
+      user.foto = url; localStorage.setItem('kip_user', JSON.stringify(user));
+      showToast('Foto de perfil actualizada');
+    } else {
+      document.getElementById('doc-foto-status').innerHTML = '<span class="doc-status uploading">✗ Error</span>';
+      showToast(d.error || 'Error al subir la foto', true);
+    }
+  } catch(e) {
+    document.getElementById('doc-foto-status').innerHTML = '<span class="doc-status uploading">✗ Error</span>';
+    showToast('Error de conexión', true);
+  }
+}
+
+/* ── SUBIR DOCUMENTO ── */
+async function subirDocumento(tipo, input) {
+  if (!input.files[0]) return;
+  const statusId = `doc-${tipo}-status`;
+  const iconId   = `doc-${tipo}-icon`;
+  document.getElementById(statusId).innerHTML = '<span class="doc-status uploading">Subiendo…</span>';
+  const fd = new FormData();
+  fd.append('documento', input.files[0]);
+  fd.append('tipo', tipo);
+  try {
+    const r = await fetch(`${API}/perfil/documento`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd
+    });
+    const d = await r.json();
+    if (r.ok && d.ok) {
+      document.getElementById(statusId).innerHTML = '<span class="doc-status ok">✓ Subido</span>';
+      document.getElementById(iconId).innerHTML   = '<span style="font-size:26px">📄</span>';
+      showToast(`${tipo === 'titulo' ? 'Título' : 'DNI'} subido correctamente`);
+    } else {
+      document.getElementById(statusId).innerHTML = '<span class="doc-status uploading">✗ Error</span>';
+      showToast(d.error || 'Error al subir', true);
+    }
+  } catch(e) {
+    document.getElementById(statusId).innerHTML = '<span class="doc-status uploading">✗ Error</span>';
+    showToast('Error de conexión', true);
+  }
 }
 
 /* ── INIT ── */
@@ -468,8 +666,10 @@ function init() {
   try { user = JSON.parse(raw); } catch(e) { window.location.href = '/'; return; }
   if (!user || user.tipo !== 'profesional') { window.location.href = '/'; return; }
 
-  renderHero();
+  renderLocal();
+  cargarPerfil();
   cargarConversaciones();
+  cargarTrabajos();
   setInterval(cargarConversaciones, 30000);
 }
 
