@@ -826,7 +826,6 @@ app.get('/api/admin/verificaciones', adminMiddleware, async (req, res) => {
              u.titulo_url, u.dni_url, u.matricula, u.created_at
       FROM users u
       WHERE u.role IN ('professional', 'profesional')
-      AND u.verification_level != 'none'
       AND u.verification_status = 'pending_review'
       ORDER BY u.created_at DESC
     `);
@@ -851,7 +850,7 @@ app.put('/api/admin/verificaciones/:id/aprobar', adminMiddleware, async (req, re
 app.put('/api/admin/verificaciones/:id/rechazar', adminMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
-    await db.query("UPDATE users SET verification_status = 'rejected', verification_level = 'none' WHERE id = $1", [id]);
+    await db.query("UPDATE users SET verification_status = 'rejected' WHERE id = $1", [id]);
     res.json({ ok: true, message: 'Verificación rechazada' });
   } catch (err) {
     console.error('Error en /api/admin/verificaciones/:id/rechazar:', err);

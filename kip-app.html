@@ -3553,6 +3553,13 @@ async function subirDocumento(input, tipo) {
       localStorage.setItem('kip_user', JSON.stringify(currentUser));
       showToast('Documento subido. Queda en revisión.');
       cargarCompletitud();
+      if (currentUser.verification_level && currentUser.verification_level !== 'none') {
+        fetch(`${API}/perfil/verificacion`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+          body: JSON.stringify({ verification_level: currentUser.verification_level, matricula: currentUser.matricula || '' })
+        }).catch(() => {});
+      }
     } else {
       showToast(d.error || 'Error al subir documento','error');
     }

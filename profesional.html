@@ -646,6 +646,14 @@ async function subirDocumento(tipo, input) {
       document.getElementById(statusId).innerHTML = '<span class="doc-status ok">✓ Subido · Pendiente de aprobación</span>';
       document.getElementById(iconId).innerHTML   = '<span style="font-size:26px">📄</span>';
       showToast(`${tipo === 'titulo' ? 'Título' : 'DNI'} subido. Quedará pendiente de aprobación.`);
+      const vLevel = user.verification_level;
+      if (vLevel && vLevel !== 'none') {
+        fetch(`${API}/perfil/verificacion`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ verification_level: vLevel, matricula: user.matricula || '' })
+        }).catch(() => {});
+      }
     } else {
       document.getElementById(statusId).innerHTML = '<span class="doc-status uploading">✗ Error</span>';
       showToast(d.error || 'Error al subir', true);
