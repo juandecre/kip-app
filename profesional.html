@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#FF6B2B">
+<title>ServiKIP – Mi panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent: #FF6B2B;
+  --accent-h: #e85a1f;
+  --navy: #1A1A2E;
+  --bg: #F5F5F7;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --text: #333333;
+  --muted: #888888;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(255,255,255,0.97);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-logo-text {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+.nav-logo-text span { color: var(--accent); }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-badge {
+  display: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 7px;
+  min-width: 20px;
+  text-align: center;
+}
+.nav-badge.on { display: inline-block; }
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 140ms, color 140ms, border-color 140ms;
+}
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+}
+.btn-outline:hover { border-color: #bbb; color: var(--text); }
+.btn-dark {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+}
+.btn-dark:hover { background: #2a2a44; }
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+.btn-accent:hover { background: var(--accent-h); }
+
+/* ── LAYOUT ── */
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 16px 80px;
+}
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.hero-avatar {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), #FF8C4B);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.hero-body { flex: 1; min-width: 0; }
+.hero-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 3px;
+}
+.hero-esp {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.hero-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .hero { flex-wrap: wrap; }
+  .hero-actions { width: 100%; justify-content: flex-end; }
+}
+
+/* ── SECTION ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.section-sub {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── MENSAJES ── */
+.conv-list { display: flex; flex-direction: column; gap: 10px; }
+.conv-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 140ms, background 140ms;
+  text-decoration: none;
+  color: inherit;
+  background: var(--bg);
+}
+.conv-item:hover {
+  border-color: rgba(255,107,43,0.35);
+  background: rgba(255,107,43,0.04);
+}
+.conv-av {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.conv-av img { width: 100%; height: 100%; object-fit: cover; }
+.conv-body { flex: 1; min-width: 0; }
+.conv-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+.conv-last {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conv-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.conv-time { font-size: 11px; color: var(--muted); }
+.conv-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.empty {
+  text-align: center;
+  padding: 36px 16px;
+  color: var(--muted);
+}
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty p { font-size: 14px; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px 20px;
+  border-radius: 12px;
+  z-index: 9999;
+  transition: transform 280ms ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── LOADING ── */
+.spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 3px solid rgba(255,107,43,0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Servi<span>KIP</span></span>
+  </a>
+  <div class="nav-right">
+    <span id="nav-badge" class="nav-badge">0</span>
+    <button class="btn btn-outline" onclick="logout()">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-avatar" id="hero-av">?</div>
+    <div class="hero-body">
+      <div class="hero-name" id="hero-name">Cargando...</div>
+      <div class="hero-esp" id="hero-esp"></div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-outline" onclick="window.location.href='/?screen=profile-user'">✏️ Perfil</button>
+      <button class="btn btn-dark" onclick="window.location.href='/'">← Cliente</button>
+    </div>
+  </div>
+
+  <!-- CONVERSACIONES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">💬 Mensajes</div>
+      <span id="conv-sub" class="section-sub"></span>
+    </div>
+    <div id="conv-list" class="conv-list">
+      <div class="empty">
+        <div class="empty-icon">⏳</div>
+        <p>Cargando mensajes...</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = '/api';
+let token = null;
+let user = null;
+let lastNuevos = 0;
+
+/* ── UTILS ── */
+function toast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = err ? '#dc2626' : '#1A1A2E';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function iniciales(nombre, apellido) {
+  return ((nombre || '?')[0] + ((apellido || '')[0] || '')).toUpperCase();
+}
+
+function fmtHora(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const hoy = new Date();
+  if (d.toDateString() === hoy.toDateString()) {
+    return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+}
+
+function logout() {
+  localStorage.removeItem('kip_token');
+  localStorage.removeItem('kip_user');
+  window.location.href = '/';
+}
+
+/* ── RENDER HERO ── */
+function renderHero() {
+  const av = document.getElementById('hero-av');
+  const ini = iniciales(user.nombre, user.apellido);
+  if (user.foto) {
+    av.innerHTML = `<img src="${user.foto}" alt="foto">`;
+  } else {
+    av.textContent = ini;
+  }
+  document.getElementById('hero-name').textContent =
+    `${user.nombre} ${user.apellido || ''}`.trim();
+  document.getElementById('hero-esp').textContent =
+    user.especialidad || 'Profesional ServiKIP';
+}
+
+/* ── CARGAR CONVERSACIONES ── */
+async function cargarConversaciones() {
+  try {
+    const r = await fetch(`${API}/conversaciones/${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!r.ok) {
+      if (r.status === 401) { logout(); return; }
+      throw new Error('Error ' + r.status);
+    }
+    const data = await r.json();
+    const lista = Array.isArray(data) ? data : (data.conversaciones || []);
+
+    const nuevos = lista.filter(c => c.no_leidos > 0).length;
+    const badge = document.getElementById('nav-badge');
+    if (nuevos > 0) {
+      badge.textContent = nuevos;
+      badge.classList.add('on');
+      if (nuevos > lastNuevos) toast(`${nuevos} mensaje${nuevos > 1 ? 's' : ''} nuevo${nuevos > 1 ? 's' : ''}`);
+    } else {
+      badge.classList.remove('on');
+    }
+    lastNuevos = nuevos;
+
+    const sub = document.getElementById('conv-sub');
+    sub.textContent = lista.length ? `${lista.length} conversación${lista.length !== 1 ? 'es' : ''}` : '';
+
+    const container = document.getElementById('conv-list');
+    if (!lista.length) {
+      container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>Todavía no tenés mensajes.</p></div>`;
+      return;
+    }
+
+    container.innerHTML = lista.map(c => {
+      const otro = c.otro_usuario || {};
+      const nombre = otro.nombre || 'Usuario';
+      const apellido = otro.apellido || '';
+      const ini = iniciales(nombre, apellido);
+      const avatarInner = otro.foto
+        ? `<img src="${otro.foto}" alt="">`
+        : ini;
+      return `<div class="conv-item" onclick="abrirChat(${otro.id || c.otro_id},'${esc(nombre)}','${esc(apellido)}','${esc(otro.foto||'')}')">
+        <div class="conv-av">${avatarInner}</div>
+        <div class="conv-body">
+          <div class="conv-name">${nombre} ${apellido}</div>
+          <div class="conv-last">${esc(c.ultimo_mensaje || 'Sin mensajes')}</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">${fmtHora(c.ultimo_mensaje_fecha)}</span>
+          ${c.no_leidos > 0 ? '<div class="conv-dot"></div>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('cargarConversaciones:', e);
+    document.getElementById('conv-list').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudieron cargar los mensajes.</p></div>`;
+  }
+}
+
+function esc(str) {
+  return String(str).replace(/'/g, "\\'").replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function abrirChat(id, nombre, apellido, foto) {
+  localStorage.setItem('kip_open_chat', JSON.stringify({ id, nombre, apellido, foto }));
+  window.location.href = '/';
+}
+
+/* ── INIT ── */
+function init() {
+  token = localStorage.getItem('kip_token');
+  const raw = localStorage.getItem('kip_user');
+  if (!token || !raw) { window.location.href = '/'; return; }
+  try { user = JSON.parse(raw); } catch(e) { window.location.href = '/'; return; }
+  if (!user || user.tipo !== 'profesional') { window.location.href = '/'; return; }
+
+  renderHero();
+  cargarConversaciones();
+  setInterval(cargarConversaciones, 30000);
+}
+
+init();
+</script>
+</body>
+</html>

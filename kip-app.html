@@ -3136,6 +3136,8 @@ function updateUIAfterLogin() {
   const cardV = document.getElementById('card-verificacion');
   if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
   if (currentUser.tipo === 'profesional') {
+    localStorage.setItem('kip_token', currentToken);
+    localStorage.setItem('kip_user', JSON.stringify(currentUser));
     window.location.href = '/profesional';
     return;
   } else {
