@@ -3136,7 +3136,8 @@ function updateUIAfterLogin() {
   const cardV = document.getElementById('card-verificacion');
   if (cardV) cardV.style.display = currentUser.tipo === 'profesional' ? 'block' : 'none';
   if (currentUser.tipo === 'profesional') {
-    showScreen('dashboard-client');
+    window.location.href = '/profesional';
+    return;
   } else {
     if (!currentUser.onboarding_complete) {
       populateOnboardingForm();
@@ -3289,6 +3290,12 @@ function filtrarChats(q) {
 }
 
 // ── PROFESIONALES ──────────────────────────────
+function contactarProfesional(id, nombre, apellido, foto) {
+  if (!currentUser) { showScreen('login'); return; }
+  activeChatUser = { id, nombre, apellido, foto };
+  openChat({ id, nombre, apellido, foto });
+}
+
 async function loadProfesionales(containerId) {
   try {
     const r = await fetch(`${API}/profesionales`);
@@ -3347,7 +3354,7 @@ function renderPros(pros, containerId) {
             <span style="font-size:12px;color:#1A1A2E">📍 ${p.zona||'Argentina'}</span>
           </div>
         </div>
-        <button onclick="event.stopPropagation();if(!currentUser){showScreen('login');return;}activeChatUser={id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}};openChat({id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}})"
+        <button onclick="event.stopPropagation();contactarProfesional(${p.id},'${p.nombre}','${p.apellido||''}',${p.foto?`'${p.foto}'`:'null'})"
           style="padding:11px 20px;border-radius:12px;background:#FF6B2B;color:white;font-weight:700;font-size:13px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background 150ms ease"
           onmouseover="this.style.background='#FF8C4B'" onmouseout="this.style.background='#FF6B2B'">
           Contactar
@@ -3374,7 +3381,7 @@ function renderPros(pros, containerId) {
       <div class="pro-stats"><div class="pro-stat-item">📅 <strong>${p.experiencia||0} años</strong></div></div>
       <div class="pro-card-actions">
         <button class="btn btn-secondary btn-sm" style="border:1.5px solid var(--blue);color:var(--blue);background:transparent">Ver perfil</button>
-        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();if(!currentUser){showScreen('login');return;}activeChatUser={id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}};openChat({id:${p.id},nombre:'${p.nombre}',apellido:'${p.apellido||''}',foto:${p.foto?`'${p.foto}'`:'null'}})">Contactar</button>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();contactarProfesional(${p.id},'${p.nombre}','${p.apellido||''}',${p.foto?`'${p.foto}'`:'null'})">Contactar</button>
       </div>
     </div>`;
   }).join('');

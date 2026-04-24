@@ -311,6 +311,10 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
+app.get('/profesional', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard-pro.html'));
+});
+
 app.get('/como-funciona', (req, res) => {
   res.sendFile(path.join(__dirname, 'como-funciona.html'));
 });

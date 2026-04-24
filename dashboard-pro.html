@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#FF6B2B">
+<title>ServiKIP – Panel Profesional</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #FF6B2B;
+  --accent-light: #FF8C4B;
+  --navy: #1A1A2E;
+  --text: #444444;
+  --text-soft: #888888;
+  --bg: #F5F5F7;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+/* ── NAVBAR ── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  background: rgba(255,255,255,0.98);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+}
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.navbar-logo-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.navbar-logo-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+.navbar-logo-text span { color: var(--accent); }
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge-msgs {
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 7px;
+  min-width: 20px;
+  text-align: center;
+  display: none;
+}
+.badge-msgs.visible { display: inline-block; }
+.btn-client {
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: var(--navy);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.btn-client:hover { background: #2d2d4a; }
+.btn-logout {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 150ms;
+}
+.btn-logout:hover { border-color: #ccc; color: var(--text); }
+/* ── MAIN ── */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 88px 20px 60px;
+}
+/* ── GREETING ── */
+.greeting {
+  margin-bottom: 28px;
+}
+.greeting h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.5px;
+}
+.greeting p {
+  font-size: 14px;
+  color: var(--text-soft);
+  margin-top: 4px;
+}
+/* ── STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-icon { font-size: 24px; }
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 500;
+}
+/* ── SECTIONS ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* ── FOTO / DOCS ── */
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 600px) {
+  .upload-grid { grid-template-columns: 1fr; }
+}
+.upload-item {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 150ms;
+  position: relative;
+  overflow: hidden;
+}
+.upload-item:hover { border-color: var(--accent); background: rgba(255,107,43,0.03); }
+.upload-item input[type=file] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer;
+  width: 100%; height: 100%;
+}
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.upload-sub { font-size: 11px; color: var(--text-soft); }
+.upload-preview {
+  width: 64px; height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin: 0 auto 8px;
+  display: block;
+}
+.upload-status {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.upload-status.ok { background: #d1fae5; color: #065f46; }
+.upload-status.pending { background: #fef3c7; color: #92400e; }
+.btn-upload {
+  margin-top: 12px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms;
+  display: block;
+  width: 100%;
+}
+.btn-upload:hover { background: var(--accent-light); }
+/* ── MENSAJES ── */
+.msg-list { display: flex; flex-direction: column; gap: 12px; }
+.msg-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 150ms;
+  background: var(--bg);
+}
+.msg-item:hover { border-color: rgba(255,107,43,0.3); background: rgba(255,107,43,0.04); }
+.msg-avatar {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #FF6B2B, #FF8C4B);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.msg-body { flex: 1; min-width: 0; }
+.msg-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+.msg-preview {
+  font-size: 13px;
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msg-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.msg-time { font-size: 11px; color: var(--text-soft); }
+.msg-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-soft);
+  font-size: 14px;
+}
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 10px; }
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--navy);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  transition: transform 300ms ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+/* ── SPINNER ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 3px solid rgba(255,107,43,0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-logo" href="/">
+    <div class="navbar-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="navbar-logo-text">Servi<span>KIP</span></span>
+  </a>
+  <div class="navbar-actions">
+    <span id="msgs-badge" class="badge-msgs">0</span>
+    <button class="btn-client" onclick="irAlCliente()">Modo cliente</button>
+    <button class="btn-logout" onclick="logout()">Salir</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- GREETING -->
+  <div class="greeting">
+    <h1 id="greeting-text">Hola 👋</h1>
+    <p id="greeting-sub">Panel profesional · ServiKIP</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📬</div>
+      <div class="stat-value" id="stat-solicitudes">–</div>
+      <div class="stat-label">Solicitudes recibidas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value" id="stat-trabajos">–</div>
+      <div class="stat-label">Trabajos realizados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-value" id="stat-cal">–</div>
+      <div class="stat-label">Calificación promedio</div>
+    </div>
+  </div>
+
+  <!-- FOTO Y DOCUMENTOS -->
+  <div class="section">
+    <div class="section-title">
+      <span>📁</span> Foto y documentos
+    </div>
+    <div class="upload-grid">
+      <!-- Foto de perfil -->
+      <div class="upload-item" id="upload-foto-wrap">
+        <input type="file" id="input-foto" accept="image/*" onchange="handleUpload('foto', this)">
+        <div id="foto-preview-wrap">
+          <div class="upload-icon">🤳</div>
+        </div>
+        <div class="upload-label">Foto de perfil</div>
+        <div class="upload-sub">JPG, PNG · máx 5 MB</div>
+        <div id="foto-status"></div>
+        <button class="btn-upload" onclick="document.getElementById('input-foto').click();event.stopPropagation()">Subir foto</button>
+      </div>
+      <!-- Título profesional -->
+      <div class="upload-item" id="upload-titulo-wrap">
+        <input type="file" id="input-titulo" accept="image/*,application/pdf" onchange="handleUpload('titulo', this)">
+        <div id="titulo-preview-wrap">
+          <div class="upload-icon">🎓</div>
+        </div>
+        <div class="upload-label">Título profesional</div>
+        <div class="upload-sub">JPG, PNG, PDF · máx 5 MB</div>
+        <div id="titulo-status"></div>
+        <button class="btn-upload" onclick="document.getElementById('input-titulo').click();event.stopPropagation()">Subir título</button>
+      </div>
+      <!-- DNI -->
+      <div class="upload-item" id="upload-dni-wrap">
+        <input type="file" id="input-dni" accept="image/*,application/pdf" onchange="handleUpload('dni', this)">
+        <div id="dni-preview-wrap">
+          <div class="upload-icon">🪪</div>
+        </div>
+        <div class="upload-label">DNI</div>
+        <div class="upload-sub">JPG, PNG, PDF · máx 5 MB</div>
+        <div id="dni-status"></div>
+        <button class="btn-upload" onclick="document.getElementById('input-dni').click();event.stopPropagation()">Subir DNI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENSAJES / SOLICITUDES -->
+  <div class="section">
+    <div class="section-title">
+      <span>💬</span> Mensajes y solicitudes
+      <span id="msgs-count-label" style="margin-left:auto;font-size:12px;color:var(--text-soft);font-weight:500"></span>
+    </div>
+    <div id="msgs-list" class="msg-list">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        Cargando mensajes...
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API = 'https://servikip.com.ar/api';
+let currentUser = null;
+let currentToken = null;
+let pollingInterval = null;
+let lastMsgCount = 0;
+
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type === 'error' ? '#dc2626' : '#1A1A2E';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function logout() {
+  localStorage.removeItem('kip_token');
+  localStorage.removeItem('kip_user');
+  window.location.href = '/';
+}
+
+function irAlCliente() {
+  // Cambiar tipo a cliente temporalmente navegando a la app
+  window.location.href = '/?screen=dashboard-client';
+}
+
+async function cargarPerfil() {
+  if (!currentToken) return;
+  try {
+    const r = await fetch(`${API}/perfil`, {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+    if (!r.ok) return;
+    const d = await r.json();
+    currentUser = { ...currentUser, ...d };
+    localStorage.setItem('kip_user', JSON.stringify(currentUser));
+
+    document.getElementById('greeting-text').textContent = `Hola, ${currentUser.nombre} 👋`;
+    document.getElementById('greeting-sub').textContent =
+      `${currentUser.especialidad || 'Profesional'} · ServiKIP`;
+
+    // Stats
+    document.getElementById('stat-solicitudes').textContent = d.total_solicitudes ?? '0';
+    document.getElementById('stat-trabajos').textContent = d.total_trabajos ?? '0';
+    document.getElementById('stat-cal').textContent =
+      d.calificacion_promedio > 0 ? Number(d.calificacion_promedio).toFixed(1) : '–';
+
+    // Documentos subidos
+    if (d.profile_image) {
+      document.getElementById('foto-preview-wrap').innerHTML =
+        `<img src="${d.profile_image}" class="upload-preview" alt="Foto">`;
+      document.getElementById('foto-status').innerHTML =
+        '<span class="upload-status ok">✓ Subida</span>';
+    }
+    if (d.titulo_url) {
+      document.getElementById('titulo-preview-wrap').innerHTML = '<div class="upload-icon">📄</div>';
+      document.getElementById('titulo-status').innerHTML =
+        '<span class="upload-status ok">✓ Subido</span>';
+    }
+    if (d.dni_url) {
+      document.getElementById('dni-preview-wrap').innerHTML = '<div class="upload-icon">📄</div>';
+      document.getElementById('dni-status').innerHTML =
+        '<span class="upload-status ok">✓ Subido</span>';
+    }
+  } catch(e) {
+    console.error('Error cargando perfil:', e);
+  }
+}
+
+async function cargarMensajes() {
+  if (!currentUser || !currentToken) return;
+  try {
+    const r = await fetch(`${API}/conversaciones/${currentUser.id}`, {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+    if (!r.ok) return;
+    const convs = await r.json();
+    const lista = Array.isArray(convs) ? convs : (convs.conversaciones || []);
+
+    // Contar mensajes nuevos (no leídos)
+    const nuevos = lista.filter(c => c.no_leidos > 0).length;
+    const badge = document.getElementById('msgs-badge');
+    const label = document.getElementById('msgs-count-label');
+
+    if (nuevos > 0) {
+      badge.textContent = nuevos;
+      badge.classList.add('visible');
+      if (nuevos > lastMsgCount) showToast(`Tenés ${nuevos} mensaje${nuevos > 1 ? 's' : ''} nuevo${nuevos > 1 ? 's' : ''}`);
+    } else {
+      badge.classList.remove('visible');
+    }
+    lastMsgCount = nuevos;
+    label.textContent = lista.length > 0 ? `${lista.length} conversación${lista.length !== 1 ? 'es' : ''}` : '';
+
+    const container = document.getElementById('msgs-list');
+    if (lista.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Todavía no tenés mensajes.</div>';
+      return;
+    }
+
+    container.innerHTML = lista.map(c => {
+      const otro = c.otro_usuario || {};
+      const ini = ((otro.nombre||'U')[0] + ((otro.apellido||'')[0]||'')).toUpperCase();
+      const avatarInner = otro.foto
+        ? `<img src="${otro.foto}" alt="Avatar">`
+        : ini;
+      const hora = c.ultimo_mensaje_fecha
+        ? new Date(c.ultimo_mensaje_fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        : '';
+      return `<div class="msg-item" onclick="abrirChat(${otro.id || c.otro_id},'${otro.nombre||''}','${otro.apellido||''}','${otro.foto||''}')">
+        <div class="msg-avatar">${avatarInner}</div>
+        <div class="msg-body">
+          <div class="msg-name">${otro.nombre||'Usuario'} ${otro.apellido||''}</div>
+          <div class="msg-preview">${c.ultimo_mensaje || 'Sin mensajes'}</div>
+        </div>
+        <div class="msg-meta">
+          <span class="msg-time">${hora}</span>
+          ${c.no_leidos > 0 ? '<div class="msg-dot"></div>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('Error cargando mensajes:', e);
+  }
+}
+
+function abrirChat(id, nombre, apellido, foto) {
+  // Guardar el usuario y redirigir a la app con el chat abierto
+  localStorage.setItem('kip_open_chat', JSON.stringify({ id, nombre, apellido, foto }));
+  window.location.href = '/';
+}
+
+async function handleUpload(tipo, input) {
+  if (!input.files[0]) return;
+  const file = input.files[0];
+  const formData = new FormData();
+
+  let endpoint, statusId, previewId;
+  if (tipo === 'foto') {
+    formData.append('foto', file);
+    endpoint = `${API}/perfil/foto`;
+    statusId = 'foto-status';
+    previewId = 'foto-preview-wrap';
+  } else if (tipo === 'titulo') {
+    formData.append('titulo', file);
+    endpoint = `${API}/perfil/titulo`;
+    statusId = 'titulo-status';
+    previewId = 'titulo-preview-wrap';
+  } else {
+    formData.append('dni', file);
+    endpoint = `${API}/perfil/dni`;
+    statusId = 'dni-status';
+    previewId = 'dni-preview-wrap';
+  }
+
+  document.getElementById(statusId).innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${currentToken}` },
+      body: formData
+    });
+    const d = await r.json();
+    if (r.ok) {
+      document.getElementById(statusId).innerHTML = '<span class="upload-status ok">✓ Subido</span>';
+      if (tipo === 'foto' && (d.foto || d.profile_image)) {
+        const url = d.foto || d.profile_image;
+        document.getElementById(previewId).innerHTML =
+          `<img src="${url}" class="upload-preview" alt="Foto">`;
+        currentUser.foto = url;
+        localStorage.setItem('kip_user', JSON.stringify(currentUser));
+      } else {
+        document.getElementById(previewId).innerHTML = '<div class="upload-icon">📄</div>';
+      }
+      showToast('Archivo subido correctamente');
+    } else {
+      document.getElementById(statusId).innerHTML =
+        '<span class="upload-status pending">✗ Error</span>';
+      showToast(d.error || 'Error al subir', 'error');
+    }
+  } catch(e) {
+    document.getElementById(statusId).innerHTML =
+      '<span class="upload-status pending">✗ Error</span>';
+    showToast('Error de conexión', 'error');
+  }
+}
+
+function iniciar() {
+  const token = localStorage.getItem('kip_token');
+  const userStr = localStorage.getItem('kip_user');
+  if (!token || !userStr) {
+    window.location.href = '/';
+    return;
+  }
+  currentToken = token;
+  currentUser = JSON.parse(userStr);
+
+  if (currentUser.tipo !== 'profesional') {
+    window.location.href = '/';
+    return;
+  }
+
+  document.getElementById('greeting-text').textContent = `Hola, ${currentUser.nombre} 👋`;
+
+  cargarPerfil();
+  cargarMensajes();
+
+  // Polling cada 30 segundos
+  pollingInterval = setInterval(cargarMensajes, 30000);
+}
+
+iniciar();
+</script>
+</body>
+</html>
