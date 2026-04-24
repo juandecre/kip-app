@@ -657,21 +657,26 @@ app.get('/api/profesionales', async (req, res) => {
     const { categoria, especialidad, zona, q } = req.query;
     let query = `
       SELECT
-        u.id, u.name as nombre, u.apellido, u.especialidad, u.categoria,
-        u.zona, u.descripcion, u.experiencia, u.foto,
-        u.verification_level, u.verification_status,
+        u.id, u.name as nombre, u.apellido,
+        COALESCE(pp.especialidad, u.especialidad) as especialidad,
+        COALESCE(pp.categoria, u.categoria) as categoria,
+        COALESCE(pp.zona, u.zona) as zona,
+        COALESCE(pp.descripcion, u.descripcion) as descripcion,
+        COALESCE(pp.experiencia_anios, u.experiencia) as experiencia,
+        u.foto, u.verification_level, u.verification_status,
         COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
         COUNT(c.id) as total_calificaciones
       FROM users u
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
+      LEFT JOIN profesional_profiles pp ON pp.user_id = u.id
       WHERE u.role = 'professional'
     `;
     const params = [];
-    if (categoria) { query += ' AND u.categoria = $' + (params.length + 1); params.push(categoria); }
-    if (especialidad) { query += ' AND u.especialidad LIKE $' + (params.length + 1); params.push(`%${especialidad}%`); }
-    if (zona) { query += ' AND u.zona LIKE $' + (params.length + 1); params.push(`%${zona}%`); }
-    if (q) { query += ' AND (u.name LIKE $' + (params.length + 1) + ' OR u.apellido LIKE $' + (params.length + 2) + ' OR u.especialidad LIKE $' + (params.length + 3) + ' OR u.descripcion LIKE $' + (params.length + 4) + ')'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
-    query += ' GROUP BY u.id ORDER BY calificacion_promedio DESC, RANDOM()';
+    if (categoria) { query += ' AND COALESCE(pp.categoria, u.categoria) = $' + (params.length + 1); params.push(categoria); }
+    if (especialidad) { query += ' AND COALESCE(pp.especialidad, u.especialidad) LIKE $' + (params.length + 1); params.push(`%${especialidad}%`); }
+    if (zona) { query += ' AND COALESCE(pp.zona, u.zona) LIKE $' + (params.length + 1); params.push(`%${zona}%`); }
+    if (q) { query += ' AND (u.name LIKE $' + (params.length + 1) + ' OR u.apellido LIKE $' + (params.length + 2) + ' OR COALESCE(pp.especialidad, u.especialidad) LIKE $' + (params.length + 3) + ' OR COALESCE(pp.descripcion, u.descripcion) LIKE $' + (params.length + 4) + ')'; params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`); }
+    query += ' GROUP BY u.id, pp.id ORDER BY calificacion_promedio DESC, RANDOM()';
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch(err) {
@@ -948,15 +953,20 @@ app.get('/api/profesionales/:id', async (req, res) => {
   try {
     const proResult = await db.query(`
       SELECT
-        u.id, u.name as nombre, u.apellido, u.especialidad, u.categoria,
-        u.zona, u.descripcion, u.experiencia, u.foto,
-        u.verification_level, u.verification_status,
+        u.id, u.name as nombre, u.apellido,
+        COALESCE(pp.especialidad, u.especialidad) as especialidad,
+        COALESCE(pp.categoria, u.categoria) as categoria,
+        COALESCE(pp.zona, u.zona) as zona,
+        COALESCE(pp.descripcion, u.descripcion) as descripcion,
+        COALESCE(pp.experiencia_anios, u.experiencia) as experiencia,
+        u.foto, u.verification_level, u.verification_status,
         COALESCE(AVG(c.estrellas), 0) as calificacion_promedio,
         COUNT(c.id) as total_calificaciones
       FROM users u
       LEFT JOIN calificaciones c ON c.para_usuario = u.id
+      LEFT JOIN profesional_profiles pp ON pp.user_id = u.id
       WHERE u.id = $1 AND u.role = 'professional'
-      GROUP BY u.id
+      GROUP BY u.id, pp.id
     `, [id]);
     const pro = proResult.rows[0];
     if (!pro) return res.status(404).json({ ok: false, error: 'Profesional no encontrado' });

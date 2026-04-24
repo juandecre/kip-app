@@ -283,7 +283,8 @@ button { font-family:inherit; cursor:pointer; border:none; }
     </div>
     <div class="hero-actions">
       <button class="btn btn-outline-accent" onclick="window.location.href='/?screen=profile-user'">👤 Editar perfil</button>
-      <button class="btn btn-dark" onclick="window.location.href='/'">← Volver como cliente</button>
+      <button class="btn btn-accent" onclick="window.location.href='/kip-app.html?screen=activar-pro'">➕ Agregar otro servicio</button>
+      <button class="btn btn-dark" onclick="window.location.href='/kip-app.html'">← Volver como cliente</button>
     </div>
   </div>
 
@@ -310,7 +311,7 @@ button { font-family:inherit; cursor:pointer; border:none; }
   <div class="actions-row">
     <button class="btn btn-accent" onclick="document.getElementById('mensajes').scrollIntoView({behavior:'smooth'})">💬 Ver mis mensajes</button>
     <button class="btn btn-ghost" onclick="window.location.href='/?screen=profile-user'">👤 Editar perfil completo</button>
-    <button class="btn btn-ghost" onclick="window.location.href='/'">← Volver como cliente</button>
+    <button class="btn btn-ghost" onclick="window.location.href='/kip-app.html'">← Volver como cliente</button>
   </div>
 
   <!-- MENSAJES -->
@@ -496,6 +497,11 @@ async function cargarPerfil() {
 
 /* ── CARGAR CONVERSACIONES ── */
 async function cargarConversaciones() {
+  if (!user || !user.id) {
+    document.getElementById('conv-list').innerHTML =
+      `<div class="empty"><div class="empty-icon">📭</div><p>No tenés mensajes aún.</p></div>`;
+    return;
+  }
   try {
     const r = await fetch(`${API}/conversaciones/${user.id}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -503,18 +509,18 @@ async function cargarConversaciones() {
     if (r.status === 401) { logout(); return; }
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
+    // La API devuelve un array plano con: otro_id, nombre, apellido, foto, ultimo_mensaje, ultimo_tiempo
     const lista = Array.isArray(data) ? data : (data.conversaciones || []);
 
-    // Badge nav
-    const nuevos = lista.filter(c => c.no_leidos > 0).length;
+    // Badge nav (no_leidos no está en esta API; usamos presencia de mensajes nuevos por tiempo)
     const badge = document.getElementById('nav-badge');
-    if (nuevos > 0) {
-      badge.textContent = nuevos; badge.classList.add('on');
-      if (nuevos > lastNuevos) showToast(`${nuevos} mensaje${nuevos>1?'s':''} nuevo${nuevos>1?'s':''}`);
-    } else {
-      badge.classList.remove('on');
+    if (lista.length > lastNuevos && lastNuevos > 0) {
+      const diff = lista.length - lastNuevos;
+      showToast(`${diff} mensaje${diff>1?'s':''} nuevo${diff>1?'s':''}`);
+      badge.textContent = diff; badge.classList.add('on');
+      setTimeout(() => badge.classList.remove('on'), 10000);
     }
-    lastNuevos = nuevos;
+    lastNuevos = lista.length;
 
     // Stats
     document.getElementById('stat-msgs').textContent = lista.length;
@@ -523,33 +529,31 @@ async function cargarConversaciones() {
 
     const c = document.getElementById('conv-list');
     if (!lista.length) {
-      c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>Todavía no tenés mensajes.</p></div>`;
+      c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>No tenés mensajes aún.</p></div>`;
       return;
     }
     c.innerHTML = lista.map(conv => {
-      const otro    = conv.otro_usuario || {};
-      const nombre  = escaparHtml(otro.nombre  || 'Usuario');
-      const apellido= escaparHtml(otro.apellido|| '');
-      const iniciales = ini(otro.nombre||'U', otro.apellido||'');
-      const avHtml  = otro.foto ? `<img src="${otro.foto}" alt="">` : iniciales;
-      const otroId  = otro.id || conv.otro_id;
-      const oFoto   = otro.foto || '';
-      return `<div class="conv-item" onclick="abrirChat(${otroId},'${escaparHtml(otro.nombre||'')}','${escaparHtml(otro.apellido||'')}','${oFoto}')">
+      // Estructura plana: conv.otro_id, conv.nombre, conv.apellido, conv.foto, conv.ultimo_mensaje, conv.ultimo_tiempo
+      const nombre   = escaparHtml(conv.nombre   || 'Usuario');
+      const apellido = escaparHtml(conv.apellido || '');
+      const otroId   = conv.otro_id;
+      const oFoto    = conv.foto || '';
+      const avHtml   = oFoto ? `<img src="${oFoto}" alt="">` : ini(conv.nombre||'U', conv.apellido||'');
+      return `<div class="conv-item" onclick="abrirChat(${otroId},'${escaparHtml(conv.nombre||'')}','${escaparHtml(conv.apellido||'')}','${oFoto}')">
         <div class="conv-av">${avHtml}</div>
         <div class="conv-body">
           <div class="conv-name">${nombre} ${apellido}</div>
           <div class="conv-last">${escaparHtml(conv.ultimo_mensaje||'Sin mensajes')}</div>
         </div>
         <div class="conv-meta">
-          <span class="conv-time">${fmtHora(conv.ultimo_mensaje_fecha)}</span>
-          ${conv.no_leidos>0?'<div class="conv-dot"></div>':''}
+          <span class="conv-time">${fmtHora(conv.ultimo_tiempo)}</span>
         </div>
       </div>`;
     }).join('');
   } catch(e) {
     console.error('cargarConversaciones:', e);
     document.getElementById('conv-list').innerHTML =
-      `<div class="empty"><div class="empty-icon">⚠️</div><p>No se pudieron cargar los mensajes.</p></div>`;
+      `<div class="empty"><div class="empty-icon">📭</div><p>No tenés mensajes aún.</p></div>`;
   }
 }
 
